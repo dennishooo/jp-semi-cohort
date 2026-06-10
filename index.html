@@ -348,6 +348,13 @@
 
     .panel{padding:12px}
 
+    /* heatmap: stop the 188px metric column dominating the screen; tighten cells so more fit */
+    #heat{font-size:11px}
+    #heat th,#heat td{padding:5px 6px}
+    thead th.metric,td.metric{min-width:96px;max-width:116px;white-space:normal;line-height:1.2}
+    #heat .metric .hint{display:none}
+    .tablewrap{-webkit-overflow-scrolling:touch}
+
     /* verdict: drop the wide fixed label column; let the bar use full width */
     .vbar{grid-template-columns:1fr 64px;grid-template-rows:auto auto;gap:5px 10px;padding:11px 13px}
     .vbar .lab{grid-column:1;grid-row:1;font-size:13px}
