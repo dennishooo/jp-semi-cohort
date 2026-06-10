@@ -95,8 +95,28 @@
   .lchip:hover{background:var(--hl)}
   .lchip.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
   .lchip.allchip{font-weight:600}
-  /* let the per-ticker chip area scroll if it gets tall on small screens */
-  .chips{max-height:108px;overflow-y:auto}
+
+  /* collapsible ticker bar */
+  .tickerbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px}
+  .tktoggle{display:inline-flex;align-items:center;gap:8px;background:none;border:0;cursor:pointer;padding:2px 0;color:var(--ink2)}
+  .tktoggle .caret{font-family:var(--mono);font-size:11px;color:var(--ink3);transition:transform .18s var(--ease)}
+  .tktoggle[aria-expanded="true"] .caret{transform:rotate(90deg)}
+  .tksum{font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
+  .tksum b{color:var(--accent);font-weight:600}
+  .tksearch{font-family:var(--mono);font-size:12px;color:var(--ink);background:#fff;
+    border:1px solid var(--line2);border-radius:20px;padding:4px 12px;width:160px;outline:none;
+    transition:border-color .15s,box-shadow .15s,width .2s var(--ease)}
+  .tksearch:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(168,67,31,.1);width:200px}
+  .tklink{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;
+    background:none;border:0;color:var(--ink3);cursor:pointer;padding:3px 4px}
+  .tklink:hover{color:var(--accent)}
+  /* expanding panel */
+  .tkpanel{overflow:hidden;max-height:0;opacity:0;transition:max-height .28s var(--ease),opacity .2s,margin .28s var(--ease);margin-top:0}
+  .tkpanel.open{max-height:240px;opacity:1;margin-top:10px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;max-height:210px;overflow-y:auto;padding:1px 1px 6px}
+  .chip.hide{display:none}
+  .chip mark{background:rgba(168,67,31,.18);color:inherit;border-radius:2px;padding:0 1px}
+  .chipsempty{font-family:var(--mono);font-size:12px;padding:6px 2px}
 
   /* supply-chain map tiles */
   .laytiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
@@ -359,9 +379,19 @@
       <button data-lens="quality" class="active">Quality-Growth</button>
     </div>
   </div>
-  <div class="wrap" style="margin-top:8px">
-    <span class="glabel">Tickers</span>
+  <div class="wrap tickerbar">
+    <button class="tktoggle" id="tkToggle" aria-expanded="false">
+      <span class="caret">▸</span><span class="glabel">Tickers</span>
+      <span class="tksum" id="tkSummary"></span>
+    </button>
+    <input type="search" class="tksearch" id="tkSearch" placeholder="search…" autocomplete="off" spellcheck="false" aria-label="Filter tickers">
+    <span class="spacer"></span>
+    <button class="tklink" id="tkAll">All</button>
+    <button class="tklink" id="tkClear">Clear</button>
+  </div>
+  <div class="wrap tkpanel" id="tkPanel" hidden>
     <div class="chips" id="chips"></div>
+    <div class="chipsempty muted" id="chipsEmpty" hidden>No tickers match.</div>
   </div>
 </div>
 
@@ -1186,15 +1216,23 @@ function renderLayerChips(){
   });
 }
 
-/* ============================ CHIPS ============================ */
+/* ============================ CHIPS (collapsible + searchable) ============================ */
 const chipsEl=document.getElementById("chips");
-// render ticker chips grouped by layer order, with a faint layer label between groups
+const tkPanel=document.getElementById("tkPanel");
+const tkToggle=document.getElementById("tkToggle");
+const tkSearch=document.getElementById("tkSearch");
+const tkSummary=document.getElementById("tkSummary");
+const chipsEmpty=document.getElementById("chipsEmpty");
+let tkOpen=false, tkQuery="";
+
+// render ticker chips grouped by layer order; each carries its searchable text
 function buildChips(){
   chipsEl.innerHTML="";
   presentLayers.forEach(l=>{
     DATA.filter(d=>d.layer===l.k).forEach(d=>{
       const c=document.createElement("div");
       c.className="chip"; c.dataset.tk=d.tk;
+      c.dataset.search=(d.tk+" "+d.nm+" "+LAYER_LABEL[d.layer]).toLowerCase();
       c.title=LAYER_LABEL[d.layer]||"";
       c.innerHTML=`<span class="dot" style="background:${d.color}"></span>${d.tk} ${d.nm.split(" ")[0]}`;
       c.onclick=()=>{ toggle(d.tk); };
@@ -1208,8 +1246,36 @@ function toggle(tk){
   else state.visible.add(tk);
   renderAll();
 }
+// apply the search filter to which chips are shown (display only — not the same as visible/plotted)
+function applyChipSearch(){
+  const q=tkQuery.trim().toLowerCase();
+  let shown=0;
+  [...chipsEl.children].forEach(c=>{
+    const match = !q || c.dataset.search.includes(q);
+    c.classList.toggle("hide",!match);
+    if(match) shown++;
+  });
+  chipsEmpty.hidden = shown>0;
+}
+function setTkOpen(open){
+  tkOpen=open;
+  tkPanel.hidden=false;                 // keep in DOM so transition runs
+  tkPanel.classList.toggle("open",open);
+  tkToggle.setAttribute("aria-expanded",open?"true":"false");
+  if(open){ applyChipSearch(); setTimeout(()=>tkSearch.focus(),120); }
+}
+tkToggle.onclick=()=>setTkOpen(!tkOpen);
+tkSearch.oninput=()=>{ tkQuery=tkSearch.value; if(!tkOpen) setTkOpen(true); applyChipSearch(); };
+tkSearch.onfocus=()=>{ if(!tkOpen) setTkOpen(true); };
+document.getElementById("tkAll").onclick=()=>{ state.visible=new Set(DATA.map(d=>d.tk)); renderAll(); };
+document.getElementById("tkClear").onclick=()=>{ // keep one so charts never go empty
+  const first=DATA[0].tk; state.visible=new Set([first]); renderAll(); };
+
 function syncChips(){
   [...chipsEl.children].forEach(c=>c.classList.toggle("off",!state.visible.has(c.dataset.tk)));
+  // summary line reflects current selection vs full cohort
+  const n=state.visible.size, total=DATA.length;
+  tkSummary.innerHTML = n===total ? `all <b>${total}</b> shown` : `<b>${n}</b> of ${total} shown`;
   renderLayerChips();
 }
 
