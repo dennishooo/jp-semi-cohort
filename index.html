@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Japan Semiconductor Value Chain — 3-Year Comparison</title>
+<title>Global Semiconductor Value Chain — 3-Year Comparison</title>
 <style>
   :root{
     --paper:#FAFAF7; --ink:#15171C; --ink2:#4A4E58; --ink3:#878C97;
@@ -155,22 +155,84 @@
   footer b{color:var(--ink2)}
   .flag{background:#FBF4E6;border:1px solid #E8D9B0;border-radius:3px;padding:12px 15px;font-size:13px;color:#6b5a2e;margin:18px 0 0}
   .flag b{color:#5a4a22}
+
+  /* ============================ RESPONSIVE ============================ */
+  /* Tablet / small laptop */
+  @media(max-width:900px){
+    .wrap{padding:0 20px}
+    header{padding:34px 0 22px}
+    header h1{font-size:25px}
+    .cards{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  }
+
+  /* Phone */
+  @media(max-width:640px){
+    body{font-size:14px}
+    .wrap{padding:0 15px}
+    header{padding:26px 0 18px}
+    header h1{font-size:21px;margin:8px 0 6px}
+    header p{font-size:13.5px}
+    .meta{gap:10px 16px;margin-top:12px}
+
+    /* control bar: stack into labelled rows instead of one cramped line */
+    .gbar{padding:9px 0;margin-bottom:22px}
+    .gbar .wrap{gap:9px}
+    .gbar .spacer{display:none}
+    .glabel{width:100%;margin-bottom:-3px}
+    .chips{gap:5px}
+    .chip{font-size:11.5px;padding:4px 8px}
+    .seg{flex-wrap:wrap}
+
+    section{margin:0 0 40px}
+    .sechead{gap:10px}
+    .sechead h2{font-size:16px}
+    .caption{font-size:12.5px;margin-bottom:18px}
+
+    /* stack the two-column blocks (radar + legend, dcf) */
+    .grid2,.dcf{grid-template-columns:1fr;gap:22px}
+
+    .card .top{padding:12px 13px;gap:9px}
+    .card .body{padding:0 13px 14px 26px}
+
+    .panel{padding:12px}
+
+    /* verdict: drop the wide fixed label column; let the bar use full width */
+    .vbar{grid-template-columns:1fr 64px;grid-template-rows:auto auto;gap:5px 10px;padding:11px 13px}
+    .vbar .lab{grid-column:1;grid-row:1;font-size:13px}
+    .vbar .sc{grid-column:2;grid-row:1;align-self:center}
+    .vbar .track{grid-column:1 / span 2;grid-row:2}
+    /* popover: position inline (full width) and let it open on tap via .show */
+    .vbar .pop{left:13px;right:13px;bottom:auto;top:calc(100% - 2px);position:absolute}
+    .vbar:hover .pop{display:none}            /* hover is unreliable on touch */
+    .vbar.show .pop{display:block}
+
+    footer{padding:18px 0 48px}
+    .flag{font-size:12.5px;padding:10px 12px}
+  }
+
+  /* Devices that can't hover (touch): make verdict bars tap-to-reveal everywhere */
+  @media(hover:none){
+    .vbar{cursor:pointer}
+    .vbar:hover .pop{display:none}
+    .vbar.show .pop{display:block}
+  }
 </style>
 </head>
 <body>
 
 <header>
   <div class="wrap">
-    <div class="eyebrow">Equity comparison · 3-year horizon · Japan semiconductor value chain</div>
-    <h1>Nine Tokyo-listed names, one supply chain, two lenses</h1>
-    <p>From wafers and process chemicals through fab equipment, test, and chips — graded on what actually
+    <div class="eyebrow">Equity comparison · 3-year horizon · Global semiconductor value chain</div>
+    <h1>Fourteen names, one supply chain, two lenses</h1>
+    <p>From wafers and process chemicals through fab equipment, test, and chips — now spanning the Tokyo-listed
+       cohort and the global leaders (ASML, TSMC, Applied Materials, Lam Research, KLA) — graded on what actually
        separates them over three years: returns on capital versus cost of capital, moat direction, balance-sheet
        resilience, and what today's price already assumes. Toggle the scoring lens; every chart shares one color
        per ticker and one show/hide state.</p>
     <div class="meta">
       <span><b>Data date</b> ~9–10 Jun 2026</span>
-      <span><b>Currency</b> JPY</span>
-      <span><b>Fiscal year</b> mostly ends March</span>
+      <span><b>Currency</b> JPY (Tokyo names) · USD (global names)</span>
+      <span><b>Fiscal year</b> Japan ends March; others vary</span>
       <span><b>Figures</b> illustrative — verify live</span>
     </div>
     <div class="flag" id=" tickerflag">
@@ -301,8 +363,9 @@
   <div class="wrap">
     <b>Sources & method.</b> Prices, market caps, and recent fiscal-year results gathered from public market data
     (~9–10 Jun 2026); ratios, ROIC, FCF quality, moat scores, and all forward figures are the author's illustrative
-    estimates and normalizations, not consensus pulls. Japanese fiscal years generally end in March. SBC is immaterial
-    for these issuers, so the SBC-adjusted basis differs only marginally from GAAP. Reverse-DCF uses a transparent
+    estimates and normalizations, not consensus pulls. Japanese fiscal years generally end in March; the global names
+    (ASML, TSMC, AMAT, LRCX, KLAC) report in USD on their own calendars. SBC is immaterial for the Japanese issuers but
+    is more meaningful for the US names, so the SBC-adjusted basis moves their margins modestly. Reverse-DCF uses a transparent
     10-year explicit FCF-to-equity model with a Gordon terminal value; per-share revenue, net cash, and starting FCF
     margins are approximations.<br><br>
     <b>Figures are illustrative — verify live before acting.</b> This is an analytical tool, not investment advice;
@@ -393,7 +456,53 @@ const DATA = [
   bear:"Narrow product breadth (cleaning-led) and smaller scale; China exposure; lower margins and more cyclicality than TEL or Disco.",
   r:{val:7,growth:6,roic:8,moat:7,fcf:7,bs:8,scal:7},
   m:{peTTM:25,peFwd:20,pegFwd:1.4,evEbitda:13,evSales:3.8,pfcf:22,fcfYield:4.0,revCagrHist:14,epsCagrFwd:14,gross:38,op:19,net:15,roic:22,roe:20,fcfMargin:13,fcfConv:80,sbc:0.3,netDebtEbitda:-0.7,intCov:999},
-  d:{revPS:3275,netCashPS:2500,fcfM:0.13}}
+  d:{revPS:3275,netCashPS:2500,fcfM:0.13}},
+
+ /* ---- Global value-chain leaders (figures in USD; illustrative, ~Jun 2026) ---- */
+ {tk:"ASML",nm:"ASML Holding",bz:"Lithography systems (EUV / DUV)",color:"#FF6B00",
+  price:1778,mcap:671,cur:"$",
+  thesis:"The single most irreplaceable node in the entire chain: a 100% monopoly on EUV lithography, the only way to print leading-edge logic and the densest memory. Every advanced fab on earth must buy from ASML, and High-NA EUV extends that grip for another decade. The debate is never the moat — it is the timing of the order cycle and how much China exposure normalizes, with the stock at a ~58x trailing multiple after a sharp AI-driven re-rating.",
+  bull:"Absolute EUV monopoly with multi-year backlog and High-NA upgrade cycle; ~51% gross margin, huge installed-base service annuity, every leading-edge roadmap depends on it.",
+  bear:"Lumpy, concentrated order book tied to a handful of fabs; China DUV revenue exposed to export controls; a ~58x P/E leaves little room for a capex air-pocket.",
+  r:{val:3,growth:8,roic:10,moat:10,fcf:9,bs:9,scal:9},
+  m:{peTTM:58,peFwd:45,pegFwd:2.0,evEbitda:38,evSales:17,pfcf:52,fcfYield:1.9,revCagrHist:18,epsCagrFwd:22,gross:51,op:33,net:28,roic:48,roe:55,fcfMargin:26,fcfConv:92,sbc:1.0,netDebtEbitda:-0.8,intCov:999},
+  d:{revPS:101,netCashPS:8,fcfM:0.26}},
+
+ {tk:"LRCX",nm:"Lam Research",bz:"Etch & deposition (WFE)",color:"#00897B",
+  price:327,mcap:409,cur:"$",
+  thesis:"The memory-capex purebred. Lam dominates plasma etch and deposition — the steps that scale fastest as NAND goes vertical and DRAM stacks toward HBM. More cyclical than the litho monopoly, but with a deep installed-base services tail and best-in-class capital returns. The stock has roughly tripled in a year on AI/HBM enthusiasm, pushing it to a ~62x trailing multiple — the cycle and memory pricing are the swing factors, not the franchise.",
+  bull:"Co-leader in etch/deposition with growing share at advanced nodes; ~48% gross margin; aggressive buybacks; direct HBM and 3D-NAND scaling leverage.",
+  bear:"Heavy memory-capex cyclicality; meaningful China sales under export-control risk; a ~62x P/E prices in a sustained up-cycle that historically has not lasted.",
+  r:{val:4,growth:7,roic:9,moat:8,fcf:9,bs:8,scal:8},
+  m:{peTTM:62,peFwd:44,pegFwd:2.4,evEbitda:42,evSales:18.5,pfcf:55,fcfYield:1.8,revCagrHist:10,epsCagrFwd:18,gross:48,op:31,net:26,roic:38,roe:55,fcfMargin:24,fcfConv:95,sbc:2.5,netDebtEbitda:-0.5,intCov:999},
+  d:{revPS:17,netCashPS:4,fcfM:0.24}},
+
+ {tk:"KLAC",nm:"KLA Corp",bz:"Process control & inspection",color:"#5E35B1",
+  price:2139,mcap:279,cur:"$",
+  thesis:"The toll-booth on yield. KLA owns ~55%+ of process-control and inspection — as nodes shrink and defects get costlier, fabs must inspect more, not less, making KLA structurally less cyclical than the WFE names. Best-in-cohort margins among equipment makers and an enviable services annuity. Highest-quality equipment franchise after the litho monopoly — though at ~61x trailing the market now prices that quality fully. (A 10-for-1 split takes effect 12 Jun 2026; figures here are pre-split.)",
+  bull:">55% share in process control with widening lead at advanced nodes; ~62% gross margin, ~40% op margin; defensive services mix and superb capital returns.",
+  bear:"A ~61x P/E is rich even for this quality; still exposed to overall WFE capex and China; concentration in leading-edge inspection demand.",
+  r:{val:3,growth:7,roic:10,moat:9,fcf:9,bs:8,scal:8},
+  m:{peTTM:61,peFwd:45,pegFwd:2.6,evEbitda:40,evSales:22,pfcf:55,fcfYield:1.8,revCagrHist:13,epsCagrFwd:15,gross:62,op:40,net:36,roic:42,roe:90,fcfMargin:30,fcfConv:95,sbc:2.2,netDebtEbitda:0.3,intCov:40},
+  d:{revPS:100,netCashPS:-20,fcfM:0.30}},
+
+ {tk:"TSM",nm:"TSMC",bz:"Leading-edge foundry",color:"#C0392B",
+  price:428,mcap:1890,cur:"$",
+  thesis:"The factory the whole industry runs on. TSMC manufactures the leading-edge silicon for Apple, Nvidia, AMD and almost every fabless designer, holding ~70% of the foundry market and effectively all of the bleeding edge. AI demand has pricing power flowing its way for the first time in years. Scale, yield and customer trust are the moat; geopolitics is the discount — and at ~32x trailing it remains the most reasonably valued of the AI-leveraged leaders. (Figures are per US-listed ADR; 1 ADR = 5 ordinary shares.)",
+  bull:"~70% foundry share and a near-monopoly on the leading edge; AI accelerator demand driving pricing power; ~59% gross margin at vast scale; unmatched yield/execution.",
+  bear:"Taiwan geopolitical risk is the structural overhang; enormous capex intensity; customer concentration in a few hyperscale/mobile accounts.",
+  r:{val:7,growth:8,roic:9,moat:10,fcf:7,bs:9,scal:10},
+  m:{peTTM:32,peFwd:22,pegFwd:0.9,evEbitda:16,evSales:12,pfcf:34,fcfYield:2.4,revCagrHist:25,epsCagrFwd:25,gross:59,op:49,net:43,roic:32,roe:31,fcfMargin:18,fcfConv:60,sbc:0.3,netDebtEbitda:-0.6,intCov:999},
+  d:{revPS:25,netCashPS:30,fcfM:0.18}},
+
+ {tk:"AMAT",nm:"Applied Materials",bz:"Diversified fab equipment (WFE)",color:"#1565C0",
+  price:499,mcap:396,cur:"$",
+  thesis:"The broadest equipment toolbox. Applied spans deposition, etch, ion implant, CMP and inspection — the widest WFE product range, which smooths cyclicality and lets it ride every node and material transition (gate-all-around, advanced packaging, ICAPS). At ~47x trailing it carries the lowest multiple of the US equipment names; the trade-off is being a generalist rather than a monopolist in any one step.",
+  bull:"Widest WFE product breadth de-risks any single segment; ~48% gross margin, strong FCF and buybacks; ICAPS/trailing-edge plus leading-edge dual exposure.",
+  bear:"No single-step monopoly, so share is contested in each category; broad China revenue exposure; full cyclicality of the WFE market at a now-elevated multiple.",
+  r:{val:5,growth:6,roic:9,moat:7,fcf:9,bs:8,scal:8},
+  m:{peTTM:47,peFwd:34,pegFwd:2.6,evEbitda:32,evSales:13,pfcf:42,fcfYield:2.4,revCagrHist:11,epsCagrFwd:13,gross:48,op:29,net:25,roic:35,roe:48,fcfMargin:23,fcfConv:95,sbc:2.0,netDebtEbitda:-0.2,intCov:999},
+  d:{revPS:37,netCashPS:2,fcfM:0.23}}
 ];
 
 const AXES=[
@@ -441,7 +550,22 @@ const state={
 DATA.forEach(d=>{ state.dcfV[d.tk]={g:d.m.epsCagrFwd, m:Math.round(d.d.fcfM*100), r:9, tg:2.5}; });
 
 const byTk=Object.fromEntries(DATA.map(d=>[d.tk,d]));
+/* currency-aware formatter: JPY (¥) by default, USD ($) for global names that set cur:"$" */
+const curOf=d=>(d&&d.cur)?d.cur:"¥";
+function fmtMoney(v,d){
+  const c=curOf(d);
+  if(c==="$") return "$"+Math.round(v).toLocaleString();
+  return "¥"+Math.round(v).toLocaleString();
+}
+/* legacy alias kept for any old call sites */
 const fmtYen=v=>"¥"+Math.round(v).toLocaleString();
+/* market-cap display: ¥xxT for JPY names, $xxxB for USD names */
+const fmtMcap=d=>curOf(d)==="$"?`$${d.mcap.toFixed(0)}B`:`¥${d.mcap.toFixed(1)}T`;
+/* normalize market cap to a common unit (USD billions) for bubble sizing only,
+   so a ¥27T Japanese name and a $1180B global name share one scale.
+   ~150 JPY/USD: ¥1T ≈ $6.7B. */
+const JPY_T_TO_USD_B=6.7;
+const mcapUSD=d=>curOf(d)==="$"?d.mcap:d.mcap*JPY_T_TO_USD_B;
 
 function composite(d,lens){
   const w=LENSES[lens].w; let s=0;
@@ -523,7 +647,7 @@ function renderCards(){
         <div class="sc"><div class="v" style="color:${d.color}">${sc.toFixed(1)}</div><div class="l">score</div></div>
       </div>
       <div class="body">
-        <div class="price">Price <b>${fmtYen(d.price)}</b> · Mkt cap <b>¥${d.mcap.toFixed(1)}T</b> · <span class="caret">▸</span></div>
+        <div class="price">Price <b>${fmtMoney(d.price,d)}</b> · Mkt cap <b>${curOf(d)}${d.mcap.toFixed(1)}${curOf(d)==="$"?"B":"T"}</b> · <span class="caret">▸</span></div>
         <p class="th">${d.thesis}</p>
       </div>`;
     card.querySelector(".top").onclick=()=>card.classList.toggle("open");
@@ -630,10 +754,10 @@ function renderScatter(){
   svg+=`<text x="${(pad.l+W-pad.r)/2}" y="${H-6}" text-anchor="middle" class="axislbl" style="font-size:11.5px">${xm.l} →  (cheaper is left)</text>`;
   svg+=`<text x="14" y="${(pad.t+H-pad.b)/2}" text-anchor="middle" class="axislbl" style="font-size:11.5px" transform="rotate(-90 14 ${(pad.t+H-pad.b)/2})">${ym.l} →</text>`;
   // bubbles
-  const rmin=8,rmax=34, mc=DATA.map(d=>d.mcap), mcMin=Math.min(...mc), mcMax=Math.max(...mc);
+  const rmin=8,rmax=34, mc=DATA.map(d=>mcapUSD(d)), mcMin=Math.min(...mc), mcMax=Math.max(...mc);
   const rad=mc=>rmin+Math.sqrt((mc-mcMin)/(mcMax-mcMin||1))*(rmax-rmin);
   vis.forEach(d=>{
-    const x=X(d.m[state.xKey]), y=Y(d.m[state.yKey]), r=rad(d.mcap);
+    const x=X(d.m[state.xKey]), y=Y(d.m[state.yKey]), r=rad(mcapUSD(d));
     svg+=`<circle class="bub" data-tk="${d.tk}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}"
        fill="${d.color}" fill-opacity="0.16" stroke="${d.color}" stroke-width="2" style="cursor:pointer"/>`;
     svg+=`<text x="${x.toFixed(1)}" y="${(y+3.5).toFixed(1)}" text-anchor="middle" style="font-family:var(--mono);font-size:10.5px;font-weight:600;fill:${d.color};pointer-events:none">${d.tk}</text>`;
@@ -641,7 +765,7 @@ function renderScatter(){
   scatter.innerHTML=svg;
   scatter.querySelectorAll(".bub").forEach(b=>{
     b.onmouseenter=()=>{const d=byTk[b.dataset.tk];
-      scatterTip.innerHTML=`<b style="color:${d.color}">${d.tk} ${d.nm}</b> &nbsp; ${xm.l} ${xm.fmt(d.m[state.xKey])} · ${ym.l} ${ym.fmt(d.m[state.yKey])} · Mkt cap ¥${d.mcap.toFixed(1)}T · Fwd P/E ${d.m.peFwd}x · ROIC ${d.m.roic}% · Net debt/EBITDA ${d.m.netDebtEbitda<0?"net cash":d.m.netDebtEbitda+"x"}`;};
+      scatterTip.innerHTML=`<b style="color:${d.color}">${d.tk} ${d.nm}</b> &nbsp; ${xm.l} ${xm.fmt(d.m[state.xKey])} · ${ym.l} ${ym.fmt(d.m[state.yKey])} · Mkt cap ${fmtMcap(d)} · Fwd P/E ${d.m.peFwd}x · ROIC ${d.m.roic}% · Net debt/EBITDA ${d.m.netDebtEbitda<0?"net cash":d.m.netDebtEbitda+"x"}`;};
     b.onmouseleave=()=>scatterTip.textContent="";
   });
 }
@@ -774,19 +898,19 @@ function renderDCFout(){
   const fv=dcfValue(d,v.g,v.m,v.r,v.tg);
   const upside=(fv/d.price-1)*100;
   const impl=impliedGrowth(d,v.m,v.r,v.tg,d.price);
-  const ncTxt=d.d.netCashPS>=0?`+${fmtYen(d.d.netCashPS)} net cash/sh`:`${fmtYen(d.d.netCashPS)} net debt/sh`;
+  const ncTxt=d.d.netCashPS>=0?`+${fmtMoney(d.d.netCashPS,d)} net cash/sh`:`${fmtMoney(d.d.netCashPS,d)} net debt/sh`;
   const out=document.getElementById("dcfOut");
   out.innerHTML=`
-    <div class="dcfrow"><span class="k">Current price</span><span class="v">${fmtYen(d.price)}</span></div>
+    <div class="dcfrow"><span class="k">Current price</span><span class="v">${fmtMoney(d.price,d)}</span></div>
     <div class="dcfrow big"><span class="k">Intrinsic value / share</span>
-      <span class="v" style="color:${upside>=0?'var(--good)':'var(--bad)'}">${fmtYen(fv)}</span></div>
+      <span class="v" style="color:${upside>=0?'var(--good)':'var(--bad)'}">${fmtMoney(fv,d)}</span></div>
     <div class="dcfrow"><span class="k">Upside / (downside)</span>
       <span class="v ${upside>=0?'up':'down'}">${upside>=0?'+':''}${upside.toFixed(0)}%</span></div>
     <div class="impl">At today's price, the model implies ~<b>${impl.toFixed(1)}% revenue growth</b> for 10 years
       (holding margin ${v.m}%, WACC ${v.r}%, terminal ${v.tg}%). Your assumption is <b>${v.g}%</b> —
       ${v.g>impl?`above the implied bar, so the DCF says <span class="up">undervalued</span>.`:
         v.g<impl?`below the implied bar, so the DCF says <span class="down">overvalued</span>.`:`right at the implied bar — fairly valued.`}
-      <br><span class="muted">Base inputs: rev/sh ${fmtYen(d.d.revPS)}, ${ncTxt}, starting FCF margin ~${Math.round(d.d.fcfM*100)}%.</span></div>`;
+      <br><span class="muted">Base inputs: rev/sh ${fmtMoney(d.d.revPS,d)}, ${ncTxt}, starting FCF margin ~${Math.round(d.d.fcfM*100)}%.</span></div>`;
 }
 
 /* ============================ VERDICT ============================ */
@@ -807,6 +931,12 @@ function renderVerdict(){
       <div class="track"><div class="fill" style="width:${(sc/max*100).toFixed(1)}%;background:${d.color}"></div></div>
       <div class="sc" style="color:${d.color}">${sc.toFixed(1)}</div>
       <div class="pop"><span class="bp bull">▲ Bull — ${d.bull}</span><span class="bp bear">▼ Bear — ${d.bear}</span></div>`;
+    // tap to reveal bull/bear on touch devices (hover handles desktop via CSS)
+    row.addEventListener("click",()=>{
+      const wasOpen=row.classList.contains("show");
+      [...el.children].forEach(r=>r.classList.remove("show"));
+      if(!wasOpen) row.classList.add("show");
+    });
     el.appendChild(row);
   });
 }
