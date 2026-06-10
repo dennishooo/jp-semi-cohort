@@ -458,6 +458,11 @@
             <button data-y="epsCagrFwd" class="active">Fwd growth</button>
             <button data-y="roic">ROIC</button>
           </div></div>
+        <div><span class="glabel">X scale</span>
+          <div class="seg" id="xScaleSeg" style="margin-left:8px">
+            <button data-xs="log" class="active">Log</button>
+            <button data-xs="linear">Linear</button>
+          </div></div>
       </div>
       <svg id="scatter" viewBox="0 0 880 470" role="img" aria-label="Valuation scatter"></svg>
       <div id="scatterTip" class="num" style="font-family:var(--mono);font-size:12px;color:var(--ink2);min-height:20px;margin-top:6px"></div>
@@ -1127,7 +1132,7 @@ const METRICS=[
 const state={
   visible:new Set(DATA.map(d=>d.tk)),
   lens:"quality",
-  xKey:"peFwd", yKey:"epsCagrFwd",
+  xKey:"peFwd", yKey:"epsCagrFwd", xScale:"log",
   period:"ttm", basis:"gaap",
   sortKey:null, sortDir:-1,
   dcf:DATA[0].tk, dcfV:{},
@@ -1293,6 +1298,10 @@ document.getElementById("xSeg").querySelectorAll("button").forEach(b=>{
 document.getElementById("ySeg").querySelectorAll("button").forEach(b=>{
   b.onclick=()=>{ state.yKey=b.dataset.y;
     document.querySelectorAll("#ySeg button").forEach(x=>x.classList.toggle("active",x===b)); renderScatter(); };
+});
+document.getElementById("xScaleSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ state.xScale=b.dataset.xs;
+    document.querySelectorAll("#xScaleSeg button").forEach(x=>x.classList.toggle("active",x===b)); renderScatter(); };
 });
 /* heatmap toggles */
 document.getElementById("periodSeg").querySelectorAll("button").forEach(b=>{
@@ -1464,12 +1473,27 @@ function renderScatter(){
   const all=DATA; // scale to full cohort for stable axes
   const xAll=all.map(d=>d.m[state.xKey]), yAll=all.map(d=>d.m[state.yKey]);
   let xMin=Math.min(...xAll), xMax=Math.max(...xAll), yMin=Math.min(...yAll), yMax=Math.max(...yAll);
-  const xPadr=(xMax-xMin)*0.12||1, yPadr=(yMax-yMin)*0.12||1;
-  xMin-=xPadr; xMax+=xPadr; yMin-=yPadr; yMax+=yPadr;
+  const yPadr=(yMax-yMin)*0.12||1;
+  yMin-=yPadr; yMax+=yPadr;
   if(state.yKey==="epsCagrFwd"||state.yKey==="roic") yMin=Math.min(yMin,0);
-  const X=v=>pad.l+(v-xMin)/(xMax-xMin)*(W-pad.l-pad.r);
+  // x can use a log scale to keep extreme-multiple outliers (e.g. 380x P/E) from
+  // crushing the rest of the cloud. Log only applies to strictly-positive x metrics.
+  const logX = state.xScale==="log";
+  const tx=v=>logX?Math.log10(Math.max(v,0.1)):v;     // value → axis space
+  if(logX){ xMin=Math.max(1,xMin); }                  // floor at 1x for a clean decade base
+  else { const xPadr=(xMax-xMin)*0.12||1; xMin-=xPadr; xMax+=xPadr; }
+  let txMin=tx(xMin), txMax=tx(xMax);
+  if(logX){ const m=(txMax-txMin)*0.06||.1; txMin-=m; txMax+=m; }
+  const X=v=>pad.l+(tx(v)-txMin)/(txMax-txMin)*(W-pad.l-pad.r);
   const Y=v=>H-pad.b-(v-yMin)/(yMax-yMin)*(H-pad.t-pad.b);
   const xm=axisMeta(state.xKey), ym=axisMeta(state.yKey);
+  // x gridline tick values: log → "nice" 1-2-5×decade ladder within range; linear → 4 even steps
+  function xTicks(){
+    if(!logX){ return [0,1,2,3,4].map(i=>xMin+i/4*(xMax-xMin)); }
+    const out=[]; const lo=Math.pow(10,Math.floor(Math.log10(Math.max(xMin,1)))), hi=xMax;
+    for(let dec=lo; dec<=hi*1.0001; dec*=10){ for(const m of [1,2,5]){ const v=dec*m; if(v>=xMin*0.999 && v<=hi*1.0001) out.push(v); } }
+    return out.length?out:[xMin,xMax];
+  }
   // medians of visible
   const xMed=median(xs), yMed=median(ys);
 
@@ -1481,22 +1505,26 @@ function renderScatter(){
   svg+=`<rect x="${qx}" y="${pad.t}" width="${W-pad.r-qx}" height="${qy-pad.t}" fill="#B23A48" fill-opacity="0.05"/>`;
   svg+=`<text x="${pad.l+6}" y="${H-pad.b-6}" class="medlbl" style="fill:#2E7D5B;font-weight:600">cheap · strong</text>`;
   svg+=`<text x="${W-pad.r-6}" y="${pad.t+12}" text-anchor="end" class="medlbl" style="fill:#B23A48;font-weight:600">dear · weak</text>`;
-  // gridlines
+  // y gridlines (4 even steps)
   for(let i=0;i<=4;i++){
-    const gx=pad.l+i/4*(W-pad.l-pad.r); const gy=pad.t+i/4*(H-pad.t-pad.b);
-    svg+=`<line x1="${gx}" y1="${pad.t}" x2="${gx}" y2="${H-pad.b}" class="gridln"/>`;
+    const gy=pad.t+i/4*(H-pad.t-pad.b);
     svg+=`<line x1="${pad.l}" y1="${gy}" x2="${W-pad.r}" y2="${gy}" class="gridln"/>`;
-    const xv=xMin+i/4*(xMax-xMin), yv=yMax-i/4*(yMax-yMin);
-    svg+=`<text x="${gx}" y="${H-pad.b+18}" text-anchor="middle" class="axislbl">${xm.fmt(xv)}</text>`;
+    const yv=yMax-i/4*(yMax-yMin);
     svg+=`<text x="${pad.l-10}" y="${gy+3}" text-anchor="end" class="axislbl">${ym.fmt(yv)}</text>`;
   }
+  // x gridlines (log ladder or even linear steps)
+  xTicks().forEach(xv=>{
+    const gx=X(xv); if(gx<pad.l-1||gx>W-pad.r+1) return;
+    svg+=`<line x1="${gx.toFixed(1)}" y1="${pad.t}" x2="${gx.toFixed(1)}" y2="${H-pad.b}" class="gridln"/>`;
+    svg+=`<text x="${gx.toFixed(1)}" y="${H-pad.b+18}" text-anchor="middle" class="axislbl">${xm.fmt(xv)}</text>`;
+  });
   // median lines
   svg+=`<line x1="${qx}" y1="${pad.t}" x2="${qx}" y2="${H-pad.b}" class="medln"/>`;
   svg+=`<line x1="${pad.l}" y1="${qy}" x2="${W-pad.r}" y2="${qy}" class="medln"/>`;
   svg+=`<text x="${qx+5}" y="${pad.t+11}" class="medlbl">median ${xm.fmt(xMed)}</text>`;
   svg+=`<text x="${W-pad.r}" y="${qy-5}" text-anchor="end" class="medlbl">median ${ym.fmt(yMed)}</text>`;
   // axis titles
-  svg+=`<text x="${(pad.l+W-pad.r)/2}" y="${H-6}" text-anchor="middle" class="axislbl" style="font-size:11.5px">${xm.l} →  (cheaper is left)</text>`;
+  svg+=`<text x="${(pad.l+W-pad.r)/2}" y="${H-6}" text-anchor="middle" class="axislbl" style="font-size:11.5px">${xm.l} →  (cheaper is left${logX?" · log scale":""})</text>`;
   svg+=`<text x="14" y="${(pad.t+H-pad.b)/2}" text-anchor="middle" class="axislbl" style="font-size:11.5px" transform="rotate(-90 14 ${(pad.t+H-pad.b)/2})">${ym.l} →</text>`;
   // bubbles — size by mcap; draw largest first so small ones land on top and stay clickable
   const rmin=7,rmax=32, mc=DATA.map(d=>mcapUSD(d)), mcMin=Math.min(...mc), mcMax=Math.max(...mc);
