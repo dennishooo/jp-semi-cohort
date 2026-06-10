@@ -223,15 +223,16 @@
 <header>
   <div class="wrap">
     <div class="eyebrow">Equity comparison · 3-year horizon · Global semiconductor value chain</div>
-    <h1>Fourteen names, one supply chain, two lenses</h1>
-    <p>From wafers and process chemicals through fab equipment, test, and chips — now spanning the Tokyo-listed
-       cohort and the global leaders (ASML, TSMC, Applied Materials, Lam Research, KLA) — graded on what actually
-       separates them over three years: returns on capital versus cost of capital, moat direction, balance-sheet
-       resilience, and what today's price already assumes. Toggle the scoring lens; every chart shares one color
-       per ticker and one show/hide state.</p>
+    <h1>Twenty-two names, one supply chain, two lenses</h1>
+    <p>From wafers and process chemicals through fab equipment, test, foundry, memory and the chip designers that
+       drive demand — spanning the Tokyo-listed cohort, the Western equipment and design leaders (ASML, TSMC, NVIDIA,
+       Broadcom, AMD, Intel, Arm, Applied Materials, Lam, KLA, Micron) and the Korean memory giants (Samsung,
+       SK Hynix) — graded on what actually separates them over three years: returns on capital versus cost of
+       capital, moat direction, balance-sheet resilience, and what today's price already assumes. Toggle the
+       scoring lens; every chart shares one color per ticker and one show/hide state.</p>
     <div class="meta">
       <span><b>Data date</b> ~9–10 Jun 2026</span>
-      <span><b>Currency</b> JPY (Tokyo names) · USD (global names)</span>
+      <span><b>Currency</b> JPY (Tokyo) · USD (US/EU/Taiwan ADR) · KRW (Korea)</span>
       <span><b>Fiscal year</b> Japan ends March; others vary</span>
       <span><b>Figures</b> illustrative — verify live</span>
     </div>
@@ -502,7 +503,80 @@ const DATA = [
   bear:"No single-step monopoly, so share is contested in each category; broad China revenue exposure; full cyclicality of the WFE market at a now-elevated multiple.",
   r:{val:5,growth:6,roic:9,moat:7,fcf:9,bs:8,scal:8},
   m:{peTTM:47,peFwd:34,pegFwd:2.6,evEbitda:32,evSales:13,pfcf:42,fcfYield:2.4,revCagrHist:11,epsCagrFwd:13,gross:48,op:29,net:25,roic:35,roe:48,fcfMargin:23,fcfConv:95,sbc:2.0,netDebtEbitda:-0.2,intCov:999},
-  d:{revPS:37,netCashPS:2,fcfM:0.23}}
+  d:{revPS:37,netCashPS:2,fcfM:0.23}},
+
+ /* ---- Chips, memory & IP: the demand side (USD unless noted; ~Jun 2026) ---- */
+ {tk:"NVDA",nm:"NVIDIA",bz:"AI accelerators / GPUs (fabless)",color:"#76B900",
+  price:208,mcap:5040,cur:"$",
+  thesis:"The demand engine the entire cohort feeds. NVIDIA's GPUs and the CUDA software moat define AI compute, and every equipment, foundry, memory and packaging name in this list is ultimately levered to its order book. At ~$5T it is the most valuable company on earth, yet a ~21x forward multiple looks almost reasonable against the growth — the whole debate is whether data-center capex sustains or air-pockets.",
+  bull:"Near-total share of AI training compute with a CUDA software lock-in no rival has cracked; ~75% gross margin, explosive FCF, the reference demand signal for the chain.",
+  bear:"Extreme customer concentration in a handful of hyperscalers; any AI-capex digestion hits hardest here; the largest cap in the world has the most to lose on sentiment.",
+  r:{val:6,growth:10,roic:10,moat:10,fcf:10,bs:10,scal:10},
+  m:{peTTM:32,peFwd:21,pegFwd:0.5,evEbitda:19,evSales:20,pfcf:28,fcfYield:2.5,revCagrHist:70,epsCagrFwd:35,gross:75,op:62,net:55,roic:90,roe:90,fcfMargin:48,fcfConv:95,sbc:3.5,netDebtEbitda:-1.5,intCov:999},
+  d:{revPS:10.5,netCashPS:1.5,fcfM:0.48}},
+
+ {tk:"AVGO",nm:"Broadcom",bz:"Custom AI silicon + networking",color:"#CC092F",
+  price:392,mcap:1870,cur:"$",
+  thesis:"The other AI-silicon winner. Broadcom designs the custom accelerators (XPUs) and networking silicon that hyperscalers use to reduce dependence on NVIDIA, plus a sticky infrastructure-software franchise (VMware). A serial-acquirer model with prodigious FCF and dividends — at ~65x trailing the AI-ASIC narrative is fully priced, but the cash generation is real.",
+  bull:"Co-leader in custom AI ASICs and data-center networking; ~60%+ gross margin, huge FCF and dividend; diversified software tail smooths the cycle.",
+  bear:"~65x trailing P/E on an M&A-built portfolio; heavy debt from VMware; custom-silicon revenue concentrated in a few hyperscale programs.",
+  r:{val:5,growth:9,roic:8,moat:8,fcf:10,bs:6,scal:9},
+  m:{peTTM:65,peFwd:25,pegFwd:1.1,evEbitda:28,evSales:26,pfcf:35,fcfYield:2.4,revCagrHist:32,epsCagrFwd:28,gross:67,op:45,net:38,roic:18,roe:35,fcfMargin:42,fcfConv:100,sbc:5.0,netDebtEbitda:1.8,intCov:9},
+  d:{revPS:16,netCashPS:-12,fcfM:0.42}},
+
+ {tk:"AMD",nm:"AMD",bz:"CPUs + AI accelerators (fabless)",color:"#ED1C24",
+  price:476,mcap:775,cur:"$",
+  thesis:"The #2 challenger across CPUs and AI accelerators. AMD has taken durable server-CPU share from Intel and is the only credible alternative to NVIDIA in data-center GPUs with its MI-series. At ~159x trailing the stock prices in a large, successful AI-GPU ramp that is still unproven at scale — enormous optionality, enormous expectations.",
+  bull:"Real server-CPU share gains plus the only credible non-NVIDIA AI-GPU roadmap; fabless asset-light model; multi-year hyperscaler design wins.",
+  bear:"~159x trailing earnings bakes in flawless execution; distant #2 in AI accelerators; gross margins well below NVIDIA's and heavy competitive pressure.",
+  r:{val:2,growth:9,roic:5,moat:6,fcf:7,bs:8,scal:8},
+  m:{peTTM:159,peFwd:55,pegFwd:1.8,evEbitda:60,evSales:21,pfcf:70,fcfYield:1.3,revCagrHist:25,epsCagrFwd:40,gross:53,op:25,net:13,roic:9,roe:11,fcfMargin:18,fcfConv:110,sbc:6.0,netDebtEbitda:-0.5,intCov:99},
+  d:{revPS:23,netCashPS:3,fcfM:0.18}},
+
+ {tk:"INTC",nm:"Intel",bz:"CPUs + foundry turnaround (IDM)",color:"#0071C5",
+  price:108,mcap:542,cur:"$",
+  thesis:"The deep-value turnaround. Intel is loss-making today as it spends to stand up a leading-edge foundry (18A/14A) and claw back process leadership it ceded to TSMC. The equity is a binary-ish bet: if the foundry roadmap and external customers materialize, the stock is cheap on assets; if not, the capital burn continues. No trailing P/E — it lost money.",
+  bull:"US/EU government-backed foundry buildout with 18A ramping; deep IDM asset base and x86 installed base; optionality if external foundry customers commit.",
+  bear:"Loss-making with negative trailing earnings (P/E n/m); years behind TSMC on process and yield; enormous capex with uncertain payback.",
+  r:{val:6,growth:3,roic:1,moat:4,fcf:2,bs:5,scal:5},
+  m:{peTTM:999,peFwd:102,pegFwd:5.0,evEbitda:14,evSales:4.5,pfcf:60,fcfYield:0.5,revCagrHist:-2,epsCagrFwd:10,gross:32,op:-2,net:-6,roic:1,roe:-3,fcfMargin:2,fcfConv:30,sbc:2.5,netDebtEbitda:2.5,intCov:2},
+  d:{revPS:11,netCashPS:-8,fcfM:0.02}},
+
+ {tk:"ARM",nm:"Arm Holdings",bz:"CPU IP / licensing (royalty)",color:"#00B4AB",
+  price:325,mcap:347,cur:"$",
+  thesis:"The asset-light toll on every chip. Arm licenses the CPU architecture inside nearly all mobile devices and a fast-growing share of data-center and edge silicon, earning upfront license fees plus a royalty on every unit shipped. ~95% gross margins and no fabs — but at ~150x forward earnings the royalty-growth runway is priced for near-perfection.",
+  bull:"Royalty model with ~95% gross margin and near-universal architectural reach; data-center and AI-edge design wins expand the royalty base every node.",
+  bear:"~150x forward P/E on a small revenue base; royalty rates contested by largest licensees; richest multiple in the entire cohort.",
+  r:{val:1,growth:9,roic:7,moat:9,fcf:8,bs:9,scal:10},
+  m:{peTTM:384,peFwd:150,pegFwd:5.0,evEbitda:120,evSales:70,pfcf:200,fcfYield:0.5,revCagrHist:25,epsCagrFwd:30,gross:95,op:35,net:25,roic:15,roe:14,fcfMargin:30,fcfConv:110,sbc:12,netDebtEbitda:-2.0,intCov:999},
+  d:{revPS:4.6,netCashPS:2,fcfM:0.30}},
+
+ {tk:"005930",nm:"Samsung Electronics",bz:"Memory + foundry + devices",color:"#1428A0",
+  price:302500,mcap:2046,cur:"₩",
+  thesis:"The diversified memory giant. Samsung is #1 in DRAM and NAND, runs the #2 foundry, and sells the devices that consume the chips — a vast, integrated franchise trading at a low-single-digit forward multiple on trough-to-recovering memory earnings. The HBM catch-up versus SK Hynix is the swing factor; the conglomerate discount is structural.",
+  bull:"Scale leadership in DRAM/NAND plus a foundry and device business; fortress balance sheet; deeply cheap on a ~6x forward multiple as memory recovers.",
+  bear:"Lagged SK Hynix in HBM for the AI cycle; conglomerate/governance discount; foundry losses and consumer-device drag dilute the memory upside.",
+  r:{val:9,growth:6,roic:6,moat:7,fcf:7,bs:10,scal:8},
+  m:{peTTM:26,peFwd:6,pegFwd:0.3,evEbitda:5,evSales:1.6,pfcf:12,fcfYield:6.0,revCagrHist:8,epsCagrFwd:35,gross:38,op:18,net:14,roic:11,roe:10,fcfMargin:9,fcfConv:70,sbc:0.1,netDebtEbitda:-2.5,intCov:999},
+  d:{revPS:58400,netCashPS:50000,fcfM:0.09}},
+
+ {tk:"000660",nm:"SK Hynix",bz:"DRAM / HBM / NAND memory",color:"#EA002C",
+  price:2048000,mcap:1569,cur:"₩",
+  thesis:"The purest listed bet on HBM. SK Hynix leads the high-bandwidth-memory market that every AI accelerator depends on, and that lead has driven a violent earnings and share-price recovery. More concentrated and more cyclical than Samsung, with a stretched-then-deleveraging balance sheet — at ~6x forward it is cheap if HBM demand holds, dangerous if memory rolls over.",
+  bull:"HBM share leadership feeding directly into the AI accelerator ramp; explosive earnings recovery; ~6x forward multiple on surging cash flow.",
+  bear:"Memory is the most cyclical link in the chain; HBM lead is contested by Samsung and Micron; earnings could halve if AI-memory pricing normalizes.",
+  r:{val:8,growth:9,roic:8,moat:6,fcf:7,bs:6,scal:7},
+  m:{peTTM:21,peFwd:6,pegFwd:0.2,evEbitda:5,evSales:2.5,pfcf:10,fcfYield:7.0,revCagrHist:30,epsCagrFwd:40,gross:50,op:38,net:30,roic:28,roe:32,fcfMargin:15,fcfConv:60,sbc:0.1,netDebtEbitda:0.4,intCov:20},
+  d:{revPS:186500,netCashPS:-50000,fcfM:0.15}},
+
+ {tk:"MU",nm:"Micron",bz:"DRAM / HBM / NAND memory",color:"#0066B3",
+  price:936,mcap:1060,cur:"$",
+  thesis:"The US-listed memory and HBM play. Micron is the #3 DRAM/NAND maker and a credible HBM supplier into the AI ramp, with earnings exploding off the memory trough — the ~9.7x forward multiple on peak-cycle earnings is the classic memory paradox: optically cheap precisely because the market doubts the earnings last.",
+  bull:"HBM share gains into AI demand; US-listed liquidity and CHIPS-Act support; enormous operating leverage off the memory-cycle bottom.",
+  bear:"Brutally cyclical commodity memory; ~9.7x forward P/E reflects peak earnings the market won't capitalize; #3 scale behind the Korean leaders.",
+  r:{val:8,growth:9,roic:7,moat:5,fcf:6,bs:7,scal:7},
+  m:{peTTM:44,peFwd:10,pegFwd:0.3,evEbitda:6,evSales:4.5,pfcf:14,fcfYield:5.0,revCagrHist:85,epsCagrFwd:45,gross:50,op:38,net:30,roic:22,roe:28,fcfMargin:12,fcfConv:50,sbc:1.5,netDebtEbitda:0.5,intCov:15},
+  d:{revPS:51,netCashPS:-15,fcfM:0.12}}
 ];
 
 const AXES=[
@@ -519,7 +593,7 @@ const LENSES={
 
 /* Heatmap metric rows: key, label, hint, fmt, higherBetter, fwdKey(optional alt), notForward */
 const METRICS=[
- {k:"peTTM",fwd:"peFwd",label:"P/E",hint:"price / earnings",fmt:v=>v.toFixed(0)+"x",hi:false},
+ {k:"peTTM",fwd:"peFwd",label:"P/E",hint:"price / earnings",fmt:v=>v>=900?"n/m":v.toFixed(0)+"x",hi:false},
  {k:"pegFwd",label:"PEG (fwd)",hint:"fwd P/E / growth",fmt:v=>v.toFixed(1),hi:false},
  {k:"evEbitda",label:"EV / EBITDA",hint:"enterprise value",fmt:v=>v.toFixed(0)+"x",hi:false},
  {k:"evSales",label:"EV / Sales",hint:"enterprise value",fmt:v=>v.toFixed(1)+"x",hi:false},
@@ -553,19 +627,27 @@ const byTk=Object.fromEntries(DATA.map(d=>[d.tk,d]));
 /* currency-aware formatter: JPY (¥) by default, USD ($) for global names that set cur:"$" */
 const curOf=d=>(d&&d.cur)?d.cur:"¥";
 function fmtMoney(v,d){
-  const c=curOf(d);
-  if(c==="$") return "$"+Math.round(v).toLocaleString();
-  return "¥"+Math.round(v).toLocaleString();
+  return curOf(d)+Math.round(v).toLocaleString();
 }
 /* legacy alias kept for any old call sites */
 const fmtYen=v=>"¥"+Math.round(v).toLocaleString();
-/* market-cap display: ¥xxT for JPY names, $xxxB for USD names */
-const fmtMcap=d=>curOf(d)==="$"?`$${d.mcap.toFixed(0)}B`:`¥${d.mcap.toFixed(1)}T`;
+/* market-cap units differ by currency: JPY/KRW in trillions, USD in billions.
+   ¥xxT for JPY names, ₩xxxxT for KRW names, $xxxB for USD names. */
+function fmtMcap(d){
+  const c=curOf(d);
+  if(c==="$") return `$${d.mcap.toFixed(0)}B`;
+  if(c==="₩") return `₩${d.mcap.toFixed(0)}T`;
+  return `¥${d.mcap.toFixed(1)}T`;
+}
 /* normalize market cap to a common unit (USD billions) for bubble sizing only,
-   so a ¥27T Japanese name and a $1180B global name share one scale.
-   ~150 JPY/USD: ¥1T ≈ $6.7B. */
-const JPY_T_TO_USD_B=6.7;
-const mcapUSD=d=>curOf(d)==="$"?d.mcap:d.mcap*JPY_T_TO_USD_B;
+   so names in ¥T, ₩T and $B all share one scale.
+   ~150 JPY/USD → ¥1T ≈ $6.7B; ~1360 KRW/USD → ₩1T ≈ $0.735B. */
+function mcapUSD(d){
+  const c=curOf(d);
+  if(c==="$") return d.mcap;                 // already USD billions
+  if(c==="₩") return d.mcap*0.735;           // KRW trillions → USD billions
+  return d.mcap*6.7;                          // JPY trillions → USD billions
+}
 
 function composite(d,lens){
   const w=LENSES[lens].w; let s=0;
