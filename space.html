@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Global Space Value Chain — 3-Year Comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Newsreader:ital,opsz@0,6..72;1,6..72&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF7F0; --paper2:#F4EFE6; --ink:#16130E; --ink2:#4B463C; --ink3:#8B8576;
+    --line:#E6DFD1; --line2:#D6CDB9; --hl:#EFE9DC; --good:#2E7D5B; --bad:#B23A48;
+    --accent:#A8431F; --accent2:#C9742B; --gold:#B8893B;
+    --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:"Newsreader",Georgia,"Times New Roman",serif;
+    --display:"Fraunces",Georgia,serif;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+    line-height:1.55;font-size:16px;letter-spacing:.003em;
+    background-image:radial-gradient(120% 80% at 80% -10%, #FBEEDD 0%, rgba(251,238,221,0) 42%),radial-gradient(100% 70% at -10% 0%, #F0EFE6 0%, rgba(240,239,230,0) 38%);
+    background-attachment:fixed}
+  /* fine grain overlay for paper texture */
+  body::before{content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.025;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+  a{color:inherit}
+  h1,h2,h3{font-family:var(--display);font-weight:500;letter-spacing:-.015em;margin:0;font-optical-sizing:auto}
+  .mono{font-family:var(--mono)}
+  .sub{color:var(--ink2)}
+  .muted{color:var(--ink3)}
+  .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+  /* ============================ HERO ============================ */
+  header{position:relative;overflow:hidden;border-bottom:1px solid var(--line2);
+    padding:70px 0 40px;margin-bottom:8px}
+  /* animated flowing supply-chain lines behind the hero */
+  .heroflow{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.5}
+  .heroflow path{fill:none;stroke-width:1.5;stroke-linecap:round;
+    stroke-dasharray:8 320;animation:flow 9s linear infinite}
+  @keyframes flow{to{stroke-dashoffset:-328}}
+  header .wrap{position:relative;z-index:1}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
+    display:inline-flex;align-items:center;gap:9px}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--accent);display:inline-block}
+  header h1{font-size:clamp(34px,6.5vw,68px);margin:18px 0 4px;line-height:1.02;font-weight:400;
+    letter-spacing:-.025em;max-width:14ch}
+  header h1 .lede{font-style:italic;color:var(--accent)}
+  header h1 .tnum{font-family:var(--mono);font-weight:500;font-size:.62em;vertical-align:.06em;
+    background:linear-gradient(100deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  header p{margin:20px 0 0;max-width:64ch;color:var(--ink2);font-size:17px;line-height:1.6}
+  header p b{color:var(--ink);font-weight:600}
+  /* count-up stat ribbon */
+  .statrow{display:flex;flex-wrap:wrap;gap:34px;margin:30px 0 4px}
+  .stat .sv{font-family:var(--display);font-size:34px;font-weight:500;line-height:1;letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums}
+  .stat .sl{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-top:6px}
+  .meta{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:26px;font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
+  .meta b{color:var(--ink2);font-weight:600}
+  .scrollcue{margin-top:30px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);
+    display:inline-flex;align-items:center;gap:8px}
+  .scrollcue .arr{display:inline-block;animation:bob 1.8s var(--ease) infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+  /* global control bar */
+  .gbar{position:sticky;top:0;z-index:30;background:rgba(250,247,240,.86);
+    backdrop-filter:blur(10px) saturate(1.2);border-bottom:1px solid var(--line);
+    padding:10px 0;margin-bottom:30px;box-shadow:0 1px 0 rgba(0,0,0,.02)}
+  .gbar .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  /* phone-only "Filters" disclosure — hidden on desktop, controls always shown */
+  /* scoped under .gbar so it beats the .gbar .wrap base rule on specificity */
+  .gbar .gbarhead{display:none}
+  .filterstoggle{display:inline-flex;align-items:center;gap:8px;background:none;border:0;cursor:pointer;padding:2px 0;color:var(--ink2)}
+  .filterstoggle .caret{font-family:var(--mono);font-size:11px;color:var(--ink3);transition:transform .18s var(--ease)}
+  .gbar.filters-open .filterstoggle .caret{transform:rotate(90deg)}
+  .glabel{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{font-family:var(--mono);font-size:12px;border:1px solid var(--line2);background:#fff;
+    border-radius:20px;padding:4px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;
+    transition:transform .14s var(--ease),box-shadow .14s,background .12s,opacity .12s;user-select:none}
+  .chip .dot{width:9px;height:9px;border-radius:50%;flex:none;transition:transform .14s var(--ease)}
+  .chip.off{opacity:.34;background:var(--hl)}
+  .chip:hover{background:#fff;transform:translateY(-1px);box-shadow:0 3px 10px rgba(20,16,8,.09)}
+  .chip:hover .dot{transform:scale(1.25)}
+  .seg{display:inline-flex;border:1px solid var(--line2);border-radius:20px;overflow:hidden;background:#fff}
+  .seg button{font-family:var(--mono);font-size:11.5px;border:0;background:transparent;padding:5px 12px;cursor:pointer;color:var(--ink2);
+    transition:color .15s,background .25s var(--ease)}
+  .seg button.active{background:var(--ink);color:var(--paper)}
+  .seg button:not(.active):hover{background:var(--hl)}
+  .seg button:not(:last-child){border-right:1px solid var(--line2)}
+  .spacer{flex:1}
+
+  /* supply-chain layer filter */
+  .layers{display:flex;gap:5px;flex-wrap:wrap}
+  .lchip{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;
+    border:1px solid var(--line2);background:#fff;border-radius:11px;padding:3px 10px;cursor:pointer;
+    color:var(--ink2);transition:background .12s,color .12s,opacity .12s;user-select:none}
+  .lchip:hover{background:var(--hl)}
+  .lchip.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  /* partial = some of the layer's names selected (multiselect / fine-tuned) */
+  .lchip.partial{border-color:var(--ink);color:var(--ink);
+    background:linear-gradient(135deg,var(--hl) 0%,var(--hl) 50%,#fff 50%,#fff 100%)}
+  .lchip.allchip{font-weight:600}
+
+  /* collapsible ticker bar */
+  .tickerbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px}
+  .tktoggle{display:inline-flex;align-items:center;gap:8px;background:none;border:0;cursor:pointer;padding:2px 0;color:var(--ink2)}
+  .tktoggle .caret{font-family:var(--mono);font-size:11px;color:var(--ink3);transition:transform .18s var(--ease)}
+  .tktoggle[aria-expanded="true"] .caret{transform:rotate(90deg)}
+  .tksum{font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
+  .tksum b{color:var(--accent);font-weight:600}
+  .tksearch{font-family:var(--mono);font-size:12px;color:var(--ink);background:#fff;
+    border:1px solid var(--line2);border-radius:20px;padding:4px 12px;width:160px;outline:none;
+    transition:border-color .15s,box-shadow .15s,width .2s var(--ease)}
+  .tksearch:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(168,67,31,.1);width:200px}
+  .tklink{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;
+    background:none;border:0;color:var(--ink3);cursor:pointer;padding:3px 4px}
+  .tklink:hover{color:var(--accent)}
+  /* expanding panel */
+  .tkpanel{overflow:hidden;max-height:0;opacity:0;transition:max-height .28s var(--ease),opacity .2s,margin .28s var(--ease);margin-top:0}
+  .tkpanel.open{max-height:240px;opacity:1;margin-top:10px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;max-height:210px;overflow-y:auto;padding:1px 1px 6px}
+  .chip.hide{display:none}
+  .chip mark{background:rgba(168,67,31,.18);color:inherit;border-radius:2px;padding:0 1px}
+  .chipsempty{font-family:var(--mono);font-size:12px;padding:6px 2px}
+
+  /* supply-chain map tiles */
+  .laytiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+  .laytile{background:var(--paper);padding:12px 14px 13px;cursor:pointer;position:relative;
+    transition:transform .16s var(--ease),box-shadow .16s,background .12s}
+  .laytile:hover{background:#fff;transform:translateY(-2px);box-shadow:0 8px 22px -8px rgba(20,16,8,.16);z-index:2}
+  .laytile .scwrap .v{font-family:var(--display)!important;font-weight:500}
+  .laytile.active{background:var(--hl);box-shadow:inset 3px 0 0 var(--ink)}
+  .laytile.partial{box-shadow:inset 3px 0 0 var(--line2)}
+  .laytile.empty{opacity:.4}
+  .laytile.empty:hover{opacity:.7}
+  .laytile .lh{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+  .laytile .lh .sw{width:9px;height:9px;border-radius:2px;flex:none}
+  .laytile .lh .nm{font-size:12.5px;font-weight:650;line-height:1.1}
+  .laytile .lh .ct{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--ink3)}
+  .laytile .scwrap{display:flex;align-items:baseline;gap:6px;margin-bottom:8px}
+  .laytile .scwrap .v{font-family:var(--mono);font-size:21px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1}
+  .laytile .scwrap .l{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+  .laytile .track{height:4px;background:var(--hl);border-radius:2px;overflow:hidden;margin-bottom:9px}
+  .laytile .track .fill{height:100%;border-radius:2px}
+  .laytile .stats{display:flex;gap:12px;font-family:var(--mono);font-size:10.5px;color:var(--ink2)}
+  .laytile .stats b{color:var(--ink);font-weight:600}
+  .laytile .stats .k{color:var(--ink3)}
+
+  /* market-share view */
+  .shareview{border:1px solid var(--line);border-radius:3px;overflow:hidden}
+  .sharegrp{border-top:1px solid var(--line)}
+  .sharegrp:first-child{border-top:0}
+  .sharegrp .gh{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--paper2)}
+  .sharegrp .gh .sw{width:9px;height:9px;border-radius:2px;flex:none}
+  .sharegrp .gh .nm{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);font-weight:600}
+  .sharegrp .gh .ct{font-family:var(--mono);font-size:10.5px;color:var(--ink3)}
+  .srow{display:grid;grid-template-columns:150px 1fr 132px;align-items:center;gap:14px;padding:7px 14px;border-top:1px solid var(--line);transition:background .12s}
+  .srow:hover{background:var(--hl)}
+  .srow .lab{display:flex;align-items:baseline;gap:7px;min-width:0}
+  .srow .lab .tk{font-family:var(--mono);font-size:11px;color:var(--ink3);flex:none}
+  .srow .lab .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .srow .strack{height:15px;background:var(--hl);border-radius:3px;overflow:hidden;position:relative}
+  .srow .sfill{height:100%;border-radius:3px;transition:width .7s var(--ease)}
+  .srow .sfill.na{background:repeating-linear-gradient(45deg,var(--line2),var(--line2) 4px,transparent 4px,transparent 8px);width:100%!important;opacity:.5}
+  .srow .sright{display:flex;align-items:baseline;gap:6px;justify-content:flex-end}
+  .srow .sright .pv{font-family:var(--display);font-size:18px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .srow .sright .rk{font-family:var(--mono);font-size:10px;color:var(--ink3)}
+  .srow .mkt{grid-column:2 / span 2;font-family:var(--mono);font-size:10.5px;color:var(--ink3);margin-top:-2px}
+  .srow .conf{display:inline-block;width:6px;height:6px;border-radius:50%;flex:none;margin-left:2px}
+  .conf.high{background:var(--good)} .conf.medium{background:var(--gold)} .conf.low{background:var(--ink3);opacity:.5}
+  @media(max-width:640px){ .srow{grid-template-columns:1fr 88px;gap:8px} .srow .strack{grid-column:1 / span 2;grid-row:2}
+    .srow .lab{grid-column:1;grid-row:1} .srow .sright{grid-column:2;grid-row:1} .srow .mkt{grid-column:1 / span 2;grid-row:3} }
+
+  section{margin:0 0 64px}
+  .secnum{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.1em;font-weight:600}
+  .sechead{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:11px;margin-bottom:8px}
+  .sechead h2{font-size:25px;font-weight:400;letter-spacing:-.02em}
+  .caption{font-size:14.5px;color:var(--ink2);margin:0 0 24px;max-width:80ch;line-height:1.6}
+  .caption .dec{color:var(--ink);font-weight:600;font-family:var(--mono);font-size:12.5px;letter-spacing:.02em}
+
+  /* ============================ MOTION ============================ */
+  /* scroll-reveal: elements lift+fade into place */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s var(--ease),transform .7s var(--ease);
+    transition-delay:var(--d,0s)}
+  .reveal.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none}
+    .heroflow path,.scrollcue .arr{animation:none}
+    *{scroll-behavior:auto}
+  }
+
+  /* thesis strip */
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+  .card{background:var(--paper);padding:0;position:relative;transition:transform .18s var(--ease),box-shadow .18s,z-index 0s}
+  .card:hover{transform:translateY(-3px);box-shadow:0 10px 30px -8px rgba(20,16,8,.18);z-index:2}
+  .card .top{display:flex;align-items:center;gap:11px;padding:15px 16px;cursor:pointer}
+  .card .bar{width:4px;align-self:stretch;border-radius:2px;flex:none;transition:width .18s var(--ease)}
+  .card:hover .bar{width:6px}
+  .card .tk{font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
+  .card .nm{font-family:var(--display);font-weight:500;font-size:17px;line-height:1.12;letter-spacing:-.01em}
+  .card .bz{font-size:12px;color:var(--ink3);margin-top:1px}
+  .card .sc{margin-left:auto;text-align:right;flex:none}
+  .card .sc .v{font-family:var(--display);font-size:23px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .card .sc .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--ink3);text-transform:uppercase}
+  .card .body{padding:0 16px 16px 31px;display:none}
+  .card.open .body{display:block}
+  .card .price{font-family:var(--mono);font-size:12.5px;color:var(--ink2);margin:2px 0 10px}
+  .card .price b{color:var(--ink)}
+  .card .th{font-size:13.5px;color:var(--ink2);margin:0}
+  .card .caret{color:var(--ink3);font-family:var(--mono);font-size:12px;transition:transform .15s}
+  .card.open .caret{transform:rotate(90deg)}
+
+  /* layout helpers */
+  .grid2{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:start}
+  @media(max-width:880px){.grid2{grid-template-columns:1fr}}
+  figure{margin:0}
+  .panel{border:1px solid var(--line);background:#fff;border-radius:3px;padding:16px}
+
+  svg{display:block;width:100%;height:auto;overflow:visible}
+  .axislbl{font-family:var(--mono);font-size:10.5px;fill:var(--ink3)}
+  .gridln{stroke:var(--line);stroke-width:1}
+  .gridln2{stroke:var(--line2);stroke-width:1}
+  .medln{stroke:var(--ink3);stroke-width:1;stroke-dasharray:3 3}
+  .medlbl{font-family:var(--mono);font-size:9.5px;fill:var(--ink3)}
+
+  /* radar legend */
+  .rlegend{display:flex;flex-direction:column;gap:3px;margin-top:6px}
+  .rrow{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12px;padding:3px 5px;cursor:pointer;border-radius:2px}
+  .rrow:hover{background:var(--hl)}
+  .rrow.off{opacity:.34}
+  .rrow .dot{width:10px;height:10px;border-radius:50%;flex:none}
+  .rrow .nm{flex:1;color:var(--ink2)}
+  .rrow .v{font-weight:600;font-variant-numeric:tabular-nums}
+
+  /* heatmap */
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:3px}
+  table{border-collapse:collapse;width:100%;font-size:12.5px}
+  th,td{padding:7px 9px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+  thead th{position:sticky;top:0;background:var(--paper);font-family:var(--mono);font-size:11px;
+    font-weight:600;cursor:pointer;border-bottom:1px solid var(--line2);user-select:none}
+  thead th.metric, td.metric{text-align:left;position:sticky;left:0;background:var(--paper);z-index:2;
+    font-family:var(--sans);color:var(--ink2);min-width:188px}
+  thead th.metric{z-index:3}
+  th .tkdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+  td.cell{font-family:var(--mono);font-variant-numeric:tabular-nums;color:#1b1d22}
+  td.cell.dim{opacity:.28}
+  .metric .hint{display:block;font-family:var(--mono);font-size:9.5px;color:var(--ink3);font-weight:400}
+  .sortcue{color:var(--ink3);font-size:9px}
+
+  /* dcf */
+  .dcf{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:start}
+  @media(max-width:880px){.dcf{grid-template-columns:1fr}}
+  .sliders{display:flex;flex-direction:column;gap:15px}
+  .sld label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:var(--ink2);margin-bottom:4px}
+  .sld label .val{color:var(--ink);font-weight:600}
+  input[type=range]{width:100%;accent-color:var(--ink);height:3px}
+  .dcfout{border:1px solid var(--line);border-radius:3px;padding:0;overflow:hidden}
+  .dcfrow{display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px}
+  .dcfrow:last-child{border-bottom:0}
+  .dcfrow .k{color:var(--ink2)}
+  .dcfrow .v{font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums}
+  .dcfrow.big{background:var(--hl)}
+  .dcfrow.big .v{font-size:17px}
+  .verdict-fv{font-family:var(--mono);font-size:12px;padding:3px 8px;border-radius:2px}
+  .up{color:var(--good)} .down{color:var(--bad)}
+  .impl{font-size:12.5px;color:var(--ink2);padding:13px 16px;background:#fff;border-top:1px solid var(--line)}
+  .impl b{font-family:var(--mono)}
+
+  /* verdict */
+  .vbars{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+  .vbar{display:grid;grid-template-columns:150px 1fr 56px;align-items:center;gap:14px;padding:11px 16px;border-bottom:1px solid var(--line);position:relative}
+  .vbar:last-child{border-bottom:0}
+  .vbar:hover{background:var(--hl)}
+  .vbar .lab{display:flex;align-items:center;gap:9px;font-size:13.5px}
+  .vbar .lab .dot{width:11px;height:11px;border-radius:50%;flex:none}
+  .vbar .lab .rk{font-family:var(--mono);font-size:11px;color:var(--ink3);width:16px}
+  .track{height:13px;background:var(--hl);border-radius:2px;overflow:hidden}
+  .fill{height:100%;border-radius:2px;transition:width .35s ease}
+  .vbar .sc{font-family:var(--mono);font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+  .vbar .pop{display:none;position:absolute;left:166px;right:72px;bottom:calc(100% - 4px);
+    background:var(--ink);color:var(--paper);padding:9px 12px;border-radius:3px;font-size:12px;line-height:1.45;z-index:20;box-shadow:0 6px 22px rgba(0,0,0,.18)}
+  .vbar:hover .pop{display:block}
+  .vbar .pop .bp{display:block;margin:2px 0}
+  .vbar .pop .bull{color:#9fe6c4} .vbar .pop .bear{color:#f4b0ba}
+  .wexpl{font-family:var(--mono);font-size:11px;color:var(--ink3);margin:0 0 14px;line-height:1.7}
+  .wexpl b{color:var(--ink2)}
+  .morebtn{display:block;width:100%;margin-top:8px;font-family:var(--mono);font-size:11.5px;color:var(--ink2);
+    background:#fff;border:1px solid var(--line2);border-radius:2px;padding:8px;cursor:pointer}
+  .morebtn:hover{background:var(--hl)}
+  .morebtn[hidden]{display:none}
+
+  footer{border-top:1px solid var(--line2);margin-top:18px;padding:22px 0 60px;font-size:12px;color:var(--ink3);line-height:1.7}
+  footer b{color:var(--ink2)}
+  .flag{background:#FBF4E6;border:1px solid #E8D9B0;border-radius:3px;padding:12px 15px;font-size:13px;color:#6b5a2e;margin:18px 0 0}
+  .flag b{color:#5a4a22}
+
+  /* ============================ RESPONSIVE ============================ */
+  /* Tablet / small laptop */
+  @media(max-width:900px){
+    .wrap{padding:0 20px}
+    header{padding:34px 0 22px}
+    header h1{font-size:25px}
+    .cards{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  }
+
+  /* Phone */
+  @media(max-width:640px){
+    body{font-size:14px}
+    .wrap{padding:0 15px}
+    header{padding:26px 0 18px}
+    header h1{font-size:21px;margin:8px 0 6px}
+    header p{font-size:13.5px}
+    .meta{gap:10px 16px;margin-top:12px}
+
+    /* control bar: stack into labelled rows instead of one cramped line */
+    .gbar{padding:8px 0;margin-bottom:22px}
+    .gbar .wrap{gap:9px}
+    .gbar .spacer{display:none}
+    .glabel{width:100%;margin-bottom:-3px}
+    .chips{gap:5px}
+    .chip{font-size:11.5px;padding:4px 8px}
+    .seg{flex-wrap:wrap}
+    /* collapse the filter controls behind the "Filters" toggle so the pinned bar is one row */
+    /* all scoped under .gbar to outrank the (0,2,0) .gbar .wrap base rule */
+    .gbar .gbarhead{display:flex}
+    .gbar .gbarctrl,.gbar .tickerbar,.gbar .tkpanel{display:none}
+    .gbar.filters-open .gbarctrl{display:flex}
+    .gbar.filters-open .tickerbar{display:flex}
+    /* ticker chip panel: show only when its own toggle is open and filters are expanded */
+    .gbar.filters-open .tkpanel.open{display:flex}
+    .gbarhead .glabel{width:auto;margin-bottom:0}
+    .tksum,.filterstoggle .tksum{width:auto}
+
+    section{margin:0 0 40px}
+    .sechead{gap:10px}
+    .sechead h2{font-size:16px}
+    .caption{font-size:12.5px;margin-bottom:18px}
+
+    /* stack the two-column blocks (radar + legend, dcf) */
+    .grid2,.dcf{grid-template-columns:1fr;gap:22px}
+
+    .card .top{padding:12px 13px;gap:9px}
+    .card .body{padding:0 13px 14px 26px}
+
+    .panel{padding:12px}
+
+    /* verdict: drop the wide fixed label column; let the bar use full width */
+    .vbar{grid-template-columns:1fr 64px;grid-template-rows:auto auto;gap:5px 10px;padding:11px 13px}
+    .vbar .lab{grid-column:1;grid-row:1;font-size:13px}
+    .vbar .sc{grid-column:2;grid-row:1;align-self:center}
+    .vbar .track{grid-column:1 / span 2;grid-row:2}
+    /* popover: position inline (full width) and let it open on tap via .show */
+    .vbar .pop{left:13px;right:13px;bottom:auto;top:calc(100% - 2px);position:absolute}
+    .vbar:hover .pop{display:none}            /* hover is unreliable on touch */
+    .vbar.show .pop{display:block}
+
+    footer{padding:18px 0 48px}
+    .flag{font-size:12.5px;padding:10px 12px}
+  }
+
+  /* Devices that can't hover (touch): make verdict bars tap-to-reveal everywhere */
+  @media(hover:none){
+    .vbar{cursor:pointer}
+    .vbar:hover .pop{display:none}
+    .vbar.show .pop{display:block}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <svg class="heroflow" id="heroflow" viewBox="0 0 1200 460" preserveAspectRatio="none" aria-hidden="true"></svg>
+  <div class="wrap">
+    <div class="eyebrow reveal">Equity comparison · 3-year horizon · global space value chain</div>
+    <h1 class="reveal" style="--d:.06s">The whole <span class="lede">space</span><br>value chain,<br><span class="tnum">24</span> names deep.</h1>
+    <p class="reveal" style="--d:.16s">From propulsion and launch, through the prime contractors and satellite
+       manufacturers, the components and subsystem suppliers, the satellite operators and earth-observation data
+       providers, out to defense electronics, navigation and the new-space services pioneers. Graded on what actually
+       separates them over three years: <b>returns versus cost of capital</b>, moat direction, balance-sheet
+       resilience, and what today's price already assumes. Pick a <b>scoring lens</b>, isolate any
+       <b>value-chain layer</b>, and every chart moves together.</p>
+    <div class="statrow reveal" style="--d:.24s">
+      <div class="stat"><div class="sv" data-count="24">0</div><div class="sl">Companies</div></div>
+      <div class="stat"><div class="sv" data-count="11">0</div><div class="sl">Chain layers</div></div>
+      <div class="stat"><div class="sv" data-count="2">0</div><div class="sl">Currencies</div></div>
+      <div class="stat"><div class="sv" data-count="6">0</div><div class="sl">Lenses & views</div></div>
+    </div>
+    <div class="meta reveal" style="--d:.3s">
+      <span><b>Data date</b> ~9-10 Jun 2026</span>
+      <span><b>Currency</b> price native (USD/EUR); caps in USD-B</span>
+      <span><b>Figures</b> illustrative - verify live</span>
+      <span><b>Related</b> <a href="./">Semiconductors</a> &middot; <a href="finance.html">Finance</a> &middot; Space</span>
+    </div>
+    <div class="scrollcue reveal" style="--d:.38s">Scroll to explore <span class="arr">&#8595;</span></div>
+    <div class="flag" id="tickerflag">
+      <b>Comparability note -</b> this cohort mixes <em>profitable, diversified</em> primes and component
+      compounders (Lockheed, RTX, Heico, TransDigm, Garmin) with <em>pre-profit, cash-burning</em> new-space names
+      (Rocket Lab, AST SpaceMobile, Planet, Intuitive Machines). For the latter, trailing
+      <span class="mono">P/E</span> is <b>n/m</b> and they are graded on growth, moat and balance-sheet runway, not
+      current returns. The primes are also <b>diversified well beyond space</b>, so their margins reflect whole-company
+      aerospace &amp; defense - not pure space. Use the layer filter to compare like with like.
+    </div>
+</header>
+
+<!-- GLOBAL CONTROL BAR -->
+<div class="gbar" id="gbar">
+  <!-- phone-only compact header: tap to reveal the filter controls -->
+  <div class="wrap gbarhead">
+    <button class="filterstoggle" id="filtersToggle" aria-expanded="false">
+      <span class="caret">▸</span><span class="glabel">Filters</span>
+      <span class="tksum" id="filterSummary"></span>
+    </button>
+  </div>
+  <div class="wrap gbarctrl" id="gbarCtrl">
+    <span class="glabel">Chain layer</span>
+    <div class="layers" id="layers"></div>
+    <span class="spacer"></span>
+    <span class="glabel">Color</span>
+    <div class="seg" id="colorSeg">
+      <button data-color="ticker" class="active">By name</button>
+      <button data-color="layer">By layer</button>
+    </div>
+    <span class="glabel">Scoring lens</span>
+    <div class="seg" id="lensSeg">
+      <button data-lens="value">Value</button>
+      <button data-lens="quality" class="active">Quality-Growth</button>
+    </div>
+  </div>
+  <div class="wrap tickerbar">
+    <button class="tktoggle" id="tkToggle" aria-expanded="false">
+      <span class="caret">▸</span><span class="glabel">Tickers</span>
+      <span class="tksum" id="tkSummary"></span>
+    </button>
+    <input type="search" class="tksearch" id="tkSearch" placeholder="search…" autocomplete="off" spellcheck="false" aria-label="Filter tickers">
+    <span class="spacer"></span>
+    <button class="tklink" id="tkAll">All</button>
+    <button class="tklink" id="tkClear">Clear</button>
+  </div>
+  <div class="wrap tkpanel" id="tkPanel" hidden>
+    <div class="chips" id="chips"></div>
+    <div class="chipsempty muted" id="chipsEmpty" hidden>No tickers match.</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- 0. SUPPLY-CHAIN MAP -->
+  <section>
+    <div class="sechead"><span class="secnum">00</span><h2>Supply-chain map</h2></div>
+    <p class="caption"><span class="dec">Decision it helps make:</span> where in the chain the quality and value
+      actually sit. Each tile is one layer, upstream → downstream, showing how many names it holds, the average
+      composite under your lens, and the layer's median forward P/E and gross margin. Click tiles to add or remove
+      whole layers — they <b>stack</b>, so you can compare several at once; “All” resets.</p>
+    <div class="laytiles" id="layerMap"></div>
+  </section>
+
+  <!-- 1. THESIS STRIP -->
+  <section>
+    <div class="sechead"><span class="secnum">01</span><h2>Thesis strip</h2></div>
+    <p class="caption"><span class="dec">Decision it helps make:</span> a 20-second read on each name — what it is,
+      where it trades, and one composite score under the lens you've selected. Click any card to expand the thesis.</p>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <!-- 2. RADAR -->
+  <section>
+    <div class="sechead"><span class="secnum">02</span><h2>Quality radar</h2></div>
+    <p class="caption"><span class="dec">Decision it helps make:</span> see each business's <em>shape</em> — where a high
+      composite comes from. A launch company and a diversified defense prime can score similarly for opposite reasons. Axes are
+      normalized 0–10 (10 = best in cohort); the legend value is the lens-weighted composite. With many names shown the
+      chart plots only the <b>top scorers</b> to stay legible — raise the limit or click a legend row to spotlight one shape.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+      <span class="glabel">Show on radar</span>
+      <div class="seg" id="radarNSeg" style="margin-left:4px">
+        <button data-n="8" class="active">Top 8</button>
+        <button data-n="16">Top 16</button>
+        <button data-n="999">All visible</button>
+      </div>
+      <span class="muted" id="radarCountNote" style="font-family:var(--mono);font-size:11px"></span>
+    </div>
+    <div class="grid2">
+      <figure class="panel"><svg id="radar" viewBox="0 0 460 460" role="img" aria-label="Radar chart"></svg></figure>
+      <div>
+        <div class="rlegend" id="radarLegend"></div>
+        <p class="wexpl" style="margin-top:14px" id="lensNote"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. SCATTER -->
+  <section>
+    <div class="sechead"><span class="secnum">03</span><h2>Valuation vs. fundamentals</h2></div>
+    <p class="caption"><span class="dec">Decision it helps make:</span> spot who is cheap or dear <em>for what you get</em>.
+      Dashed lines are cohort medians — bottom-right of the crosshair is the sweet spot (lower multiple, higher growth/returns).
+      Bubble size = market cap. Hover for the underlying numbers.</p>
+    <div class="panel">
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px">
+        <div><span class="glabel">X axis</span>
+          <div class="seg" id="xSeg" style="margin-left:8px">
+            <button data-x="peFwd" class="active">Fwd P/E</button>
+            <button data-x="evEbitda">EV/EBITDA</button>
+          </div></div>
+        <div><span class="glabel">Y axis</span>
+          <div class="seg" id="ySeg" style="margin-left:8px">
+            <button data-y="epsCagrFwd" class="active">Fwd growth</button>
+            <button data-y="roic">ROIC</button>
+          </div></div>
+        <div><span class="glabel">X scale</span>
+          <div class="seg" id="xScaleSeg" style="margin-left:8px">
+            <button data-xs="log" class="active">Log</button>
+            <button data-xs="linear">Linear</button>
+          </div></div>
+      </div>
+      <svg id="scatter" viewBox="0 0 880 470" role="img" aria-label="Valuation scatter"></svg>
+      <div id="scatterTip" class="num" style="font-family:var(--mono);font-size:12px;color:var(--ink2);min-height:20px;margin-top:6px"></div>
+    </div>
+  </section>
+
+  <!-- 4. HEATMAP -->
+  <section>
+    <div class="sechead"><span class="secnum">04</span><h2>Metric heatmap</h2></div>
+    <p class="caption"><span class="dec">Decision it helps make:</span> the full grid, every row color-graded best&#8594;worst
+      within the cohort (green = best). Click a column header to sort by that metric. Toggle the basis below; under
+      SBC-adjusted, stock-based comp is netted out of margins and returns - meaningful for the new-space names where
+      SBC is a large share of revenue. Loss-making names show negative margins and n/m multiples.</p>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px">
+      <div><span class="glabel">Period</span>
+        <div class="seg" id="periodSeg" style="margin-left:8px">
+          <button data-period="ttm" class="active">TTM</button>
+          <button data-period="fwd">Forward</button>
+        </div></div>
+      <div><span class="glabel">Earnings basis</span>
+        <div class="seg" id="basisSeg" style="margin-left:8px">
+          <button data-basis="gaap" class="active">GAAP</button>
+          <button data-basis="sbc">SBC-adj</button>
+        </div></div>
+    </div>
+    <div class="tablewrap"><table id="heat"><thead></thead><tbody></tbody></table></div>
+  </section>
+
+  <!-- 5. REVERSE DCF -->
+  <section>
+    <div class="sechead"><span class="secnum">05</span><h2>Reverse-DCF workbench</h2></div>
+    <p class="caption"><span class="dec">Decision it helps make:</span> stop arguing about “expensive.” Set your own
+      assumptions and read two things: the intrinsic value they imply, and — holding everything else fixed — the
+      <em>revenue growth the current price already bakes in</em>. If that implied growth looks heroic, the market is doing
+      the dreaming for you. Simple 10-year FCF-to-equity model; all inputs shown.</p>
+    <div class="panel">
+      <div style="margin-bottom:16px"><span class="glabel">Company</span>
+        <div class="seg" id="dcfSeg" style="margin-left:8px;flex-wrap:wrap"></div></div>
+      <div class="dcf">
+        <div class="sliders" id="dcfSliders"></div>
+        <div>
+          <div class="dcfout" id="dcfOut"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. VERDICT -->
+  <section>
+    <div class="sechead"><span class="secnum">06</span><h2>Verdict</h2></div>
+    <p class="caption"><span class="dec">Decision it helps make:</span> the weighted ranking under your selected lens.
+      Hover any bar for its single biggest bull and bear point. Weights re-sort the field live.</p>
+    <p class="wexpl" id="weightExpl"></p>
+    <div class="vbars" id="verdict"></div>
+    <button class="morebtn" id="verdictMore"></button>
+  </section>
+
+  <!-- 7. MARKET SHARE -->
+  <section>
+    <div class="sechead"><span class="secnum">07</span><h2>Market position</h2></div>
+    <p class="caption"><span class="dec">Decision it helps make:</span> who actually <em>owns</em> their slice of the chain.
+      Bars show approximate global share <b>within each company's served market</b> - grouped by layer, so a
+      near-monopoly (launch, L-band comms, daily imagery) reads very differently from a contested field
+      (components, defense electronics). The denominator matters and is labelled per bar; figures are illustrative estimates.</p>
+    <div class="shareview" id="shareView"></div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <b>Sources &amp; method.</b> Prices, market caps and recent results are gathered from public market
+    data (~9-10 Jun 2026); ratios, returns, moat scores and all forward figures are the author's illustrative
+    estimates and normalizations, not consensus pulls. The prime contractors (Lockheed, Northrop, Boeing, RTX,
+    Airbus) and component names are <b>diversified beyond space</b>, so company-level margins and returns reflect
+    their whole aerospace &amp; defense portfolios, not their space segments alone. Many new-space names are
+    pre-profit: trailing P/E is n/m and forward multiples assume the modeled ramp. Airbus and SES show price in
+    EUR; all market caps are normalized to USD billions. Reverse-DCF uses a transparent 10-year FCF-to-equity
+    model and is least reliable for the pre-profit names.<br><br>
+    <b>Figures are illustrative - verify live before acting.</b> This is an analytical tool, not investment advice;
+    it reflects no view on your objectives, and the author is not a financial adviser.
+  </div>
+</footer>
+
+<script>
+/* ============================ DATA ============================ */
+/* All figures illustrative, ~Jun 2026, JPY. Radar axes 0-10 (10=best). */
+const DATA = [
+ {tk:"KRMN",nm:"Karman Holdings",bz:"Propulsion & defense systems",color:"#5B8C5A",layer:"propulsion",share:{pct:15,rank:"#3",conf:"medium",market:"missile/space propulsion & payload systems"},price:45,mcap:6,cur:"$",mcapUSD:true,
+  thesis:"A pure-play on propulsion and payload integration for missiles, hypersonics and launch \u2014 exactly the part of the defense-space budget growing fastest. Profitable and recently public, priced as a high-growth defense-tech name.",
+  bull:"Sole/dual-source propulsion content on growing missile and launch programs; profitable with rising backlog.",
+  bear:"Newly public with limited float and a rich multiple; program-timing and budget-cycle dependence.",
+  r:{val:3,growth:8,roic:6,moat:7,fcf:6,bs:6,scal:7},
+  m:{peTTM:55,peFwd:40,pegFwd:2,evEbitda:28,evSales:7,pfcf:45,fcfYield:1.8,revCagrHist:20,epsCagrFwd:20,gross:30,op:18,net:8,roic:8,roe:9,fcfMargin:10,fcfConv:80,sbc:1.5,netDebtEbitda:2.5,intCov:8},
+  d:{revPS:8,netCashPS:-2,fcfM:0.1}},
+
+ {tk:"RKLB",nm:"Rocket Lab",bz:"Small launch + space systems",color:"#7FA650",layer:"launch",share:{pct:60,rank:"#2",conf:"high",market:"dedicated small-satellite launch (ex-SpaceX)"},price:25,mcap:12,cur:"$",mcapUSD:true,
+  thesis:"The clear #2 in Western launch and a vertically integrating space company: Electron dominates dedicated small launch, the Neutron medium rocket targets the lucrative mega-constellation market, and a growing Space Systems arm builds satellites and components. Pre-profit, all about the Neutron ramp.",
+  bull:"Only credible Western launch alternative to SpaceX; Neutron optionality plus a real, growing systems business.",
+  bear:"Deeply unprofitable with negative FCF; Neutron schedule and execution risk; valuation is all future.",
+  r:{val:2,growth:10,roic:1,moat:7,fcf:2,bs:6,scal:7},
+  m:{peTTM:999,peFwd:120,pegFwd:9,evEbitda:80,evSales:15,pfcf:90,fcfYield:-3,revCagrHist:30,epsCagrFwd:40,gross:30,op:-12,net:-15,roic:-8,roe:-15,fcfMargin:-18,fcfConv:40,sbc:8,netDebtEbitda:0.8,intCov:1},
+  d:{revPS:2.6,netCashPS:1,fcfM:-0.15}},
+
+ {tk:"LMT",nm:"Lockheed Martin",bz:"Prime contractor (F-35, space)",color:"#C0392B",layer:"primes",share:{pct:25,rank:"#1",conf:"high",market:"U.S. defense prime contracts + military space"},price:470,mcap:110,cur:"$",mcapUSD:true,
+  thesis:"The largest pure defense prime, with a vast space division (satellites, missile defense, Orion) inside a backlog measured in years. Low-growth but cash-rich and shareholder-friendly; the F-35 and classified space programs anchor the franchise.",
+  bull:"Multi-year backlog and entrenched program positions; ~$80B+ backlog and large buybacks/dividends.",
+  bear:"Low single-digit growth, fixed-price program risk, and budget/political dependence; mature space mix.",
+  r:{val:7,growth:3,roic:7,moat:8,fcf:8,bs:6,scal:6},
+  m:{peTTM:17,peFwd:16,pegFwd:3.5,evEbitda:12,evSales:1.7,pfcf:18,fcfYield:5,revCagrHist:3,epsCagrFwd:4,gross:12,op:12,net:9,roic:15,roe:60,fcfMargin:8,fcfConv:90,sbc:1,netDebtEbitda:1.6,intCov:12},
+  d:{revPS:290,netCashPS:-40,fcfM:0.08}},
+
+ {tk:"NOC",nm:"Northrop Grumman",bz:"Prime contractor (space-heavy)",color:"#B23A2E",layer:"primes",share:{pct:20,rank:"#2",conf:"high",market:"military space + strategic systems"},price:520,mcap:75,cur:"$",mcapUSD:true,
+  thesis:"The most space-levered of the U.S. primes: Northrop builds satellites, the Space Launch System boosters, and the B-21 and Sentinel strategic programs. A long-cycle, backlog-driven compounder tied to the U.S. nuclear and space modernization wave.",
+  bull:"Heaviest space/strategic exposure of the primes; B-21 and Sentinel anchor a decade of demand.",
+  bear:"Fixed-price development losses have stung; slow growth and heavy capex on the modernization programs.",
+  r:{val:6,growth:4,roic:7,moat:8,fcf:7,bs:6,scal:6},
+  m:{peTTM:19,peFwd:17,pegFwd:3.4,evEbitda:13,evSales:1.9,pfcf:20,fcfYield:4.5,revCagrHist:4,epsCagrFwd:5,gross:20,op:11,net:9,roic:12,roe:30,fcfMargin:7,fcfConv:88,sbc:1.5,netDebtEbitda:1.5,intCov:12},
+  d:{revPS:330,netCashPS:-45,fcfM:0.07}},
+
+ {tk:"BA",nm:"Boeing",bz:"Prime contractor + Starliner (turnaround)",color:"#D35400",layer:"primes",share:{pct:45,rank:"co-leader",conf:"high",market:"commercial aircraft (with Airbus) + defense/space"},price:210,mcap:160,cur:"$",mcapUSD:true,
+  thesis:"A deep turnaround: a commercial-aerospace duopoly franchise wrapped around a defense-and-space arm (Starliner, satellites, SLS) that has bled fixed-price losses. Enormous demand backlog against a fragile balance sheet \u2014 the bet is on cash-flow recovery.",
+  bull:"Duopoly commercial franchise with a huge backlog; any normalization of deliveries swings FCF sharply positive.",
+  bear:"Loss-making with ~5x net leverage; Starliner and fixed-price space programs remain cash drains.",
+  r:{val:5,growth:5,roic:1,moat:7,fcf:1,bs:2,scal:5},
+  m:{peTTM:999,peFwd:40,pegFwd:5,evEbitda:30,evSales:1.5,pfcf:60,fcfYield:-1,revCagrHist:8,epsCagrFwd:20,gross:8,op:-3,net:-6,roic:-2,roe:-15,fcfMargin:-2,fcfConv:20,sbc:2,netDebtEbitda:5,intCov:1},
+  d:{revPS:290,netCashPS:-90,fcfM:-0.02}},
+
+ {tk:"RTX",nm:"RTX Corp",bz:"Prime + propulsion (Pratt, Raytheon)",color:"#E0533F",layer:"primes",share:{pct:20,rank:"#1",conf:"high",market:"aero-engines + missiles/defense electronics"},price:130,mcap:175,cur:"$",mcapUSD:true,
+  thesis:"Aerospace-and-defense at scale: Pratt & Whitney engines, Collins avionics, and Raytheon missiles and space sensors. The geared-turbofan recall is the known overhang; the aftermarket and missile-demand tailwinds are the offset.",
+  bull:"Huge aftermarket annuity + missile-demand surge; diversified across commercial aero and defense/space.",
+  bear:"GTF powder-metal recall costs linger; ~3x leverage and integration of a sprawling portfolio.",
+  r:{val:6,growth:6,roic:6,moat:8,fcf:7,bs:6,scal:7},
+  m:{peTTM:22,peFwd:19,pegFwd:2.2,evEbitda:14,evSales:2.4,pfcf:22,fcfYield:4,revCagrHist:6,epsCagrFwd:9,gross:20,op:12,net:9,roic:9,roe:12,fcfMargin:11,fcfConv:88,sbc:1.5,netDebtEbitda:2.8,intCov:9},
+  d:{revPS:95,netCashPS:-25,fcfM:0.11}},
+
+ {tk:"AIR",nm:"Airbus",bz:"Prime + Airbus Defence & Space",color:"#0071C5",layer:"primes",share:{pct:55,rank:"co-leader",conf:"high",market:"commercial aircraft (with Boeing) + Euro space"},price:190,mcap:170,cur:"\u20ac",mcapUSD:true,
+  thesis:"The healthier half of the aircraft duopoly, and Europe's space prime (satellites, launchers via ArianeGroup). A record commercial backlog funds a net-cash balance sheet while the space-and-defense arm rides European sovereignty spending.",
+  bull:"Duopoly with the stronger order book and net cash; European defense-space spending tailwind.",
+  bear:"Supply-chain/engine constraints cap the delivery ramp; space-and-defense margins lag commercial.",
+  r:{val:5,growth:8,roic:8,moat:9,fcf:7,bs:9,scal:8},
+  m:{peTTM:28,peFwd:24,pegFwd:2.4,evEbitda:14,evSales:1.6,pfcf:26,fcfYield:3,revCagrHist:8,epsCagrFwd:9,gross:17,op:9,net:7,roic:16,roe:30,fcfMargin:9,fcfConv:90,sbc:0.5,netDebtEbitda:-0.5,intCov:40},
+  d:{revPS:75,netCashPS:15,fcfM:0.09}},
+
+ {tk:"HEI",nm:"Heico",bz:"Aftermarket parts & subsystems",color:"#B0843B",layer:"components",share:{pct:10,rank:"#1",conf:"medium",market:"FAA-approved aftermarket aircraft/space parts"},price:280,mcap:38,cur:"$",mcapUSD:true,
+  thesis:"A serial-compounder of niche aerospace components: Heico makes FAA-approved replacement parts and ruggedized electronics for aircraft, satellites and defense systems, growing organically and via a relentless bolt-on M&A machine. Premium multiple for premium consistency.",
+  bull:"Decades of disciplined acquisitions + organic growth; sticky, certified parts with ~22% margins.",
+  bear:"~55x earnings is among the richest here; growth depends on continued accretive M&A.",
+  r:{val:2,growth:9,roic:8,moat:8,fcf:8,bs:7,scal:8},
+  m:{peTTM:58,peFwd:50,pegFwd:3.3,evEbitda:32,evSales:7,pfcf:52,fcfYield:1.6,revCagrHist:15,epsCagrFwd:15,gross:38,op:22,net:16,roic:12,roe:16,fcfMargin:18,fcfConv:90,sbc:1,netDebtEbitda:1.2,intCov:15},
+  d:{revPS:20,netCashPS:-5,fcfM:0.18}},
+
+ {tk:"TDG",nm:"TransDigm",bz:"Proprietary aerospace components",color:"#9C6B1E",layer:"components",share:{pct:20,rank:"#1",conf:"high",market:"sole-source proprietary aircraft/space parts"},price:1450,mcap:82,cur:"$",mcapUSD:true,
+  thesis:"A private-equity-style compounder in public form: TransDigm owns sole-source, proprietary aerospace components with extraordinary pricing power, runs ~45% operating margins, and levers the balance sheet hard to fund buyouts and special dividends.",
+  bull:"Sole-source parts with monopoly pricing power; ~45% op margins and aggressive capital returns.",
+  bear:"~5x net leverage by design; pricing practices draw scrutiny and growth needs ever-larger deals.",
+  r:{val:3,growth:9,roic:9,moat:9,fcf:8,bs:2,scal:8},
+  m:{peTTM:38,peFwd:33,pegFwd:2.6,evEbitda:22,evSales:10,pfcf:30,fcfYield:2.8,revCagrHist:12,epsCagrFwd:13,gross:60,op:45,net:25,roic:12,roe:200,fcfMargin:28,fcfConv:90,sbc:1,netDebtEbitda:5,intCov:4},
+  d:{revPS:85,netCashPS:-120,fcfM:0.28}},
+
+ {tk:"MRCY",nm:"Mercury Systems",bz:"Defense/space processing electronics",color:"#C9952F",layer:"components",share:{pct:8,rank:"#3",conf:"medium",market:"rugged processing subsystems for defense/space"},price:55,mcap:3.3,cur:"$",mcapUSD:true,
+  thesis:"A turnaround in defense-and-space electronics: Mercury supplies rugged processing and RF subsystems for radar, missiles and satellites, and is recovering margins after a botched fixed-price push. Operationally levered to a backlog that is finally converting.",
+  bull:"Recovering margins on a sticky, design-in defense/space backlog; cash flow inflecting positive.",
+  bear:"Thin current profitability and execution scar tissue; small scale and program concentration.",
+  r:{val:4,growth:7,roic:3,moat:6,fcf:4,bs:6,scal:6},
+  m:{peTTM:80,peFwd:40,pegFwd:3,evEbitda:18,evSales:2.2,pfcf:40,fcfYield:2,revCagrHist:8,epsCagrFwd:12,gross:25,op:5,net:3,roic:5,roe:4,fcfMargin:6,fcfConv:80,sbc:2,netDebtEbitda:2,intCov:5},
+  d:{revPS:55,netCashPS:-10,fcfM:0.06}},
+
+ {tk:"RDW",nm:"Redwire",bz:"Space infrastructure & manufacturing",color:"#D35400",layer:"satellites",share:{pct:10,rank:"#3",conf:"low",market:"in-space manufacturing & spacecraft components"},price:18,mcap:1.5,cur:"$",mcapUSD:true,
+  thesis:"A roll-up of space-infrastructure niches \u2014 solar arrays, avionics, in-space manufacturing and, via Edge Autonomy, drones. Growing fast off a small base with a chunky backlog, but still scaling toward sustained profitability.",
+  bull:"Diversified space-infrastructure portfolio with strong bookings; Edge Autonomy adds drone exposure.",
+  bear:"Small, acquisitive and not yet consistently profitable; dilution and integration risk.",
+  r:{val:3,growth:9,roic:2,moat:5,fcf:3,bs:5,scal:6},
+  m:{peTTM:999,peFwd:60,pegFwd:4,evEbitda:40,evSales:4,pfcf:60,fcfYield:-2,revCagrHist:25,epsCagrFwd:35,gross:28,op:-5,net:-8,roic:-5,roe:-12,fcfMargin:-10,fcfConv:40,sbc:4,netDebtEbitda:1.5,intCov:2},
+  d:{revPS:6,netCashPS:-1,fcfM:-0.08}},
+
+ {tk:"ASTS",nm:"AST SpaceMobile",bz:"Direct-to-cell satellite network",color:"#1B6CA8",layer:"operators",share:{pct:50,rank:"#1",conf:"low",market:"space-based direct-to-smartphone broadband"},price:40,mcap:12,cur:"$",mcapUSD:true,
+  thesis:"The boldest optionality in the cohort: a constellation aiming to deliver broadband straight to ordinary smartphones, with carrier deals (AT&T, Verizon, Vodafone) and spectrum as the moat. Essentially pre-revenue \u2014 a binary bet on the constellation deploying on schedule.",
+  bull:"Unique direct-to-device approach with tier-1 carrier partners and spectrum; vast TAM if it works.",
+  bear:"Pre-revenue, capital-hungry and dilutive; deployment cadence and funding are existential risks.",
+  r:{val:1,growth:10,roic:1,moat:7,fcf:1,bs:5,scal:8},
+  m:{peTTM:999,peFwd:999,pegFwd:9,evEbitda:99,evSales:99,pfcf:99,fcfYield:-1,revCagrHist:0,epsCagrFwd:80,gross:40,op:-99,net:-99,roic:-30,roe:-40,fcfMargin:-99,fcfConv:0,sbc:9,netDebtEbitda:1,intCov:1},
+  d:{revPS:0.2,netCashPS:1.5,fcfM:-2}},
+
+ {tk:"IRDM",nm:"Iridium",bz:"LEO satellite operator (L-band comms)",color:"#1565C0",layer:"operators",share:{pct:80,rank:"#1",conf:"high",market:"global L-band mobile satellite voice/data"},price:28,mcap:3.2,cur:"$",mcapUSD:true,
+  thesis:"The only operator with a fully deployed, global cross-linked LEO constellation for L-band voice and IoT \u2014 sticky government and maritime customers, high incremental margins, and now a direct-to-device deal of its own. Mature constellation means low capex and strong FCF.",
+  bull:"Global L-band moat with low go-forward capex; strong recurring FCF funding buybacks and a dividend.",
+  bear:"Slower growth and ~3.5x leverage; next-gen constellation capex eventually returns.",
+  r:{val:6,growth:6,roic:7,moat:8,fcf:8,bs:5,scal:6},
+  m:{peTTM:22,peFwd:18,pegFwd:1.5,evEbitda:11,evSales:5,pfcf:16,fcfYield:5,revCagrHist:6,epsCagrFwd:10,gross:72,op:25,net:10,roic:9,roe:40,fcfMargin:28,fcfConv:95,sbc:2,netDebtEbitda:3.5,intCov:6},
+  d:{revPS:28,netCashPS:-12,fcfM:0.28}},
+
+ {tk:"SATS",nm:"EchoStar",bz:"Satellite comms + spectrum (Hughes/Boost)",color:"#16557B",layer:"operators",share:{pct:15,rank:"#4",conf:"medium",market:"satellite broadband + U.S. wireless spectrum"},price:28,mcap:7,cur:"$",mcapUSD:true,
+  thesis:"A spectrum-and-satellite optionality play: Hughes satellite broadband and the Boost wireless buildout sit atop a vast, contested trove of U.S. spectrum. Loss-making and heavily indebted \u2014 the thesis is asset value, not earnings.",
+  bull:"Deep spectrum portfolio worth a multiple of the equity in a sale/lease; satellite + 5G optionality.",
+  bear:"Heavy debt and cash burn; spectrum monetization timing and regulatory overhang are unresolved.",
+  r:{val:7,growth:4,roic:1,moat:4,fcf:2,bs:2,scal:5},
+  m:{peTTM:999,peFwd:999,pegFwd:5,evEbitda:12,evSales:1.5,pfcf:40,fcfYield:-3,revCagrHist:2,epsCagrFwd:5,gross:40,op:-2,net:-8,roic:-1,roe:-6,fcfMargin:-5,fcfConv:20,sbc:2,netDebtEbitda:6,intCov:1},
+  d:{revPS:28,netCashPS:-60,fcfM:-0.05}},
+
+ {tk:"VSAT",nm:"Viasat",bz:"Satellite broadband operator",color:"#2A6FB0",layer:"operators",share:{pct:12,rank:"#3",conf:"medium",market:"GEO satellite broadband + Inmarsat mobility"},price:12,mcap:1.6,cur:"$",mcapUSD:true,
+  thesis:"A levered satellite-connectivity turnaround: the Inmarsat merger built a global mobility (aviation, maritime, government) franchise, but a satellite failure and heavy debt have weighed on the equity. FCF inflection as the launch-capex wave passes is the bull case.",
+  bull:"Global mobility/government connectivity scale post-Inmarsat; FCF inflects as capex rolls off.",
+  bear:"~4x leverage and past satellite anomalies; Starlink competition pressures consumer and mobility.",
+  r:{val:6,growth:5,roic:2,moat:5,fcf:3,bs:2,scal:5},
+  m:{peTTM:999,peFwd:30,pegFwd:3,evEbitda:9,evSales:1.4,pfcf:30,fcfYield:-2,revCagrHist:5,epsCagrFwd:12,gross:55,op:8,net:-2,roic:2,roe:-3,fcfMargin:-8,fcfConv:30,sbc:2,netDebtEbitda:4,intCov:2},
+  d:{revPS:28,netCashPS:-70,fcfM:-0.06}},
+
+ {tk:"SES",nm:"SES S.A.",bz:"GEO/MEO satellite operator",color:"#1F78C2",layer:"operators",share:{pct:15,rank:"#2",conf:"medium",market:"global GEO/MEO video & data capacity"},price:7,mcap:5,cur:"\u20ac",mcapUSD:true,
+  thesis:"Europe's satellite operator, reshaped by the Intelsat merger into a scaled video-and-data capacity provider with the differentiated O3b mPOWER MEO system for low-latency connectivity. Cheap and cash-generative, with C-band proceeds and synergies as catalysts.",
+  bull:"Intelsat scale + unique MEO assets; cheap on cash flow with merger synergies and C-band cash inflows.",
+  bear:"Secular video decline and Starlink/LEO competition; integration and capex discipline are key.",
+  r:{val:7,growth:4,roic:4,moat:6,fcf:6,bs:5,scal:5},
+  m:{peTTM:10,peFwd:9,pegFwd:1.8,evEbitda:5,evSales:2,pfcf:9,fcfYield:8,revCagrHist:2,epsCagrFwd:5,gross:80,op:30,net:12,roic:6,roe:8,fcfMargin:30,fcfConv:90,sbc:2,netDebtEbitda:3,intCov:6},
+  d:{revPS:6,netCashPS:-4,fcfM:0.3}},
+
+ {tk:"PL",nm:"Planet Labs",bz:"Earth-observation data",color:"#2E86AB",layer:"earthobs",share:{pct:40,rank:"#1",conf:"medium",market:"daily medium-resolution earth imagery"},price:6,mcap:1.8,cur:"$",mcapUSD:true,
+  thesis:"The data-subscription model of space: Planet flies the largest fleet of imaging satellites, scanning the whole Earth daily and selling the archive as recurring subscriptions to government, agriculture and defense customers. Approaching breakeven as large contracts and AI-analytics deals scale.",
+  bull:"Unique daily global imagery archive sold as high-margin subscriptions; large govt/defense contract wins.",
+  bear:"Still unprofitable on a small base; long sales cycles and competition in higher-resolution imagery.",
+  r:{val:4,growth:8,roic:2,moat:6,fcf:4,bs:6,scal:8},
+  m:{peTTM:999,peFwd:90,pegFwd:5,evEbitda:30,evSales:4,pfcf:60,fcfYield:-1,revCagrHist:12,epsCagrFwd:25,gross:55,op:-8,net:-12,roic:-6,roe:-10,fcfMargin:-12,fcfConv:40,sbc:8,netDebtEbitda:-0.5,intCov:2},
+  d:{revPS:0.8,netCashPS:0.6,fcfM:-0.1}},
+
+ {tk:"BKSY",nm:"BlackSky",bz:"Earth observation + analytics",color:"#3C97C4",layer:"earthobs",share:{pct:10,rank:"#3",conf:"low",market:"real-time high-revisit satellite imagery"},price:14,mcap:0.5,cur:"$",mcapUSD:true,
+  thesis:"High-revisit imaging plus an AI analytics layer (Spectra) aimed squarely at defense and intelligence customers who need tasking in minutes. Small and pre-profit, but the Gen-3 constellation and international defense deals are the growth engine.",
+  bull:"Real-time tasking + analytics tailored to defense/intel; Gen-3 sharpens resolution and revisit.",
+  bear:"Sub-scale and unprofitable; capital-intensive constellation refresh and lumpy government orders.",
+  r:{val:3,growth:9,roic:1,moat:5,fcf:2,bs:4,scal:6},
+  m:{peTTM:999,peFwd:70,pegFwd:4,evEbitda:30,evSales:3,pfcf:50,fcfYield:-3,revCagrHist:20,epsCagrFwd:30,gross:60,op:-10,net:-18,roic:-8,roe:-15,fcfMargin:-15,fcfConv:30,sbc:5,netDebtEbitda:1,intCov:1},
+  d:{revPS:2,netCashPS:0.5,fcfM:-0.12}},
+
+ {tk:"SPIR",nm:"Spire Global",bz:"RF / weather & tracking data",color:"#56A8D4",layer:"earthobs",share:{pct:8,rank:"#3",conf:"low",market:"space-based RF, weather & ship/plane tracking"},price:10,mcap:0.3,cur:"$",mcapUSD:true,
+  thesis:"A space-based sensor-data subscription business: Spire's nanosatellites collect weather, ship- and aircraft-tracking and RF data sold as recurring feeds. Restructured and slimmer after divesting its maritime unit; the bet is on data-subscription growth reaching cash breakeven.",
+  bull:"Differentiated RF/weather data sold as subscriptions; leaner cost base after the maritime divestiture.",
+  bear:"Very small, historically cash-burning and dilutive; concentrated in a few data verticals.",
+  r:{val:3,growth:8,roic:2,moat:4,fcf:3,bs:4,scal:6},
+  m:{peTTM:999,peFwd:80,pegFwd:4,evEbitda:25,evSales:3,pfcf:50,fcfYield:-2,revCagrHist:10,epsCagrFwd:25,gross:65,op:-8,net:-12,roic:-6,roe:-12,fcfMargin:-12,fcfConv:30,sbc:6,netDebtEbitda:0.5,intCov:1},
+  d:{revPS:4,netCashPS:0.5,fcfM:-0.1}},
+
+ {tk:"LHX",nm:"L3Harris",bz:"Defense electronics + propulsion",color:"#0071C5",layer:"defense",share:{pct:15,rank:"#3",conf:"high",market:"tactical comms + space sensors + propulsion"},price:250,mcap:47,cur:"$",mcapUSD:true,
+  thesis:"A defense-electronics prime with a genuine space spine: tactical radios, space-based sensors and missile-tracking payloads, plus the Aerojet Rocketdyne propulsion franchise. A scaled, backlog-rich beneficiary of missile-defense and resilient-space architectures.",
+  bull:"Tactical comms + space sensors + Aerojet propulsion; ~$30B+ backlog and margin-expansion program.",
+  bear:"~3x leverage from the Aerojet deal; budget-cycle dependence and integration execution.",
+  r:{val:6,growth:5,roic:6,moat:7,fcf:7,bs:5,scal:6},
+  m:{peTTM:20,peFwd:17,pegFwd:2.4,evEbitda:14,evSales:2.6,pfcf:18,fcfYield:4.5,revCagrHist:5,epsCagrFwd:7,gross:30,op:15,net:10,roic:9,roe:12,fcfMargin:12,fcfConv:88,sbc:1.5,netDebtEbitda:2.8,intCov:9},
+  d:{revPS:120,netCashPS:-30,fcfM:0.12}},
+
+ {tk:"KTOS",nm:"Kratos Defense",bz:"Drones + propulsion + space",color:"#3C8DCC",layer:"defense",share:{pct:10,rank:"#4",conf:"medium",market:"tactical drones + rocket propulsion + C5ISR"},price:40,mcap:6,cur:"$",mcapUSD:true,
+  thesis:"A pure-play on cheaper, attritable defense: jet-powered target/combat drones, solid-rocket propulsion (a scarce second source to the primes), hypersonics and space C5ISR. High-growth and richly valued on the affordable-mass-and-propulsion thesis.",
+  bull:"Affordable drones + scarce second-source propulsion; fast bookings growth on hypersonics and space.",
+  bear:"~70x earnings on thin margins; program timing and the need to scale manufacturing profitably.",
+  r:{val:3,growth:9,roic:3,moat:6,fcf:4,bs:7,scal:7},
+  m:{peTTM:70,peFwd:55,pegFwd:3,evEbitda:30,evSales:3.5,pfcf:60,fcfYield:1,revCagrHist:15,epsCagrFwd:18,gross:25,op:8,net:5,roic:5,roe:6,fcfMargin:5,fcfConv:80,sbc:1,netDebtEbitda:0.2,intCov:10},
+  d:{revPS:40,netCashPS:5,fcfM:0.06}},
+
+ {tk:"GRMN",nm:"Garmin",bz:"GPS / navigation devices",color:"#1E8E6B",layer:"navigation",share:{pct:20,rank:"#2",conf:"high",market:"consumer & aviation GPS navigation devices"},price:210,mcap:40,cur:"$",mcapUSD:true,
+  thesis:"The downstream consumer face of the positioning chain: Garmin turns GPS into wearables, aviation avionics, marine and automotive devices, with a fortress net-cash balance sheet, ~25% operating margins and consistent double-digit growth across five diversified segments.",
+  bull:"Diversified, profitable navigation franchise; net-cash balance sheet, ~25% margins and steady growth.",
+  bear:"Consumer-discretionary cyclicality in wearables/fitness; not a space operator, a GPS-end-user beneficiary.",
+  r:{val:6,growth:8,roic:9,moat:7,fcf:9,bs:10,scal:7},
+  m:{peTTM:28,peFwd:26,pegFwd:2.2,evEbitda:18,evSales:5,pfcf:28,fcfYield:3.5,revCagrHist:10,epsCagrFwd:11,gross:58,op:25,net:22,roic:20,roe:20,fcfMargin:24,fcfConv:95,sbc:1.5,netDebtEbitda:-2.5,intCov:99},
+  d:{revPS:40,netCashPS:30,fcfM:0.22}},
+
+ {tk:"LUNR",nm:"Intuitive Machines",bz:"Lunar landers & cislunar services",color:"#9C2C77",layer:"newspace",share:{pct:40,rank:"#1",conf:"low",market:"NASA commercial lunar payload services"},price:12,mcap:1.5,cur:"$",mcapUSD:true,
+  thesis:"The leading commercial Moon-services company: Intuitive Machines flies NASA payloads to the lunar surface and is bidding for lunar comms-and-navigation relays and data services. Early, lumpy and contract-driven \u2014 a call option on the U.S. return to the Moon.",
+  bull:"First-mover in commercial lunar landing with NASA backing; lunar relay/data-network optionality.",
+  bear:"Mission failures are reputational and financial; tiny revenue base, lumpy contracts and dilution.",
+  r:{val:2,growth:10,roic:1,moat:6,fcf:2,bs:5,scal:7},
+  m:{peTTM:999,peFwd:90,pegFwd:4,evEbitda:40,evSales:5,pfcf:70,fcfYield:-2,revCagrHist:40,epsCagrFwd:50,gross:20,op:-15,net:-20,roic:-10,roe:-20,fcfMargin:-20,fcfConv:30,sbc:6,netDebtEbitda:0.2,intCov:1},
+  d:{revPS:2.5,netCashPS:0.8,fcfM:-0.2}},
+
+ {tk:"LDOS",nm:"Leidos",bz:"Ground systems & defense IT",color:"#6A4C93",layer:"ground",share:{pct:12,rank:"#1",conf:"high",market:"U.S. government IT, ground systems & GEOINT"},price:160,mcap:21,cur:"$",mcapUSD:true,
+  thesis:"The downstream integrator: Leidos builds and runs the ground systems, mission software and geospatial-intelligence pipelines that turn satellite data into decisions for U.S. agencies. A steady, backlog-rich services compounder with improving margins.",
+  bull:"Largest govt-IT/GEOINT integrator with a deep backlog; margin-expansion and strong FCF/buybacks.",
+  bear:"Low-margin services with re-compete risk; growth is GDP-like and budget-dependent.",
+  r:{val:6,growth:6,roic:7,moat:6,fcf:8,bs:6,scal:6},
+  m:{peTTM:18,peFwd:15,pegFwd:2,evEbitda:12,evSales:1.3,pfcf:15,fcfYield:6,revCagrHist:6,epsCagrFwd:8,gross:18,op:11,net:7,roic:11,roe:30,fcfMargin:9,fcfConv:90,sbc:1,netDebtEbitda:2.5,intCov:10},
+  d:{revPS:160,netCashPS:-30,fcfM:0.09}}
+];
+
+const AXES=[
+ {k:"val",label:"Valuation"},{k:"growth",label:"Growth"},{k:"roic",label:"ROIC vs WACC"},
+ {k:"moat",label:"Moat"},{k:"fcf",label:"FCF quality"},{k:"bs",label:"Balance sheet"},{k:"scal",label:"Scalability"}
+];
+
+/* Supply-chain layers, ordered upstream → downstream. Each DATA row carries a `layer` key. */
+const LAYERS=[
+ {k:"propulsion",label:"Propulsion",c:"#5B8C5A"},
+ {k:"launch",label:"Launch",c:"#7FA650"},
+ {k:"primes",label:"Prime contractors",c:"#C0392B"},
+ {k:"satellites",label:"Satellite mfg",c:"#D35400"},
+ {k:"components",label:"Components",c:"#B0843B"},
+ {k:"operators",label:"Operators / comms",c:"#1B6CA8"},
+ {k:"earthobs",label:"Earth observation",c:"#2E86AB"},
+ {k:"defense",label:"Defense electronics",c:"#0071C5"},
+ {k:"navigation",label:"Navigation / GPS",c:"#1E8E6B"},
+ {k:"newspace",label:"New-space services",c:"#9C2C77"},
+ {k:"ground",label:"Ground & integration",c:"#6A4C93"}
+];
+const LAYER_LABEL=Object.fromEntries(LAYERS.map(l=>[l.k,l.label]));
+const LAYER_COLOR=Object.fromEntries(LAYERS.map(l=>[l.k,l.c]));
+const LAYER_ORDER=Object.fromEntries(LAYERS.map((l,i)=>[l.k,i]));
+/* effective plotting color for a name: per-ticker by default, or by chain layer when colorMode='layer' */
+function colorOf(d){ return state.colorMode==="layer" ? (LAYER_COLOR[d.layer]||d.color) : d.color; }
+
+const LENSES={
+ value:{label:"Value",w:{val:.30,fcf:.15,bs:.15,roic:.12,moat:.10,growth:.10,scal:.08},
+   note:"Value lens overweights what you pay and what protects it — valuation (30%), FCF quality and balance sheet (15% each), with returns and moat behind them. It rewards cheap, cash-generative, lowly-levered names and penalizes paying up for growth."},
+ quality:{label:"Quality-Growth",w:{growth:.22,roic:.20,moat:.18,scal:.12,fcf:.12,bs:.08,val:.08},
+   note:"Quality-Growth lens overweights the compounding engine — growth (22%), ROIC vs WACC (20%) and moat (18%), with valuation a light 8%. It rewards durable, high-return franchises with room to reinvest and tolerates a fuller multiple."}
+};
+
+/* Heatmap metric rows: key, label, hint, fmt, higherBetter, fwdKey(optional alt), notForward */
+const METRICS=[
+ {k:"peTTM",fwd:"peFwd",label:"P/E",hint:"price / earnings",fmt:v=>v>=900?"n/m":v.toFixed(0)+"x",hi:false},
+ {k:"pegFwd",label:"PEG (fwd)",hint:"fwd P/E / growth",fmt:v=>v.toFixed(1),hi:false},
+ {k:"evEbitda",label:"EV / EBITDA",hint:"enterprise value",fmt:v=>v.toFixed(0)+"x",hi:false},
+ {k:"evSales",label:"EV / Sales",hint:"enterprise value",fmt:v=>v.toFixed(1)+"x",hi:false},
+ {k:"pfcf",label:"P / FCF",hint:"price / free cash flow",fmt:v=>v.toFixed(0)+"x",hi:false},
+ {k:"fcfYield",label:"FCF yield",hint:"FCF / market cap",fmt:v=>v.toFixed(1)+"%",hi:true},
+ {k:"revCagrHist",fwd:"epsCagrFwd",label:"Growth",hint:"rev CAGR (TTM) / EPS CAGR (fwd)",fmt:v=>v.toFixed(0)+"%",hi:true},
+ {k:"gross",label:"Gross margin",hint:"% of revenue",fmt:v=>v.toFixed(0)+"%",hi:true},
+ {k:"op",label:"Operating margin",hint:"% of revenue",fmt:v=>v.toFixed(0)+"%",hi:true},
+ {k:"net",label:"Net margin",hint:"% of revenue",fmt:v=>v.toFixed(1)+"%",hi:true},
+ {k:"roic",label:"ROIC",hint:"return on invested capital",fmt:v=>v.toFixed(0)+"%",hi:true},
+ {k:"roe",label:"ROE",hint:"return on equity",fmt:v=>v.toFixed(0)+"%",hi:true},
+ {k:"fcfMargin",label:"FCF margin",hint:"FCF / revenue",fmt:v=>v.toFixed(0)+"%",hi:true},
+ {k:"fcfConv",label:"FCF conversion",hint:"FCF / net income",fmt:v=>v.toFixed(0)+"%",hi:true},
+ {k:"sbc",label:"SBC % of revenue",hint:"stock-based comp",fmt:v=>v.toFixed(1)+"%",hi:false},
+ {k:"netDebtEbitda",label:"Net debt / EBITDA",hint:"negative = net cash",fmt:v=>(v<0?"":"+")+v.toFixed(1)+"x",hi:false},
+ {k:"intCov",label:"Interest coverage",hint:"EBIT / interest",fmt:v=>v>=999?"net cash":v.toFixed(0)+"x",hi:true}
+];
+
+/* ============================ STATE ============================ */
+const state={
+  visible:new Set(DATA.map(d=>d.tk)),
+  lens:"quality",
+  xKey:"peFwd", yKey:"epsCagrFwd", xScale:"log",
+  period:"ttm", basis:"gaap",
+  sortKey:null, sortDir:-1,
+  dcf:DATA[0].tk, dcfV:{},
+  colorMode:"ticker",   // "ticker" | "layer"
+  radarTopN:8,          // when many names visible, radar draws only the top-N by composite
+  verdictExpanded:false,
+  hl:null               // highlighted ticker (legend/scatter hover spotlight)
+};
+DATA.forEach(d=>{ state.dcfV[d.tk]={g:d.m.epsCagrFwd, m:Math.round(d.d.fcfM*100), r:9, tg:2.5}; });
+
+const byTk=Object.fromEntries(DATA.map(d=>[d.tk,d]));
+/* currency-aware formatter. cur governs only the PRICE display symbol:
+   ¥ (JPY, default), $ (USD), ₩ (KRW), € (EUR), CN¥ (Chinese yuan). */
+const curOf=d=>(d&&d.cur)?d.cur:"¥";
+function fmtMoney(v,d){
+  return curOf(d)+Math.round(v).toLocaleString();
+}
+/* legacy alias kept for any old call sites */
+const fmtYen=v=>"¥"+Math.round(v).toLocaleString();
+/* Market-cap storage:
+   - legacy Tokyo/Korea names store mcap in native TRILLIONS (¥T / ₩T) with no mcapUSD flag.
+   - all newer names store mcap already in USD BILLIONS and set mcapUSD:true.
+   Display: USD-billion names show "$xxxB"; native-trillion names show ¥xxT / ₩xxxxT. */
+function fmtMcap(d){
+  if(d.mcapUSD||curOf(d)==="$") return `$${d.mcap.toFixed(0)}B`;  // already USD billions
+  if(curOf(d)==="₩") return `₩${d.mcap.toFixed(0)}T`;
+  return `¥${d.mcap.toFixed(1)}T`;
+}
+/* normalize market cap to a common unit (USD billions) for bubble sizing.
+   USD-billion names pass through; legacy native-trillion names convert.
+   ~150 JPY/USD → ¥1T ≈ $6.7B; ~1360 KRW/USD → ₩1T ≈ $0.735B. */
+function mcapUSD(d){
+  if(d.mcapUSD) return d.mcap;                // already USD billions
+  const c=curOf(d);
+  if(c==="$") return d.mcap;                 // already USD billions
+  if(c==="₩") return d.mcap*0.735;           // KRW trillions → USD billions
+  return d.mcap*6.7;                          // JPY trillions → USD billions
+}
+
+function composite(d,lens){
+  const w=LENSES[lens].w; let s=0;
+  for(const a of AXES) s+=d.r[a.k]*w[a.k];
+  return s;
+}
+/* shared median helper (used by layer map and scatter) */
+function median(arr){ const s=[...arr].filter(v=>v!=null&&!isNaN(v)).sort((a,b)=>a-b); const n=s.length;
+  return n? (n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2) : 0; }
+function basisAdj(d,key){
+  // SBC-adjusted basis: nudge margins down slightly by SBC; trivially small for these names
+  if(state.basis!=="sbc") return d.m[key];
+  const v=d.m[key];
+  if(["net","op","fcfMargin","roe","roic"].includes(key)) return v - d.m.sbc*0.6;
+  return v;
+}
+function metricVal(d,met){
+  let key=met.k;
+  if(state.period==="fwd" && met.fwd) key=met.fwd;
+  return basisAdj(d,key);
+}
+
+/* ============================ LAYER FILTER ============================ */
+// which layers actually appear in DATA, kept in canonical order
+const presentLayers=LAYERS.filter(l=>DATA.some(d=>d.layer===l.k));
+const layersEl=document.getElementById("layers");
+function tksInLayer(k){ return DATA.filter(d=>d.layer===k).map(d=>d.tk); }
+// how much of a layer is currently visible: "full" | "partial" | "none"
+function layerState(k){
+  const tks=tksInLayer(k); const on=tks.filter(t=>state.visible.has(t)).length;
+  return on===0?"none":(on===tks.length?"full":"partial");
+}
+// MULTISELECT toggle: if the whole layer is in, remove it; otherwise add it.
+// Edits the shared visible set so layer toggles and ticker chips compose freely.
+function toggleLayer(k){
+  const tks=tksInLayer(k), st=layerState(k);
+  if(st==="full"){ tks.forEach(t=>state.visible.delete(t)); }      // remove the layer
+  else { tks.forEach(t=>state.visible.add(t)); }                   // add the whole layer
+  if(state.visible.size===0) state.visible=new Set(DATA.map(d=>d.tk)); // never empty → reset to All
+  renderAll();
+}
+function renderLayerChips(){
+  layersEl.innerHTML="";
+  // "All" resets to every ticker visible
+  const all=document.createElement("div");
+  all.className="lchip allchip"+(state.visible.size===DATA.length?" active":"");
+  all.textContent="All";
+  all.title="Show every name";
+  all.onclick=()=>{ state.visible=new Set(DATA.map(d=>d.tk)); renderAll(); };
+  layersEl.appendChild(all);
+  presentLayers.forEach(l=>{
+    const tks=tksInLayer(l.k), st=layerState(l.k);
+    const chip=document.createElement("div");
+    chip.className="lchip"+(st==="full"?" active":st==="partial"?" partial":"");
+    chip.textContent=l.label;
+    chip.title=`${st==="full"?"Remove":"Add"} ${l.label} (${tks.length}) — layers stack`;
+    chip.onclick=()=>toggleLayer(l.k);
+    layersEl.appendChild(chip);
+  });
+}
+
+/* ============================ CHIPS (collapsible + searchable) ============================ */
+const chipsEl=document.getElementById("chips");
+const tkPanel=document.getElementById("tkPanel");
+const tkToggle=document.getElementById("tkToggle");
+const tkSearch=document.getElementById("tkSearch");
+const tkSummary=document.getElementById("tkSummary");
+const chipsEmpty=document.getElementById("chipsEmpty");
+let tkOpen=false, tkQuery="";
+
+// render ticker chips grouped by layer order; each carries its searchable text
+function buildChips(){
+  chipsEl.innerHTML="";
+  presentLayers.forEach(l=>{
+    DATA.filter(d=>d.layer===l.k).forEach(d=>{
+      const c=document.createElement("div");
+      c.className="chip"; c.dataset.tk=d.tk;
+      c.dataset.search=(d.tk+" "+d.nm+" "+LAYER_LABEL[d.layer]).toLowerCase();
+      c.title=LAYER_LABEL[d.layer]||"";
+      c.innerHTML=`<span class="dot" style="background:${d.color}"></span>${d.tk} ${d.nm.split(" ")[0]}`;
+      c.onclick=()=>{ toggle(d.tk); };
+      chipsEl.appendChild(c);
+    });
+  });
+}
+buildChips();
+function toggle(tk){
+  if(state.visible.has(tk)){ if(state.visible.size>1) state.visible.delete(tk); }
+  else state.visible.add(tk);
+  renderAll();
+}
+// apply the search filter to which chips are shown (display only — not the same as visible/plotted)
+function applyChipSearch(){
+  const q=tkQuery.trim().toLowerCase();
+  let shown=0;
+  [...chipsEl.children].forEach(c=>{
+    const match = !q || c.dataset.search.includes(q);
+    c.classList.toggle("hide",!match);
+    if(match) shown++;
+  });
+  chipsEmpty.hidden = shown>0;
+}
+function setTkOpen(open){
+  tkOpen=open;
+  tkPanel.hidden=false;                 // keep in DOM so transition runs
+  tkPanel.classList.toggle("open",open);
+  tkToggle.setAttribute("aria-expanded",open?"true":"false");
+  if(open){ applyChipSearch(); setTimeout(()=>tkSearch.focus(),120); }
+}
+tkToggle.onclick=()=>setTkOpen(!tkOpen);
+tkSearch.oninput=()=>{ tkQuery=tkSearch.value; if(!tkOpen) setTkOpen(true); applyChipSearch(); };
+tkSearch.onfocus=()=>{ if(!tkOpen) setTkOpen(true); };
+document.getElementById("tkAll").onclick=()=>{ state.visible=new Set(DATA.map(d=>d.tk)); renderAll(); };
+document.getElementById("tkClear").onclick=()=>{ // keep one so charts never go empty
+  const first=DATA[0].tk; state.visible=new Set([first]); renderAll(); };
+
+/* phone-only "Filters" disclosure for the sticky bar */
+const gbar=document.getElementById("gbar");
+const filtersToggle=document.getElementById("filtersToggle");
+const filterSummary=document.getElementById("filterSummary");
+filtersToggle.onclick=()=>{
+  const open=gbar.classList.toggle("filters-open");
+  filtersToggle.setAttribute("aria-expanded",open?"true":"false");
+};
+
+function syncChips(){
+  [...chipsEl.children].forEach(c=>c.classList.toggle("off",!state.visible.has(c.dataset.tk)));
+  // summary line reflects current selection vs full cohort
+  const n=state.visible.size, total=DATA.length;
+  const sum = n===total ? `all <b>${total}</b> shown` : `<b>${n}</b> of ${total} shown`;
+  tkSummary.innerHTML=sum;
+  filterSummary.innerHTML=sum;   // mirror on the phone Filters header
+  renderLayerChips();
+}
+
+/* lens segmented */
+document.getElementById("lensSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ state.lens=b.dataset.lens;
+    document.querySelectorAll("#lensSeg button").forEach(x=>x.classList.toggle("active",x===b));
+    renderAll(); };
+});
+/* scatter axes */
+document.getElementById("xSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ state.xKey=b.dataset.x;
+    document.querySelectorAll("#xSeg button").forEach(x=>x.classList.toggle("active",x===b)); renderScatter(); };
+});
+document.getElementById("ySeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ state.yKey=b.dataset.y;
+    document.querySelectorAll("#ySeg button").forEach(x=>x.classList.toggle("active",x===b)); renderScatter(); };
+});
+document.getElementById("xScaleSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ state.xScale=b.dataset.xs;
+    document.querySelectorAll("#xScaleSeg button").forEach(x=>x.classList.toggle("active",x===b)); renderScatter(); };
+});
+/* heatmap toggles */
+document.getElementById("periodSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ state.period=b.dataset.period;
+    document.querySelectorAll("#periodSeg button").forEach(x=>x.classList.toggle("active",x===b)); renderHeat(); };
+});
+document.getElementById("basisSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ state.basis=b.dataset.basis;
+    document.querySelectorAll("#basisSeg button").forEach(x=>x.classList.toggle("active",x===b)); renderHeat(); };
+});
+/* color mode (by name / by layer) — affects radar, scatter, heatmap, verdict */
+document.getElementById("colorSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ state.colorMode=b.dataset.color;
+    document.querySelectorAll("#colorSeg button").forEach(x=>x.classList.toggle("active",x===b)); renderAll(); };
+});
+/* radar top-N */
+document.getElementById("radarNSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ state.radarTopN=parseInt(b.dataset.n,10);
+    document.querySelectorAll("#radarNSeg button").forEach(x=>x.classList.toggle("active",x===b)); renderRadar(); };
+});
+
+/* ============================ SUPPLY-CHAIN MAP ============================ */
+const layerMapEl=document.getElementById("layerMap");
+function renderLayerMap(){
+  layerMapEl.innerHTML="";
+  // map stays a full navigator (all layers shown so you can switch), but stats reflect the
+  // CURRENT selection: empty layers dim, counts/score/P/E/GM are computed from visible members.
+  presentLayers.forEach(l=>{
+    const all=DATA.filter(d=>d.layer===l.k);
+    const allTks=all.map(d=>d.tk);
+    const names=all.filter(d=>state.visible.has(d.tk));   // visible members of this layer
+    const nVis=names.length, nAll=all.length;
+    const st=layerState(l.k);                             // "full" | "partial" | "none"
+    const stat=names.length?names:all;                    // fall back to full layer if none visible
+    const scores=stat.map(d=>composite(d,state.lens));
+    const avg=scores.reduce((a,b)=>a+b,0)/stat.length;
+    const top=[...stat].sort((a,b)=>composite(b,state.lens)-composite(a,state.lens))[0];
+    const medPE=median(stat.map(d=>d.m.peFwd).filter(v=>v<900));
+    const medGM=median(stat.map(d=>d.m.gross));
+    const tile=document.createElement("div");
+    tile.className="laytile"+(st==="full"?" active":st==="partial"?" partial":"")+(nVis===0?" empty":"");
+    const countLbl = nVis===nAll ? `${nAll}` : `${nVis}/${nAll}`;
+    tile.innerHTML=`
+      <div class="lh"><span class="sw" style="background:${l.c}"></span>
+        <span class="nm">${l.label}</span><span class="ct">${countLbl}</span></div>
+      <div class="scwrap"><span class="v" style="color:${l.c}">${avg.toFixed(1)}</span>
+        <span class="l">avg ${state.lens==="value"?"value":"quality"}</span></div>
+      <div class="track"><div class="fill" style="width:${(avg/10*100).toFixed(0)}%;background:${l.c}"></div></div>
+      <div class="stats">
+        <span><span class="k">P/E</span> <b>${medPE?medPE.toFixed(0)+"x":"n/m"}</b></span>
+        <span><span class="k">GM</span> <b>${medGM.toFixed(0)}%</b></span>
+        <span><span class="k">top</span> <b>${top.tk}</b></span>
+      </div>`;
+    tile.title=`${st==="full"?"Remove":"Add"} ${l.label} — ${nAll} names: ${allTks.join(", ")} (layers stack)`;
+    // multiselect: toggle this layer in/out of the shared selection
+    tile.onclick=()=>toggleLayer(l.k);
+    layerMapEl.appendChild(tile);
+  });
+}
+
+/* ============================ THESIS CARDS ============================ */
+const cardsEl=document.getElementById("cards");
+function renderCards(){
+  cardsEl.innerHTML="";
+  // only the selected names — filtered-out cards are removed so the grid reflows (no greyed dead space)
+  const vis=DATA.filter(d=>state.visible.has(d.tk))
+    .sort((a,b)=>(LAYER_ORDER[a.layer]-LAYER_ORDER[b.layer]) || (composite(b,state.lens)-composite(a,state.lens)));
+  vis.forEach(d=>{
+    const sc=composite(d,state.lens), col=colorOf(d);
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`
+      <div class="top">
+        <span class="bar" style="background:${col}"></span>
+        <div>
+          <div class="tk">${d.tk} <span class="muted" style="font-size:9.5px">${LAYER_LABEL[d.layer]}</span></div>
+          <div class="nm">${d.nm}</div>
+          <div class="bz">${d.bz}</div>
+        </div>
+        <div class="sc"><div class="v" style="color:${col}">${sc.toFixed(1)}</div><div class="l">score</div></div>
+      </div>
+      <div class="body">
+        <div class="price">Price <b>${fmtMoney(d.price,d)}</b> · Mkt cap <b>${fmtMcap(d)}</b> · <span class="caret">▸</span></div>
+        <p class="th">${d.thesis}</p>
+      </div>`;
+    card.querySelector(".top").onclick=()=>card.classList.toggle("open");
+    cardsEl.appendChild(card);
+  });
+}
+
+/* ============================ RADAR ============================ */
+const radar=document.getElementById("radar");
+function renderRadar(){
+  const cx=230,cy=222,R=150,N=AXES.length;
+  let svg="";
+  // rings
+  for(let ring=1;ring<=5;ring++){
+    const r=R*ring/5; let pts=[];
+    for(let i=0;i<N;i++){const a=-Math.PI/2+i*2*Math.PI/N; pts.push((cx+r*Math.cos(a)).toFixed(1)+","+(cy+r*Math.sin(a)).toFixed(1));}
+    svg+=`<polygon points="${pts.join(" ")}" fill="none" class="${ring===5?'gridln2':'gridln'}"/>`;
+  }
+  // spokes + labels
+  for(let i=0;i<N;i++){
+    const a=-Math.PI/2+i*2*Math.PI/N;
+    const x=cx+R*Math.cos(a), y=cy+R*Math.sin(a);
+    svg+=`<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" class="gridln"/>`;
+    const lx=cx+(R+24)*Math.cos(a), ly=cy+(R+24)*Math.sin(a);
+    let anchor=Math.abs(Math.cos(a))<0.3?"middle":(Math.cos(a)>0?"start":"end");
+    svg+=`<text x="${lx.toFixed(1)}" y="${(ly+3).toFixed(1)}" text-anchor="${anchor}" class="axislbl">${AXES[i].label}</text>`;
+  }
+  // which visible names to plot: top-N by composite (keeps the chart legible at scale)
+  const visRanked=DATA.filter(d=>state.visible.has(d.tk))
+    .sort((a,b)=>composite(b,state.lens)-composite(a,state.lens));
+  const plotted=visRanked.slice(0, state.radarTopN);
+  const plottedSet=new Set(plotted.map(d=>d.tk));
+  const spot=state.hl;  // highlighted ticker, if any
+
+  // polygons (draw spotlighted one last so it sits on top)
+  const order=[...plotted].sort((a,b)=> (a.tk===spot?1:0)-(b.tk===spot?1:0));
+  order.forEach(d=>{
+    const col=colorOf(d);
+    const dim = spot && d.tk!==spot;
+    const fillOp = dim?0.02 : (spot? 0.14 : 0.07);
+    const strokeOp = dim?0.18 : 1;
+    const sw = d.tk===spot?2.6:2;
+    let pts=[];
+    for(let i=0;i<N;i++){
+      const a=-Math.PI/2+i*2*Math.PI/N; const v=d.r[AXES[i].k]/10*R;
+      pts.push((cx+v*Math.cos(a)).toFixed(1)+","+(cy+v*Math.sin(a)).toFixed(1));
+    }
+    svg+=`<polygon points="${pts.join(" ")}" fill="${col}" fill-opacity="${fillOp}" stroke="${col}" stroke-opacity="${strokeOp}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+    if(!dim) for(let i=0;i<N;i++){
+      const a=-Math.PI/2+i*2*Math.PI/N; const v=d.r[AXES[i].k]/10*R;
+      svg+=`<circle cx="${(cx+v*Math.cos(a)).toFixed(1)}" cy="${(cy+v*Math.sin(a)).toFixed(1)}" r="${d.tk===spot?3:2.4}" fill="${col}"/>`;
+    }
+  });
+  radar.innerHTML=svg;
+
+  // count note
+  const visN=visRanked.length;
+  const cn=document.getElementById("radarCountNote");
+  if(cn) cn.textContent = plotted.length<visN ? `plotting top ${plotted.length} of ${visN} shown` : `plotting all ${visN} shown`;
+
+  // legend — full ranked list of visible names; rows not on the radar are marked
+  const leg=document.getElementById("radarLegend");
+  leg.innerHTML="";
+  visRanked.forEach(d=>{
+    const col=colorOf(d);
+    const onRadar=plottedSet.has(d.tk);
+    const row=document.createElement("div");
+    row.className="rrow"+(onRadar?"":" off");
+    row.innerHTML=`<span class="dot" style="background:${col}"></span>
+      <span class="nm">${d.tk} ${d.nm}${onRadar?"":' <span class="muted" style="font-size:10px">·hidden</span>'}</span>
+      <span class="v" style="color:${col}">${composite(d,state.lens).toFixed(1)}</span>`;
+    row.onclick=()=>toggle(d.tk);
+    row.onmouseenter=()=>{ state.hl=d.tk; renderRadar(); };
+    row.onmouseleave=()=>{ state.hl=null; renderRadar(); };
+    leg.appendChild(row);
+  });
+  document.getElementById("lensNote").textContent=LENSES[state.lens].note;
+}
+
+/* ============================ SCATTER ============================ */
+const scatter=document.getElementById("scatter");
+const scatterTip=document.getElementById("scatterTip");
+function axisMeta(k){
+  const map={peFwd:{l:"Forward P/E",fmt:v=>v.toFixed(0)+"x"},
+    evEbitda:{l:"EV / EBITDA",fmt:v=>v.toFixed(0)+"x"},
+    epsCagrFwd:{l:"Fwd EPS growth",fmt:v=>v.toFixed(0)+"%"},
+    roic:{l:"ROIC",fmt:v=>v.toFixed(0)+"%"}};
+  return map[k];
+}
+function renderScatter(){
+  const W=880,H=470,pad={l:64,r:30,t:24,b:52};
+  const vis=DATA.filter(d=>state.visible.has(d.tk));
+  const xs=vis.map(d=>d.m[state.xKey]), ys=vis.map(d=>d.m[state.yKey]);
+  const all=DATA; // scale to full cohort for stable axes
+  const xAll=all.map(d=>d.m[state.xKey]), yAll=all.map(d=>d.m[state.yKey]);
+  let xMin=Math.min(...xAll), xMax=Math.max(...xAll), yMin=Math.min(...yAll), yMax=Math.max(...yAll);
+  const yPadr=(yMax-yMin)*0.12||1;
+  yMin-=yPadr; yMax+=yPadr;
+  if(state.yKey==="epsCagrFwd"||state.yKey==="roic") yMin=Math.min(yMin,0);
+  // x can use a log scale to keep extreme-multiple outliers (e.g. 380x P/E) from
+  // crushing the rest of the cloud. Log only applies to strictly-positive x metrics.
+  const logX = state.xScale==="log";
+  const tx=v=>logX?Math.log10(Math.max(v,0.1)):v;     // value → axis space
+  if(logX){ xMin=Math.max(1,xMin); }                  // floor at 1x for a clean decade base
+  else { const xPadr=(xMax-xMin)*0.12||1; xMin-=xPadr; xMax+=xPadr; }
+  let txMin=tx(xMin), txMax=tx(xMax);
+  if(logX){ const m=(txMax-txMin)*0.06||.1; txMin-=m; txMax+=m; }
+  const X=v=>pad.l+(tx(v)-txMin)/(txMax-txMin)*(W-pad.l-pad.r);
+  const Y=v=>H-pad.b-(v-yMin)/(yMax-yMin)*(H-pad.t-pad.b);
+  const xm=axisMeta(state.xKey), ym=axisMeta(state.yKey);
+  // x gridline tick values: log → "nice" 1-2-5×decade ladder within range; linear → 4 even steps
+  function xTicks(){
+    if(!logX){ return [0,1,2,3,4].map(i=>xMin+i/4*(xMax-xMin)); }
+    const out=[]; const lo=Math.pow(10,Math.floor(Math.log10(Math.max(xMin,1)))), hi=xMax;
+    for(let dec=lo; dec<=hi*1.0001; dec*=10){ for(const m of [1,2,5]){ const v=dec*m; if(v>=xMin*0.999 && v<=hi*1.0001) out.push(v); } }
+    return out.length?out:[xMin,xMax];
+  }
+  // medians of visible
+  const xMed=median(xs), yMed=median(ys);
+
+  let svg="";
+  // quadrant shading — only meaningful when "cheaper-left, better-up" holds (both current axes do)
+  const qx=X(xMed), qy=Y(yMed);
+  // bottom-left of crosshair = cheap + high (the sweet spot): faint green; top-right = dear + low: faint red
+  svg+=`<rect x="${pad.l}" y="${qy}" width="${qx-pad.l}" height="${H-pad.b-qy}" fill="#2E7D5B" fill-opacity="0.05"/>`;
+  svg+=`<rect x="${qx}" y="${pad.t}" width="${W-pad.r-qx}" height="${qy-pad.t}" fill="#B23A48" fill-opacity="0.05"/>`;
+  svg+=`<text x="${pad.l+6}" y="${H-pad.b-6}" class="medlbl" style="fill:#2E7D5B;font-weight:600">cheap · strong</text>`;
+  svg+=`<text x="${W-pad.r-6}" y="${pad.t+12}" text-anchor="end" class="medlbl" style="fill:#B23A48;font-weight:600">dear · weak</text>`;
+  // y gridlines (4 even steps)
+  for(let i=0;i<=4;i++){
+    const gy=pad.t+i/4*(H-pad.t-pad.b);
+    svg+=`<line x1="${pad.l}" y1="${gy}" x2="${W-pad.r}" y2="${gy}" class="gridln"/>`;
+    const yv=yMax-i/4*(yMax-yMin);
+    svg+=`<text x="${pad.l-10}" y="${gy+3}" text-anchor="end" class="axislbl">${ym.fmt(yv)}</text>`;
+  }
+  // x gridlines (log ladder or even linear steps)
+  xTicks().forEach(xv=>{
+    const gx=X(xv); if(gx<pad.l-1||gx>W-pad.r+1) return;
+    svg+=`<line x1="${gx.toFixed(1)}" y1="${pad.t}" x2="${gx.toFixed(1)}" y2="${H-pad.b}" class="gridln"/>`;
+    svg+=`<text x="${gx.toFixed(1)}" y="${H-pad.b+18}" text-anchor="middle" class="axislbl">${xm.fmt(xv)}</text>`;
+  });
+  // median lines
+  svg+=`<line x1="${qx}" y1="${pad.t}" x2="${qx}" y2="${H-pad.b}" class="medln"/>`;
+  svg+=`<line x1="${pad.l}" y1="${qy}" x2="${W-pad.r}" y2="${qy}" class="medln"/>`;
+  svg+=`<text x="${qx+5}" y="${pad.t+11}" class="medlbl">median ${xm.fmt(xMed)}</text>`;
+  svg+=`<text x="${W-pad.r}" y="${qy-5}" text-anchor="end" class="medlbl">median ${ym.fmt(yMed)}</text>`;
+  // axis titles
+  svg+=`<text x="${(pad.l+W-pad.r)/2}" y="${H-6}" text-anchor="middle" class="axislbl" style="font-size:11.5px">${xm.l} →  (cheaper is left${logX?" · log scale":""})</text>`;
+  svg+=`<text x="14" y="${(pad.t+H-pad.b)/2}" text-anchor="middle" class="axislbl" style="font-size:11.5px" transform="rotate(-90 14 ${(pad.t+H-pad.b)/2})">${ym.l} →</text>`;
+  // bubbles — size by mcap; draw largest first so small ones land on top and stay clickable
+  const rmin=7,rmax=32, mc=DATA.map(d=>mcapUSD(d)), mcMin=Math.min(...mc), mcMax=Math.max(...mc);
+  const rad=mc=>rmin+Math.sqrt((mc-mcMin)/(mcMax-mcMin||1))*(rmax-rmin);
+  const spot=state.hl;
+  const drawn=[...vis].map(d=>({d,x:X(d.m[state.xKey]),y:Y(d.m[state.yKey]),r:rad(mcapUSD(d))}))
+    .sort((a,b)=>b.r-a.r);
+  // label only when uncrowded (≤18 visible) or for the spotlighted bubble — avoids label soup at scale
+  const labelAll = vis.length<=18;
+  drawn.forEach(({d,x,y,r})=>{
+    const col=colorOf(d);
+    const dim = spot && d.tk!==spot;
+    const fo = dim?0.04 : 0.16, so = dim?0.25:1, sw = d.tk===spot?3:2;
+    svg+=`<circle class="bub" data-tk="${d.tk}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}"
+       fill="${col}" fill-opacity="${fo}" stroke="${col}" stroke-opacity="${so}" stroke-width="${sw}" style="cursor:pointer"/>`;
+    if((labelAll||d.tk===spot)&&!dim)
+      svg+=`<text x="${x.toFixed(1)}" y="${(y+3.5).toFixed(1)}" text-anchor="middle" style="font-family:var(--mono);font-size:10px;font-weight:600;fill:${col};pointer-events:none">${d.tk}</text>`;
+  });
+  // size legend (bottom-right): two reference bubbles
+  const lx=W-pad.r-96, ly=H-pad.b-46;
+  const big=rad(mcMax), small=rad(median(mc));
+  svg+=`<text x="${W-pad.r}" y="${ly-big-6}" text-anchor="end" class="medlbl">bubble = market cap</text>`;
+  svg+=`<circle cx="${lx}" cy="${ly-big+big}" r="${big}" fill="none" stroke="var(--ink3)" stroke-width="1"/>`;
+  svg+=`<circle cx="${lx}" cy="${ly-big+2*big-small}" r="${small}" fill="none" stroke="var(--ink3)" stroke-width="1"/>`;
+  svg+=`<text x="${lx+big+6}" y="${ly-big+big+3}" class="medlbl">$${(mcMax).toFixed(0)}B</text>`;
+  svg+=`<text x="${lx+big+6}" y="${ly-big+2*big-small+3}" class="medlbl">$${median(mc).toFixed(0)}B</text>`;
+  scatter.innerHTML=svg;
+  scatter.querySelectorAll(".bub").forEach(b=>{
+    b.onmouseenter=()=>{const d=byTk[b.dataset.tk];
+      state.hl=d.tk; renderScatter();
+      scatterTip.innerHTML=`<b style="color:${colorOf(d)}">${d.tk} ${d.nm}</b> <span class="muted">(${LAYER_LABEL[d.layer]})</span> &nbsp; ${xm.l} ${xm.fmt(d.m[state.xKey])} · ${ym.l} ${ym.fmt(d.m[state.yKey])} · Mkt cap ${fmtMcap(d)} · Fwd P/E ${d.m.peFwd>=900?"n/m":d.m.peFwd+"x"} · ROIC ${d.m.roic}% · Net debt/EBITDA ${d.m.netDebtEbitda<0?"net cash":d.m.netDebtEbitda+"x"}`;};
+    b.onmouseleave=()=>{ state.hl=null; renderScatter(); scatterTip.textContent=""; };
+  });
+}
+
+/* ============================ HEATMAP ============================ */
+const heat=document.getElementById("heat");
+function lerp(a,b,t){return a+(b-a)*t;}
+function gradeColor(t){ // t: 0(worst)..1(best)
+  // worst -> warm/red wash, best -> green wash, mid -> paper
+  let r,g,b;
+  if(t<0.5){const k=t/0.5; r=lerp(244,250,k); g=lerp(225,249,k); b=lerp(223,246,k);}
+  else{const k=(t-0.5)/0.5; r=lerp(250,214,k); g=lerp(249,238,k); b=lerp(246,224,k);}
+  return `rgb(${r|0},${g|0},${b|0})`;
+}
+function renderHeat(){
+  const vis=DATA.filter(d=>state.visible.has(d.tk));
+  // default column order groups by chain layer (upstream→downstream), then composite within layer;
+  // a ticker-sort overrides nothing here (it reorders ROWS, not columns)
+  const cols=(vis.length?vis:DATA).slice().sort((a,b)=>
+    (LAYER_ORDER[a.layer]-LAYER_ORDER[b.layer]) || (composite(b,state.lens)-composite(a,state.lens)));
+  // header — thin layer-colored top border marks where each layer group begins
+  let thead=`<tr><th class="metric" onclick="setSort(null)">Metric<span class="hint">columns grouped by layer · click a ticker to sort rows ↓</span></th>`;
+  cols.forEach((d,i)=>{
+    const cue=state.sortKey&&state.sortKey.tk===d.tk?`<span class="sortcue"> ${state.sortDir<0?"▼":"▲"}</span>`:"";
+    const newGroup = i===0 || cols[i-1].layer!==d.layer;
+    const lc=LAYER_COLOR[d.layer]||d.color;
+    thead+=`<th data-tk="${d.tk}" title="${LAYER_LABEL[d.layer]}" style="box-shadow:inset 0 3px 0 ${newGroup?lc:"transparent"}">`+
+      `<span class="tkdot" style="background:${colorOf(d)}"></span>${d.tk}${cue}</th>`;
+  });
+  thead+=`</tr>`;
+  heat.querySelector("thead").innerHTML=thead;
+
+  // rows, optionally sorted by selected ticker's value within each row order? sorting columns means reorder rows by that ticker's metric.
+  let metrics=[...METRICS];
+  // build body
+  let body="";
+  metrics.forEach(met=>{
+    const vals=cols.map(d=>metricVal(d,met));
+    let lo=Math.min(...vals), hi=Math.max(...vals);
+    body+=`<tr><td class="metric">${met.label}<span class="hint">${met.hint}</span></td>`;
+    cols.forEach(d=>{
+      const v=metricVal(d,met);
+      let t = hi===lo?0.5 : (v-lo)/(hi-lo);
+      if(!met.hi) t=1-t;
+      // clamp specials: intCov 999 -> best
+      const disp=met.fmt(v);
+      body+=`<td class="cell" style="background:${gradeColor(t)}">${disp}</td>`;
+    });
+    body+=`</tr>`;
+  });
+  heat.querySelector("tbody").innerHTML=body;
+
+  heat.querySelectorAll("thead th[data-tk]").forEach(th=>{
+    th.onclick=()=>{
+      const tk=th.dataset.tk;
+      if(state.sortKey&&state.sortKey.tk===tk) state.sortDir*=-1;
+      else { state.sortKey={tk}; state.sortDir=-1; }
+      sortHeatRows();
+    };
+  });
+  if(state.sortKey) sortHeatRows();
+}
+function sortHeatRows(){
+  // reorder visible tbody rows by the chosen ticker's normalized rank (best metrics top when desc)
+  const tb=heat.querySelector("tbody");
+  const rows=[...tb.children];
+  const cols=DATA.filter(d=>state.visible.has(d.tk)); const colsArr=cols.length?cols:DATA;
+  const idx=colsArr.findIndex(d=>d.tk===state.sortKey.tk);
+  if(idx<0) return;
+  // compute normalized score for the selected ticker per metric (higher=better after orientation)
+  const scored=rows.map((row,i)=>{
+    const met=METRICS[i];
+    const vals=colsArr.map(d=>metricVal(d,met));
+    let lo=Math.min(...vals),hi=Math.max(...vals);
+    const v=metricVal(colsArr[idx],met);
+    let t=hi===lo?0.5:(v-lo)/(hi-lo); if(!met.hi)t=1-t;
+    return {row,t};
+  });
+  scored.sort((a,b)=>(b.t-a.t)*(state.sortDir<0?1:-1));
+  scored.forEach(s=>tb.appendChild(s.row));
+  // refresh header cue
+  heat.querySelectorAll("thead th[data-tk]").forEach(th=>{
+    const old=th.querySelector(".sortcue"); if(old) old.remove();
+    if(th.dataset.tk===state.sortKey.tk){
+      const s=document.createElement("span"); s.className="sortcue"; s.textContent=" "+(state.sortDir<0?"▼":"▲"); th.appendChild(s);
+    }
+  });
+}
+function setSort(x){ state.sortKey=null; renderHeat(); }
+window.setSort=setSort;
+
+/* ============================ REVERSE DCF ============================ */
+const dcfSeg=document.getElementById("dcfSeg");
+DATA.forEach(d=>{
+  const b=document.createElement("button"); b.textContent=d.tk; b.dataset.tk=d.tk;
+  b.onclick=()=>{ state.dcf=d.tk; renderDCF(); };
+  dcfSeg.appendChild(b);
+});
+function dcfValue(d,g,m,r,tg){ // g,m,r,tg in % (m absolute %, others %); returns ¥/share
+  const R0=d.d.revPS, nc=d.d.netCashPS, years=10;
+  const gr=g/100, mar=m/100, dr=r/100, tgr=tg/100;
+  let pv=0, rev=R0;
+  for(let t=1;t<=years;t++){ rev*=(1+gr); const fcf=rev*mar; pv+=fcf/Math.pow(1+dr,t); }
+  const fcfT=rev*mar; const tv=fcfT*(1+tgr)/(dr-tgr); pv+=tv/Math.pow(1+dr,years);
+  return pv+nc;
+}
+function impliedGrowth(d,m,r,tg,price){ // solve g s.t. dcfValue==price
+  let lo=-20, hi=80;
+  for(let i=0;i<60;i++){ const mid=(lo+hi)/2; const v=dcfValue(d,mid,m,r,tg);
+    if(v>price) hi=mid; else lo=mid; }
+  return (lo+hi)/2;
+}
+function renderDCF(){
+  dcfSeg.querySelectorAll("button").forEach(b=>b.classList.toggle("active",b.dataset.tk===state.dcf));
+  const d=byTk[state.dcf], v=state.dcfV[state.dcf];
+  const slEl=document.getElementById("dcfSliders");
+  const defs=[
+    {k:"g",label:"Revenue growth (10y)",min:-10,max:45,step:0.5,unit:"%/yr"},
+    {k:"m",label:"Terminal FCF margin",min:1,max:45,step:0.5,unit:"%"},
+    {k:"r",label:"Discount rate (WACC)",min:5,max:15,step:0.25,unit:"%"},
+    {k:"tg",label:"Terminal growth",min:0,max:5,step:0.25,unit:"%"}
+  ];
+  slEl.innerHTML="";
+  defs.forEach(def=>{
+    const wrap=document.createElement("div"); wrap.className="sld";
+    wrap.innerHTML=`<label>${def.label}<span class="val">${v[def.k]}${def.unit}</span></label>
+      <input type="range" min="${def.min}" max="${def.max}" step="${def.step}" value="${v[def.k]}">`;
+    const inp=wrap.querySelector("input");
+    inp.oninput=()=>{ v[def.k]=parseFloat(inp.value); wrap.querySelector(".val").textContent=v[def.k]+def.unit; renderDCFout(); };
+    slEl.appendChild(wrap);
+  });
+  renderDCFout();
+}
+function renderDCFout(){
+  const d=byTk[state.dcf], v=state.dcfV[state.dcf];
+  const fv=dcfValue(d,v.g,v.m,v.r,v.tg);
+  const upside=(fv/d.price-1)*100;
+  const impl=impliedGrowth(d,v.m,v.r,v.tg,d.price);
+  const ncTxt=d.d.netCashPS>=0?`+${fmtMoney(d.d.netCashPS,d)} net cash/sh`:`${fmtMoney(d.d.netCashPS,d)} net debt/sh`;
+  const out=document.getElementById("dcfOut");
+  out.innerHTML=`
+    <div class="dcfrow"><span class="k">Current price</span><span class="v">${fmtMoney(d.price,d)}</span></div>
+    <div class="dcfrow big"><span class="k">Intrinsic value / share</span>
+      <span class="v" style="color:${upside>=0?'var(--good)':'var(--bad)'}">${fmtMoney(fv,d)}</span></div>
+    <div class="dcfrow"><span class="k">Upside / (downside)</span>
+      <span class="v ${upside>=0?'up':'down'}">${upside>=0?'+':''}${upside.toFixed(0)}%</span></div>
+    <div class="impl">At today's price, the model implies ~<b>${impl.toFixed(1)}% revenue growth</b> for 10 years
+      (holding margin ${v.m}%, WACC ${v.r}%, terminal ${v.tg}%). Your assumption is <b>${v.g}%</b> —
+      ${v.g>impl?`above the implied bar, so the DCF says <span class="up">undervalued</span>.`:
+        v.g<impl?`below the implied bar, so the DCF says <span class="down">overvalued</span>.`:`right at the implied bar — fairly valued.`}
+      <br><span class="muted">Base inputs: rev/sh ${fmtMoney(d.d.revPS,d)}, ${ncTxt}, starting FCF margin ~${Math.round(d.d.fcfM*100)}%.</span></div>`;
+}
+
+/* ============================ VERDICT ============================ */
+function renderVerdict(){
+  const w=LENSES[state.lens].w;
+  document.getElementById("weightExpl").innerHTML="Weights ("+LENSES[state.lens].label+"): "+
+    AXES.map(a=>`<b>${a.label}</b> ${(w[a.k]*100)|0}%`).join(" · ");
+  const vis=DATA.filter(d=>state.visible.has(d.tk));
+  const ranked=[...vis].sort((a,b)=>composite(b,state.lens)-composite(a,state.lens));
+  const max=Math.max(...DATA.map(d=>composite(d,state.lens)));
+  const CAP=12; // collapse long lists
+  const showAll = state.verdictExpanded || ranked.length<=CAP;
+  const shown = showAll ? ranked : ranked.slice(0, CAP);
+  const el=document.getElementById("verdict"); el.innerHTML="";
+  shown.forEach((d,i)=>{
+    const sc=composite(d,state.lens), col=colorOf(d);
+    const row=document.createElement("div"); row.className="vbar";
+    row.innerHTML=`
+      <div class="lab"><span class="rk">${i+1}</span><span class="dot" style="background:${col}"></span>
+        <span>${d.tk} ${d.nm.split(" ")[0]}</span></div>
+      <div class="track"><div class="fill" style="width:${(sc/max*100).toFixed(1)}%;background:${col}"></div></div>
+      <div class="sc" style="color:${col}">${sc.toFixed(1)}</div>
+      <div class="pop"><span class="bp bull">▲ Bull — ${d.bull}</span><span class="bp bear">▼ Bear — ${d.bear}</span></div>`;
+    // tap to reveal bull/bear on touch devices (hover handles desktop via CSS)
+    row.addEventListener("click",()=>{
+      const wasOpen=row.classList.contains("show");
+      [...el.children].forEach(r=>r.classList.remove("show"));
+      if(!wasOpen) row.classList.add("show");
+    });
+    el.appendChild(row);
+  });
+  const more=document.getElementById("verdictMore");
+  if(ranked.length<=CAP){ more.hidden=true; }
+  else { more.hidden=false; more.textContent = showAll ? `▴ Show top ${CAP} only` : `▾ Show all ${ranked.length} ranked names`;
+    more.onclick=()=>{ state.verdictExpanded=!state.verdictExpanded; renderVerdict(); }; }
+}
+
+/* ============================ MARKET SHARE ============================ */
+const shareEl=document.getElementById("shareView");
+function renderShareView(){
+  shareEl.innerHTML="";
+  const vis=new Set([...state.visible]);
+  presentLayers.forEach(l=>{
+    const names=DATA.filter(d=>d.layer===l.k && vis.has(d.tk) && d.share);
+    if(!names.length) return;
+    // within a layer, sort by share desc (n/a, pct<0, sinks to the bottom)
+    names.sort((a,b)=>(b.share.pct<0?-1:b.share.pct)-(a.share.pct<0?-1:a.share.pct));
+    const grp=document.createElement("div"); grp.className="sharegrp";
+    let rows=`<div class="gh"><span class="sw" style="background:${l.c}"></span>
+      <span class="nm">${l.label}</span><span class="ct">${names.length}</span></div>`;
+    names.forEach(d=>{
+      const sh=d.share, na=!(sh.pct>=0), col=colorOf(d);
+      const w=na?100:Math.max(2,Math.min(100,sh.pct));
+      rows+=`<div class="srow" title="${(sh.market||"").replace(/"/g,'&quot;')}">
+        <div class="lab"><span class="tk">${d.tk}</span><span class="nm">${d.nm}</span></div>
+        <div class="strack"><div class="sfill${na?" na":""}" style="width:${w}%;background:${na?"":col}"></div></div>
+        <div class="sright">${na?'<span class="pv" style="color:var(--ink3)">n/a</span>':
+          `<span class="pv" style="color:${col}">~${sh.pct}%</span><span class="rk">${sh.rank||""}</span>`}
+          <span class="conf ${sh.conf||"low"}" title="${sh.conf||"low"} confidence"></span></div>
+        <div class="mkt">${na?"n/a — outside a single served market":"share of "+ (sh.market||"served market")}</div>
+      </div>`;
+    });
+    grp.innerHTML=rows;
+    shareEl.appendChild(grp);
+  });
+  if(!shareEl.children.length) shareEl.innerHTML=`<div class="chipsempty muted" style="padding:14px">No market-share data for the current selection.</div>`;
+}
+
+/* ============================ RENDER ALL ============================ */
+function renderAll(){
+  syncChips(); renderLayerMap(); renderCards(); renderRadar(); renderScatter(); renderHeat(); renderDCF(); renderVerdict(); renderShareView();
+}
+renderAll();
+
+/* ============================ HERO & MOTION ============================ */
+const RM = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* hero flow lines — gentle left→right currents echoing upstream→downstream */
+(function heroFlow(){
+  const el=document.getElementById("heroflow"); if(!el) return;
+  const cols=["#A8431F","#C9742B","#B8893B","#2E86AB","#1E8E6B"];
+  let s="";
+  const rows=7;
+  for(let i=0;i<rows;i++){
+    const y=40+i*62 + (i%2?10:0);
+    const c=cols[i%cols.length];
+    // a smooth wave across the width
+    const amp=16+ (i%3)*10;
+    let d=`M -20 ${y}`;
+    for(let x=0;x<=1240;x+=120){ const yy=y+(Math.sin(x/120+i)*amp); d+=` Q ${x+60} ${yy+amp} ${x+120} ${y}`; }
+    s+=`<path d="${d}" stroke="${c}" style="animation-delay:${(i*0.7).toFixed(2)}s;animation-duration:${(8+i).toFixed(0)}s"/>`;
+  }
+  el.innerHTML=s;
+})();
+
+/* count-up hero stats */
+function countUp(elm){
+  const target=+elm.dataset.count, sfx=elm.dataset.suffix||"";
+  if(RM){ elm.textContent=target+sfx; return; }
+  const dur=1100, t0=performance.now();
+  function step(now){
+    const p=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-p,3);
+    elm.textContent=Math.round(target*e)+sfx;
+    if(p<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+/* scroll reveals + trigger count-ups when hero stats enter */
+(function motion(){
+  // tag each analysis section for reveal
+  document.querySelectorAll("section").forEach((s,i)=>{ s.classList.add("reveal"); s.style.setProperty("--d","0s"); });
+  const els=document.querySelectorAll(".reveal");
+  if(RM || !("IntersectionObserver" in window)){ els.forEach(e=>e.classList.add("in")); document.querySelectorAll(".sv[data-count]").forEach(countUp); return; }
+  let counted=false;
+  const io=new IntersectionObserver((ents)=>{
+    ents.forEach(en=>{
+      if(en.isIntersecting){
+        en.target.classList.add("in");
+        if(!counted && en.target.querySelector && en.target.querySelector(".sv[data-count]")){
+          counted=true; en.target.querySelectorAll(".sv[data-count]").forEach(countUp);
+        }
+        io.unobserve(en.target);
+      }
+    });
+  },{threshold:.12, rootMargin:"0px 0px -8% 0px"});
+  els.forEach(e=>io.observe(e));
+  // hero stats may already be in view on load → observe the statrow explicitly
+  const sr=document.querySelector(".statrow");
+  if(sr){ const io2=new IntersectionObserver((e)=>{ if(e[0].isIntersecting && !counted){ counted=true; sr.querySelectorAll(".sv[data-count]").forEach(countUp); io2.disconnect(); } },{threshold:.3}); io2.observe(sr); }
+})();
+</script>
+</body>
+</html>
