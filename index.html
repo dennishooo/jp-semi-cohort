@@ -125,6 +125,8 @@
   .laytile:hover{background:#fff;transform:translateY(-2px);box-shadow:0 8px 22px -8px rgba(20,16,8,.16);z-index:2}
   .laytile .scwrap .v{font-family:var(--display)!important;font-weight:500}
   .laytile.active{background:var(--hl);box-shadow:inset 3px 0 0 var(--ink)}
+  .laytile.empty{opacity:.4}
+  .laytile.empty:hover{opacity:.7}
   .laytile .lh{display:flex;align-items:center;gap:7px;margin-bottom:9px}
   .laytile .lh .sw{width:9px;height:9px;border-radius:2px;flex:none}
   .laytile .lh .nm{font-size:12.5px;font-weight:650;line-height:1.1}
@@ -1734,20 +1736,26 @@ document.getElementById("radarNSeg").querySelectorAll("button").forEach(b=>{
 const layerMapEl=document.getElementById("layerMap");
 function renderLayerMap(){
   layerMapEl.innerHTML="";
+  // map stays a full navigator (all layers shown so you can switch), but stats reflect the
+  // CURRENT selection: empty layers dim, counts/score/P/E/GM are computed from visible members.
   presentLayers.forEach(l=>{
-    const names=DATA.filter(d=>d.layer===l.k);
-    const scores=names.map(d=>composite(d,state.lens));
-    const avg=scores.reduce((a,b)=>a+b,0)/names.length;
-    const top=[...names].sort((a,b)=>composite(b,state.lens)-composite(a,state.lens))[0];
-    const medPE=median(names.map(d=>d.m.peFwd).filter(v=>v<900));   // exclude n/m sentinels
-    const medGM=median(names.map(d=>d.m.gross));
-    const tks=names.map(d=>d.tk);
-    const isExact=tks.length===state.visible.size && tks.every(t=>state.visible.has(t));
+    const all=DATA.filter(d=>d.layer===l.k);
+    const allTks=all.map(d=>d.tk);
+    const names=all.filter(d=>state.visible.has(d.tk));   // visible members of this layer
+    const nVis=names.length, nAll=all.length;
+    const isExact=nVis===state.visible.size && nVis===nAll && nAll>0;  // this layer is the whole selection
+    const stat=names.length?names:all;                    // fall back to full layer if none visible
+    const scores=stat.map(d=>composite(d,state.lens));
+    const avg=scores.reduce((a,b)=>a+b,0)/stat.length;
+    const top=[...stat].sort((a,b)=>composite(b,state.lens)-composite(a,state.lens))[0];
+    const medPE=median(stat.map(d=>d.m.peFwd).filter(v=>v<900));
+    const medGM=median(stat.map(d=>d.m.gross));
     const tile=document.createElement("div");
-    tile.className="laytile"+(isExact?" active":"");
+    tile.className="laytile"+(isExact?" active":"")+(nVis===0?" empty":"");
+    const countLbl = nVis===nAll ? `${nAll}` : `${nVis}/${nAll}`;
     tile.innerHTML=`
       <div class="lh"><span class="sw" style="background:${l.c}"></span>
-        <span class="nm">${l.label}</span><span class="ct">${names.length}</span></div>
+        <span class="nm">${l.label}</span><span class="ct">${countLbl}</span></div>
       <div class="scwrap"><span class="v" style="color:${l.c}">${avg.toFixed(1)}</span>
         <span class="l">avg ${state.lens==="value"?"value":"quality"}</span></div>
       <div class="track"><div class="fill" style="width:${(avg/10*100).toFixed(0)}%;background:${l.c}"></div></div>
@@ -1756,9 +1764,10 @@ function renderLayerMap(){
         <span><span class="k">GM</span> <b>${medGM.toFixed(0)}%</b></span>
         <span><span class="k">top</span> <b>${top.tk}</b></span>
       </div>`;
-    tile.title=`Isolate ${l.label} — ${names.length} names: ${tks.join(", ")}`;
+    tile.title=`Isolate ${l.label} — ${nAll} names: ${allTks.join(", ")}`;
+    // click isolates this layer; click again (when it's the active sole selection) → All
     tile.onclick=()=>{ if(isExact){ state.visible=new Set(DATA.map(d=>d.tk)); }
-      else { state.visible=new Set(tks); } renderAll(); };
+      else { state.visible=new Set(allTks); } renderAll(); };
     layerMapEl.appendChild(tile);
   });
 }
@@ -1767,7 +1776,10 @@ function renderLayerMap(){
 const cardsEl=document.getElementById("cards");
 function renderCards(){
   cardsEl.innerHTML="";
-  DATA.forEach(d=>{
+  // only the selected names — filtered-out cards are removed so the grid reflows (no greyed dead space)
+  const vis=DATA.filter(d=>state.visible.has(d.tk))
+    .sort((a,b)=>(LAYER_ORDER[a.layer]-LAYER_ORDER[b.layer]) || (composite(b,state.lens)-composite(a,state.lens)));
+  vis.forEach(d=>{
     const sc=composite(d,state.lens), col=colorOf(d);
     const card=document.createElement("div");
     card.className="card";
@@ -1786,7 +1798,6 @@ function renderCards(){
         <p class="th">${d.thesis}</p>
       </div>`;
     card.querySelector(".top").onclick=()=>card.classList.toggle("open");
-    if(!state.visible.has(d.tk)) card.style.opacity=.4;
     cardsEl.appendChild(card);
   });
 }
