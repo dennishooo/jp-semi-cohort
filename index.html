@@ -61,6 +61,24 @@
   /* let the per-ticker chip area scroll if it gets tall on small screens */
   .chips{max-height:108px;overflow-y:auto}
 
+  /* supply-chain map tiles */
+  .laytiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+  .laytile{background:var(--paper);padding:11px 13px 12px;cursor:pointer;position:relative;transition:background .12s}
+  .laytile:hover{background:var(--hl)}
+  .laytile.active{background:var(--hl);box-shadow:inset 3px 0 0 var(--ink)}
+  .laytile .lh{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+  .laytile .lh .sw{width:9px;height:9px;border-radius:2px;flex:none}
+  .laytile .lh .nm{font-size:12.5px;font-weight:650;line-height:1.1}
+  .laytile .lh .ct{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--ink3)}
+  .laytile .scwrap{display:flex;align-items:baseline;gap:6px;margin-bottom:8px}
+  .laytile .scwrap .v{font-family:var(--mono);font-size:21px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1}
+  .laytile .scwrap .l{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+  .laytile .track{height:4px;background:var(--hl);border-radius:2px;overflow:hidden;margin-bottom:9px}
+  .laytile .track .fill{height:100%;border-radius:2px}
+  .laytile .stats{display:flex;gap:12px;font-family:var(--mono);font-size:10.5px;color:var(--ink2)}
+  .laytile .stats b{color:var(--ink);font-weight:600}
+  .laytile .stats .k{color:var(--ink3)}
+
   section{margin:0 0 56px}
   .secnum{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.1em}
   .sechead{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:9px;margin-bottom:6px}
@@ -161,6 +179,10 @@
   .vbar .pop .bull{color:#9fe6c4} .vbar .pop .bear{color:#f4b0ba}
   .wexpl{font-family:var(--mono);font-size:11px;color:var(--ink3);margin:0 0 14px;line-height:1.7}
   .wexpl b{color:var(--ink2)}
+  .morebtn{display:block;width:100%;margin-top:8px;font-family:var(--mono);font-size:11.5px;color:var(--ink2);
+    background:#fff;border:1px solid var(--line2);border-radius:2px;padding:8px;cursor:pointer}
+  .morebtn:hover{background:var(--hl)}
+  .morebtn[hidden]{display:none}
 
   footer{border-top:1px solid var(--line2);margin-top:18px;padding:22px 0 60px;font-size:12px;color:var(--ink3);line-height:1.7}
   footer b{color:var(--ink2)}
@@ -269,6 +291,11 @@
     <span class="glabel">Chain layer</span>
     <div class="layers" id="layers"></div>
     <span class="spacer"></span>
+    <span class="glabel">Color</span>
+    <div class="seg" id="colorSeg">
+      <button data-color="ticker" class="active">By name</button>
+      <button data-color="layer">By layer</button>
+    </div>
     <span class="glabel">Scoring lens</span>
     <div class="seg" id="lensSeg">
       <button data-lens="value">Value</button>
@@ -283,6 +310,16 @@
 
 <div class="wrap">
 
+  <!-- 0. SUPPLY-CHAIN MAP -->
+  <section>
+    <div class="sechead"><span class="secnum">00</span><h2>Supply-chain map</h2></div>
+    <p class="caption"><span class="dec">Decision it helps make:</span> where in the chain the quality and value
+      actually sit. Each tile is one layer, upstream → downstream, showing how many names it holds, the average
+      composite under your lens, and the layer's median forward P/E and gross margin. Click a tile to isolate that
+      layer across every chart.</p>
+    <div class="laytiles" id="layerMap"></div>
+  </section>
+
   <!-- 1. THESIS STRIP -->
   <section>
     <div class="sechead"><span class="secnum">01</span><h2>Thesis strip</h2></div>
@@ -296,7 +333,17 @@
     <div class="sechead"><span class="secnum">02</span><h2>Quality radar</h2></div>
     <p class="caption"><span class="dec">Decision it helps make:</span> see each business's <em>shape</em> — where a high
       composite comes from. A wafer maker and a fabless test leader can score similarly for opposite reasons. Axes are
-      normalized 0–10 (10 = best in cohort); the legend value is the lens-weighted composite. Click the legend to isolate names.</p>
+      normalized 0–10 (10 = best in cohort); the legend value is the lens-weighted composite. With many names shown the
+      chart plots only the <b>top scorers</b> to stay legible — raise the limit or click a legend row to spotlight one shape.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+      <span class="glabel">Show on radar</span>
+      <div class="seg" id="radarNSeg" style="margin-left:4px">
+        <button data-n="8" class="active">Top 8</button>
+        <button data-n="16">Top 16</button>
+        <button data-n="999">All visible</button>
+      </div>
+      <span class="muted" id="radarCountNote" style="font-family:var(--mono);font-size:11px"></span>
+    </div>
     <div class="grid2">
       <figure class="panel"><svg id="radar" viewBox="0 0 460 460" role="img" aria-label="Radar chart"></svg></figure>
       <div>
@@ -377,6 +424,7 @@
       Hover any bar for its single biggest bull and bear point. Weights re-sort the field live.</p>
     <p class="wexpl" id="weightExpl"></p>
     <div class="vbars" id="verdict"></div>
+    <button class="morebtn" id="verdictMore"></button>
   </section>
 
 </div>
@@ -937,24 +985,28 @@ const AXES=[
 
 /* Supply-chain layers, ordered upstream → downstream. Each DATA row carries a `layer` key. */
 const LAYERS=[
- {k:"gases",label:"Gases"},
- {k:"materials",label:"Materials"},
- {k:"wafers",label:"Wafers"},
- {k:"eda",label:"EDA & IP"},
- {k:"design",label:"Chip designers"},
- {k:"foundry",label:"Foundry"},
- {k:"idm",label:"IDM"},
- {k:"memory",label:"Memory"},
- {k:"analog",label:"Analog / auto"},
- {k:"power",label:"Power"},
- {k:"equipment",label:"Equipment"},
- {k:"test",label:"Test"},
- {k:"backend",label:"Back-end / assembly"},
- {k:"osat",label:"OSAT & substrates"},
- {k:"distribution",label:"Distribution"},
- {k:"demand",label:"End clients / demand"}
+ {k:"gases",label:"Gases",c:"#5B8C5A"},
+ {k:"materials",label:"Materials",c:"#7FA650"},
+ {k:"wafers",label:"Wafers",c:"#B0843B"},
+ {k:"eda",label:"EDA & IP",c:"#8E5DA8"},
+ {k:"design",label:"Chip designers",c:"#C0392B"},
+ {k:"foundry",label:"Foundry",c:"#D35400"},
+ {k:"idm",label:"IDM",c:"#0071C5"},
+ {k:"memory",label:"Memory",c:"#16557B"},
+ {k:"analog",label:"Analog / auto",c:"#2E86AB"},
+ {k:"power",label:"Power",c:"#1E8E6B"},
+ {k:"equipment",label:"Equipment",c:"#00786A"},
+ {k:"test",label:"Test",c:"#9C2C77"},
+ {k:"backend",label:"Back-end / assembly",c:"#6A4C93"},
+ {k:"osat",label:"OSAT & substrates",c:"#C9468A"},
+ {k:"distribution",label:"Distribution",c:"#7A8390"},
+ {k:"demand",label:"End clients / demand",c:"#555555"}
 ];
 const LAYER_LABEL=Object.fromEntries(LAYERS.map(l=>[l.k,l.label]));
+const LAYER_COLOR=Object.fromEntries(LAYERS.map(l=>[l.k,l.c]));
+const LAYER_ORDER=Object.fromEntries(LAYERS.map((l,i)=>[l.k,i]));
+/* effective plotting color for a name: per-ticker by default, or by chain layer when colorMode='layer' */
+function colorOf(d){ return state.colorMode==="layer" ? (LAYER_COLOR[d.layer]||d.color) : d.color; }
 
 const LENSES={
  value:{label:"Value",w:{val:.30,fcf:.15,bs:.15,roic:.12,moat:.10,growth:.10,scal:.08},
@@ -991,7 +1043,11 @@ const state={
   xKey:"peFwd", yKey:"epsCagrFwd",
   period:"ttm", basis:"gaap",
   sortKey:null, sortDir:-1,
-  dcf:DATA[0].tk, dcfV:{}
+  dcf:DATA[0].tk, dcfV:{},
+  colorMode:"ticker",   // "ticker" | "layer"
+  radarTopN:8,          // when many names visible, radar draws only the top-N by composite
+  verdictExpanded:false,
+  hl:null               // highlighted ticker (legend/scatter hover spotlight)
 };
 DATA.forEach(d=>{ state.dcfV[d.tk]={g:d.m.epsCagrFwd, m:Math.round(d.d.fcfM*100), r:9, tg:2.5}; });
 
@@ -1029,6 +1085,9 @@ function composite(d,lens){
   for(const a of AXES) s+=d.r[a.k]*w[a.k];
   return s;
 }
+/* shared median helper (used by layer map and scatter) */
+function median(arr){ const s=[...arr].filter(v=>v!=null&&!isNaN(v)).sort((a,b)=>a-b); const n=s.length;
+  return n? (n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2) : 0; }
 function basisAdj(d,key){
   // SBC-adjusted basis: nudge margins down slightly by SBC; trivially small for these names
   if(state.basis!=="sbc") return d.m[key];
@@ -1121,27 +1180,70 @@ document.getElementById("basisSeg").querySelectorAll("button").forEach(b=>{
   b.onclick=()=>{ state.basis=b.dataset.basis;
     document.querySelectorAll("#basisSeg button").forEach(x=>x.classList.toggle("active",x===b)); renderHeat(); };
 });
+/* color mode (by name / by layer) — affects radar, scatter, heatmap, verdict */
+document.getElementById("colorSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ state.colorMode=b.dataset.color;
+    document.querySelectorAll("#colorSeg button").forEach(x=>x.classList.toggle("active",x===b)); renderAll(); };
+});
+/* radar top-N */
+document.getElementById("radarNSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ state.radarTopN=parseInt(b.dataset.n,10);
+    document.querySelectorAll("#radarNSeg button").forEach(x=>x.classList.toggle("active",x===b)); renderRadar(); };
+});
+
+/* ============================ SUPPLY-CHAIN MAP ============================ */
+const layerMapEl=document.getElementById("layerMap");
+function renderLayerMap(){
+  layerMapEl.innerHTML="";
+  presentLayers.forEach(l=>{
+    const names=DATA.filter(d=>d.layer===l.k);
+    const scores=names.map(d=>composite(d,state.lens));
+    const avg=scores.reduce((a,b)=>a+b,0)/names.length;
+    const top=[...names].sort((a,b)=>composite(b,state.lens)-composite(a,state.lens))[0];
+    const medPE=median(names.map(d=>d.m.peFwd).filter(v=>v<900));   // exclude n/m sentinels
+    const medGM=median(names.map(d=>d.m.gross));
+    const tks=names.map(d=>d.tk);
+    const isExact=tks.length===state.visible.size && tks.every(t=>state.visible.has(t));
+    const tile=document.createElement("div");
+    tile.className="laytile"+(isExact?" active":"");
+    tile.innerHTML=`
+      <div class="lh"><span class="sw" style="background:${l.c}"></span>
+        <span class="nm">${l.label}</span><span class="ct">${names.length}</span></div>
+      <div class="scwrap"><span class="v" style="color:${l.c}">${avg.toFixed(1)}</span>
+        <span class="l">avg ${state.lens==="value"?"value":"quality"}</span></div>
+      <div class="track"><div class="fill" style="width:${(avg/10*100).toFixed(0)}%;background:${l.c}"></div></div>
+      <div class="stats">
+        <span><span class="k">P/E</span> <b>${medPE?medPE.toFixed(0)+"x":"n/m"}</b></span>
+        <span><span class="k">GM</span> <b>${medGM.toFixed(0)}%</b></span>
+        <span><span class="k">top</span> <b>${top.tk}</b></span>
+      </div>`;
+    tile.title=`Isolate ${l.label} — ${names.length} names: ${tks.join(", ")}`;
+    tile.onclick=()=>{ if(isExact){ state.visible=new Set(DATA.map(d=>d.tk)); }
+      else { state.visible=new Set(tks); } renderAll(); };
+    layerMapEl.appendChild(tile);
+  });
+}
 
 /* ============================ THESIS CARDS ============================ */
 const cardsEl=document.getElementById("cards");
 function renderCards(){
   cardsEl.innerHTML="";
   DATA.forEach(d=>{
-    const sc=composite(d,state.lens);
+    const sc=composite(d,state.lens), col=colorOf(d);
     const card=document.createElement("div");
     card.className="card";
     card.innerHTML=`
       <div class="top">
-        <span class="bar" style="background:${d.color}"></span>
+        <span class="bar" style="background:${col}"></span>
         <div>
-          <div class="tk">${d.tk}</div>
+          <div class="tk">${d.tk} <span class="muted" style="font-size:9.5px">${LAYER_LABEL[d.layer]}</span></div>
           <div class="nm">${d.nm}</div>
           <div class="bz">${d.bz}</div>
         </div>
-        <div class="sc"><div class="v" style="color:${d.color}">${sc.toFixed(1)}</div><div class="l">score</div></div>
+        <div class="sc"><div class="v" style="color:${col}">${sc.toFixed(1)}</div><div class="l">score</div></div>
       </div>
       <div class="body">
-        <div class="price">Price <b>${fmtMoney(d.price,d)}</b> · Mkt cap <b>${curOf(d)}${d.mcap.toFixed(1)}${curOf(d)==="$"?"B":"T"}</b> · <span class="caret">▸</span></div>
+        <div class="price">Price <b>${fmtMoney(d.price,d)}</b> · Mkt cap <b>${fmtMcap(d)}</b> · <span class="caret">▸</span></div>
         <p class="th">${d.thesis}</p>
       </div>`;
     card.querySelector(".top").onclick=()=>card.classList.toggle("open");
@@ -1170,33 +1272,53 @@ function renderRadar(){
     let anchor=Math.abs(Math.cos(a))<0.3?"middle":(Math.cos(a)>0?"start":"end");
     svg+=`<text x="${lx.toFixed(1)}" y="${(ly+3).toFixed(1)}" text-anchor="${anchor}" class="axislbl">${AXES[i].label}</text>`;
   }
-  // polygons
-  DATA.forEach(d=>{
-    if(!state.visible.has(d.tk)) return;
+  // which visible names to plot: top-N by composite (keeps the chart legible at scale)
+  const visRanked=DATA.filter(d=>state.visible.has(d.tk))
+    .sort((a,b)=>composite(b,state.lens)-composite(a,state.lens));
+  const plotted=visRanked.slice(0, state.radarTopN);
+  const plottedSet=new Set(plotted.map(d=>d.tk));
+  const spot=state.hl;  // highlighted ticker, if any
+
+  // polygons (draw spotlighted one last so it sits on top)
+  const order=[...plotted].sort((a,b)=> (a.tk===spot?1:0)-(b.tk===spot?1:0));
+  order.forEach(d=>{
+    const col=colorOf(d);
+    const dim = spot && d.tk!==spot;
+    const fillOp = dim?0.02 : (spot? 0.14 : 0.07);
+    const strokeOp = dim?0.18 : 1;
+    const sw = d.tk===spot?2.6:2;
     let pts=[];
     for(let i=0;i<N;i++){
       const a=-Math.PI/2+i*2*Math.PI/N; const v=d.r[AXES[i].k]/10*R;
       pts.push((cx+v*Math.cos(a)).toFixed(1)+","+(cy+v*Math.sin(a)).toFixed(1));
     }
-    svg+=`<polygon points="${pts.join(" ")}" fill="${d.color}" fill-opacity="0.07" stroke="${d.color}" stroke-width="2" stroke-linejoin="round"/>`;
-    for(let i=0;i<N;i++){
+    svg+=`<polygon points="${pts.join(" ")}" fill="${col}" fill-opacity="${fillOp}" stroke="${col}" stroke-opacity="${strokeOp}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+    if(!dim) for(let i=0;i<N;i++){
       const a=-Math.PI/2+i*2*Math.PI/N; const v=d.r[AXES[i].k]/10*R;
-      svg+=`<circle cx="${(cx+v*Math.cos(a)).toFixed(1)}" cy="${(cy+v*Math.sin(a)).toFixed(1)}" r="2.4" fill="${d.color}"/>`;
+      svg+=`<circle cx="${(cx+v*Math.cos(a)).toFixed(1)}" cy="${(cy+v*Math.sin(a)).toFixed(1)}" r="${d.tk===spot?3:2.4}" fill="${col}"/>`;
     }
   });
   radar.innerHTML=svg;
 
-  // legend
+  // count note
+  const visN=visRanked.length;
+  const cn=document.getElementById("radarCountNote");
+  if(cn) cn.textContent = plotted.length<visN ? `plotting top ${plotted.length} of ${visN} shown` : `plotting all ${visN} shown`;
+
+  // legend — full ranked list of visible names; rows not on the radar are marked
   const leg=document.getElementById("radarLegend");
-  const ranked=[...DATA].sort((a,b)=>composite(b,state.lens)-composite(a,state.lens));
   leg.innerHTML="";
-  ranked.forEach(d=>{
+  visRanked.forEach(d=>{
+    const col=colorOf(d);
+    const onRadar=plottedSet.has(d.tk);
     const row=document.createElement("div");
-    row.className="rrow"+(state.visible.has(d.tk)?"":" off");
-    row.innerHTML=`<span class="dot" style="background:${d.color}"></span>
-      <span class="nm">${d.tk} ${d.nm}</span>
-      <span class="v" style="color:${d.color}">${composite(d,state.lens).toFixed(1)}</span>`;
+    row.className="rrow"+(onRadar?"":" off");
+    row.innerHTML=`<span class="dot" style="background:${col}"></span>
+      <span class="nm">${d.tk} ${d.nm}${onRadar?"":' <span class="muted" style="font-size:10px">·hidden</span>'}</span>
+      <span class="v" style="color:${col}">${composite(d,state.lens).toFixed(1)}</span>`;
     row.onclick=()=>toggle(d.tk);
+    row.onmouseenter=()=>{ state.hl=d.tk; renderRadar(); };
+    row.onmouseleave=()=>{ state.hl=null; renderRadar(); };
     leg.appendChild(row);
   });
   document.getElementById("lensNote").textContent=LENSES[state.lens].note;
@@ -1226,10 +1348,16 @@ function renderScatter(){
   const Y=v=>H-pad.b-(v-yMin)/(yMax-yMin)*(H-pad.t-pad.b);
   const xm=axisMeta(state.xKey), ym=axisMeta(state.yKey);
   // medians of visible
-  const med=arr=>{const s=[...arr].sort((a,b)=>a-b);const n=s.length;return n? (n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2):0;};
-  const xMed=med(xs), yMed=med(ys);
+  const xMed=median(xs), yMed=median(ys);
 
   let svg="";
+  // quadrant shading — only meaningful when "cheaper-left, better-up" holds (both current axes do)
+  const qx=X(xMed), qy=Y(yMed);
+  // bottom-left of crosshair = cheap + high (the sweet spot): faint green; top-right = dear + low: faint red
+  svg+=`<rect x="${pad.l}" y="${qy}" width="${qx-pad.l}" height="${H-pad.b-qy}" fill="#2E7D5B" fill-opacity="0.05"/>`;
+  svg+=`<rect x="${qx}" y="${pad.t}" width="${W-pad.r-qx}" height="${qy-pad.t}" fill="#B23A48" fill-opacity="0.05"/>`;
+  svg+=`<text x="${pad.l+6}" y="${H-pad.b-6}" class="medlbl" style="fill:#2E7D5B;font-weight:600">cheap · strong</text>`;
+  svg+=`<text x="${W-pad.r-6}" y="${pad.t+12}" text-anchor="end" class="medlbl" style="fill:#B23A48;font-weight:600">dear · weak</text>`;
   // gridlines
   for(let i=0;i<=4;i++){
     const gx=pad.l+i/4*(W-pad.l-pad.r); const gy=pad.t+i/4*(H-pad.t-pad.b);
@@ -1240,27 +1368,44 @@ function renderScatter(){
     svg+=`<text x="${pad.l-10}" y="${gy+3}" text-anchor="end" class="axislbl">${ym.fmt(yv)}</text>`;
   }
   // median lines
-  svg+=`<line x1="${X(xMed)}" y1="${pad.t}" x2="${X(xMed)}" y2="${H-pad.b}" class="medln"/>`;
-  svg+=`<line x1="${pad.l}" y1="${Y(yMed)}" x2="${W-pad.r}" y2="${Y(yMed)}" class="medln"/>`;
-  svg+=`<text x="${X(xMed)+5}" y="${pad.t+11}" class="medlbl">median ${xm.fmt(xMed)}</text>`;
-  svg+=`<text x="${W-pad.r}" y="${Y(yMed)-5}" text-anchor="end" class="medlbl">median ${ym.fmt(yMed)}</text>`;
+  svg+=`<line x1="${qx}" y1="${pad.t}" x2="${qx}" y2="${H-pad.b}" class="medln"/>`;
+  svg+=`<line x1="${pad.l}" y1="${qy}" x2="${W-pad.r}" y2="${qy}" class="medln"/>`;
+  svg+=`<text x="${qx+5}" y="${pad.t+11}" class="medlbl">median ${xm.fmt(xMed)}</text>`;
+  svg+=`<text x="${W-pad.r}" y="${qy-5}" text-anchor="end" class="medlbl">median ${ym.fmt(yMed)}</text>`;
   // axis titles
   svg+=`<text x="${(pad.l+W-pad.r)/2}" y="${H-6}" text-anchor="middle" class="axislbl" style="font-size:11.5px">${xm.l} →  (cheaper is left)</text>`;
   svg+=`<text x="14" y="${(pad.t+H-pad.b)/2}" text-anchor="middle" class="axislbl" style="font-size:11.5px" transform="rotate(-90 14 ${(pad.t+H-pad.b)/2})">${ym.l} →</text>`;
-  // bubbles
-  const rmin=8,rmax=34, mc=DATA.map(d=>mcapUSD(d)), mcMin=Math.min(...mc), mcMax=Math.max(...mc);
+  // bubbles — size by mcap; draw largest first so small ones land on top and stay clickable
+  const rmin=7,rmax=32, mc=DATA.map(d=>mcapUSD(d)), mcMin=Math.min(...mc), mcMax=Math.max(...mc);
   const rad=mc=>rmin+Math.sqrt((mc-mcMin)/(mcMax-mcMin||1))*(rmax-rmin);
-  vis.forEach(d=>{
-    const x=X(d.m[state.xKey]), y=Y(d.m[state.yKey]), r=rad(mcapUSD(d));
+  const spot=state.hl;
+  const drawn=[...vis].map(d=>({d,x:X(d.m[state.xKey]),y:Y(d.m[state.yKey]),r:rad(mcapUSD(d))}))
+    .sort((a,b)=>b.r-a.r);
+  // label only when uncrowded (≤18 visible) or for the spotlighted bubble — avoids label soup at scale
+  const labelAll = vis.length<=18;
+  drawn.forEach(({d,x,y,r})=>{
+    const col=colorOf(d);
+    const dim = spot && d.tk!==spot;
+    const fo = dim?0.04 : 0.16, so = dim?0.25:1, sw = d.tk===spot?3:2;
     svg+=`<circle class="bub" data-tk="${d.tk}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}"
-       fill="${d.color}" fill-opacity="0.16" stroke="${d.color}" stroke-width="2" style="cursor:pointer"/>`;
-    svg+=`<text x="${x.toFixed(1)}" y="${(y+3.5).toFixed(1)}" text-anchor="middle" style="font-family:var(--mono);font-size:10.5px;font-weight:600;fill:${d.color};pointer-events:none">${d.tk}</text>`;
+       fill="${col}" fill-opacity="${fo}" stroke="${col}" stroke-opacity="${so}" stroke-width="${sw}" style="cursor:pointer"/>`;
+    if((labelAll||d.tk===spot)&&!dim)
+      svg+=`<text x="${x.toFixed(1)}" y="${(y+3.5).toFixed(1)}" text-anchor="middle" style="font-family:var(--mono);font-size:10px;font-weight:600;fill:${col};pointer-events:none">${d.tk}</text>`;
   });
+  // size legend (bottom-right): two reference bubbles
+  const lx=W-pad.r-96, ly=H-pad.b-46;
+  const big=rad(mcMax), small=rad(median(mc));
+  svg+=`<text x="${W-pad.r}" y="${ly-big-6}" text-anchor="end" class="medlbl">bubble = market cap</text>`;
+  svg+=`<circle cx="${lx}" cy="${ly-big+big}" r="${big}" fill="none" stroke="var(--ink3)" stroke-width="1"/>`;
+  svg+=`<circle cx="${lx}" cy="${ly-big+2*big-small}" r="${small}" fill="none" stroke="var(--ink3)" stroke-width="1"/>`;
+  svg+=`<text x="${lx+big+6}" y="${ly-big+big+3}" class="medlbl">$${(mcMax).toFixed(0)}B</text>`;
+  svg+=`<text x="${lx+big+6}" y="${ly-big+2*big-small+3}" class="medlbl">$${median(mc).toFixed(0)}B</text>`;
   scatter.innerHTML=svg;
   scatter.querySelectorAll(".bub").forEach(b=>{
     b.onmouseenter=()=>{const d=byTk[b.dataset.tk];
-      scatterTip.innerHTML=`<b style="color:${d.color}">${d.tk} ${d.nm}</b> &nbsp; ${xm.l} ${xm.fmt(d.m[state.xKey])} · ${ym.l} ${ym.fmt(d.m[state.yKey])} · Mkt cap ${fmtMcap(d)} · Fwd P/E ${d.m.peFwd}x · ROIC ${d.m.roic}% · Net debt/EBITDA ${d.m.netDebtEbitda<0?"net cash":d.m.netDebtEbitda+"x"}`;};
-    b.onmouseleave=()=>scatterTip.textContent="";
+      state.hl=d.tk; renderScatter();
+      scatterTip.innerHTML=`<b style="color:${colorOf(d)}">${d.tk} ${d.nm}</b> <span class="muted">(${LAYER_LABEL[d.layer]})</span> &nbsp; ${xm.l} ${xm.fmt(d.m[state.xKey])} · ${ym.l} ${ym.fmt(d.m[state.yKey])} · Mkt cap ${fmtMcap(d)} · Fwd P/E ${d.m.peFwd>=900?"n/m":d.m.peFwd+"x"} · ROIC ${d.m.roic}% · Net debt/EBITDA ${d.m.netDebtEbitda<0?"net cash":d.m.netDebtEbitda+"x"}`;};
+    b.onmouseleave=()=>{ state.hl=null; renderScatter(); scatterTip.textContent=""; };
   });
 }
 
@@ -1276,12 +1421,18 @@ function gradeColor(t){ // t: 0(worst)..1(best)
 }
 function renderHeat(){
   const vis=DATA.filter(d=>state.visible.has(d.tk));
-  const cols=vis.length?vis:DATA;
-  // header
-  let thead=`<tr><th class="metric" onclick="setSort(null)">Metric<span class="hint">click a ticker to sort ↓</span></th>`;
-  cols.forEach(d=>{
+  // default column order groups by chain layer (upstream→downstream), then composite within layer;
+  // a ticker-sort overrides nothing here (it reorders ROWS, not columns)
+  const cols=(vis.length?vis:DATA).slice().sort((a,b)=>
+    (LAYER_ORDER[a.layer]-LAYER_ORDER[b.layer]) || (composite(b,state.lens)-composite(a,state.lens)));
+  // header — thin layer-colored top border marks where each layer group begins
+  let thead=`<tr><th class="metric" onclick="setSort(null)">Metric<span class="hint">columns grouped by layer · click a ticker to sort rows ↓</span></th>`;
+  cols.forEach((d,i)=>{
     const cue=state.sortKey&&state.sortKey.tk===d.tk?`<span class="sortcue"> ${state.sortDir<0?"▼":"▲"}</span>`:"";
-    thead+=`<th data-tk="${d.tk}"><span class="tkdot" style="background:${d.color}"></span>${d.tk}${cue}</th>`;
+    const newGroup = i===0 || cols[i-1].layer!==d.layer;
+    const lc=LAYER_COLOR[d.layer]||d.color;
+    thead+=`<th data-tk="${d.tk}" title="${LAYER_LABEL[d.layer]}" style="box-shadow:inset 0 3px 0 ${newGroup?lc:"transparent"}">`+
+      `<span class="tkdot" style="background:${colorOf(d)}"></span>${d.tk}${cue}</th>`;
   });
   thead+=`</tr>`;
   heat.querySelector("thead").innerHTML=thead;
@@ -1415,15 +1566,18 @@ function renderVerdict(){
   const vis=DATA.filter(d=>state.visible.has(d.tk));
   const ranked=[...vis].sort((a,b)=>composite(b,state.lens)-composite(a,state.lens));
   const max=Math.max(...DATA.map(d=>composite(d,state.lens)));
+  const CAP=12; // collapse long lists
+  const showAll = state.verdictExpanded || ranked.length<=CAP;
+  const shown = showAll ? ranked : ranked.slice(0, CAP);
   const el=document.getElementById("verdict"); el.innerHTML="";
-  ranked.forEach((d,i)=>{
-    const sc=composite(d,state.lens);
+  shown.forEach((d,i)=>{
+    const sc=composite(d,state.lens), col=colorOf(d);
     const row=document.createElement("div"); row.className="vbar";
     row.innerHTML=`
-      <div class="lab"><span class="rk">${i+1}</span><span class="dot" style="background:${d.color}"></span>
+      <div class="lab"><span class="rk">${i+1}</span><span class="dot" style="background:${col}"></span>
         <span>${d.tk} ${d.nm.split(" ")[0]}</span></div>
-      <div class="track"><div class="fill" style="width:${(sc/max*100).toFixed(1)}%;background:${d.color}"></div></div>
-      <div class="sc" style="color:${d.color}">${sc.toFixed(1)}</div>
+      <div class="track"><div class="fill" style="width:${(sc/max*100).toFixed(1)}%;background:${col}"></div></div>
+      <div class="sc" style="color:${col}">${sc.toFixed(1)}</div>
       <div class="pop"><span class="bp bull">▲ Bull — ${d.bull}</span><span class="bp bear">▼ Bear — ${d.bear}</span></div>`;
     // tap to reveal bull/bear on touch devices (hover handles desktop via CSS)
     row.addEventListener("click",()=>{
@@ -1433,11 +1587,15 @@ function renderVerdict(){
     });
     el.appendChild(row);
   });
+  const more=document.getElementById("verdictMore");
+  if(ranked.length<=CAP){ more.hidden=true; }
+  else { more.hidden=false; more.textContent = showAll ? `▴ Show top ${CAP} only` : `▾ Show all ${ranked.length} ranked names`;
+    more.onclick=()=>{ state.verdictExpanded=!state.verdictExpanded; renderVerdict(); }; }
 }
 
 /* ============================ RENDER ALL ============================ */
 function renderAll(){
-  syncChips(); renderCards(); renderRadar(); renderScatter(); renderHeat(); renderDCF(); renderVerdict();
+  syncChips(); renderLayerMap(); renderCards(); renderRadar(); renderScatter(); renderHeat(); renderDCF(); renderVerdict();
 }
 renderAll();
 </script>
