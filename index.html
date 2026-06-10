@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Japan Semiconductor Value Chain — 3-Year Comparison</title>
+<style>
+  :root{
+    --paper:#FAFAF7; --ink:#15171C; --ink2:#4A4E58; --ink3:#878C97;
+    --line:#E4E2DA; --line2:#D2CFC4; --hl:#F2F0E8; --good:#2E7D5B; --bad:#B23A48;
+    --mono: ui-monospace,"SF Mono",Menlo,"Cascadia Mono",Consolas,monospace;
+    --sans: system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+    line-height:1.5;font-size:15px;letter-spacing:.005em}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+  a{color:inherit}
+  h1,h2,h3{font-weight:650;letter-spacing:-.01em;margin:0}
+  .mono{font-family:var(--mono)}
+  .sub{color:var(--ink2)}
+  .muted{color:var(--ink3)}
+  .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+  /* header */
+  header{border-bottom:1px solid var(--line2);padding:44px 0 26px;margin-bottom:8px}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+  header h1{font-size:30px;margin:10px 0 6px;line-height:1.1}
+  header p{margin:6px 0 0;max-width:760px;color:var(--ink2);font-size:14.5px}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;margin-top:16px;font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
+  .meta b{color:var(--ink2);font-weight:600}
+
+  /* global control bar */
+  .gbar{position:sticky;top:0;z-index:30;background:rgba(250,250,247,.94);
+    backdrop-filter:blur(6px);border-bottom:1px solid var(--line);
+    padding:10px 0;margin-bottom:30px}
+  .gbar .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .glabel{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{font-family:var(--mono);font-size:12px;border:1px solid var(--line2);background:#fff;
+    border-radius:2px;padding:4px 9px;cursor:pointer;display:flex;align-items:center;gap:6px;
+    transition:opacity .12s, background .12s;user-select:none}
+  .chip .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .chip.off{opacity:.32;background:var(--hl)}
+  .chip:hover{background:var(--hl)}
+  .seg{display:inline-flex;border:1px solid var(--line2);border-radius:2px;overflow:hidden}
+  .seg button{font-family:var(--mono);font-size:11.5px;border:0;background:#fff;padding:5px 11px;cursor:pointer;color:var(--ink2)}
+  .seg button.active{background:var(--ink);color:var(--paper)}
+  .seg button:not(:last-child){border-right:1px solid var(--line2)}
+  .spacer{flex:1}
+
+  section{margin:0 0 56px}
+  .secnum{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.1em}
+  .sechead{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:9px;margin-bottom:6px}
+  .sechead h2{font-size:18px}
+  .caption{font-size:13px;color:var(--ink2);margin:0 0 22px;max-width:780px}
+  .caption .dec{color:var(--ink);font-weight:600}
+
+  /* thesis strip */
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+  .card{background:var(--paper);padding:0}
+  .card .top{display:flex;align-items:center;gap:11px;padding:14px 16px;cursor:pointer}
+  .card .bar{width:4px;align-self:stretch;border-radius:2px;flex:none}
+  .card .tk{font-family:var(--mono);font-size:12px;color:var(--ink3)}
+  .card .nm{font-weight:650;font-size:15px;line-height:1.15}
+  .card .bz{font-size:12px;color:var(--ink3);margin-top:1px}
+  .card .sc{margin-left:auto;text-align:right;flex:none}
+  .card .sc .v{font-family:var(--mono);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+  .card .sc .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--ink3);text-transform:uppercase}
+  .card .body{padding:0 16px 16px 31px;display:none}
+  .card.open .body{display:block}
+  .card .price{font-family:var(--mono);font-size:12.5px;color:var(--ink2);margin:2px 0 10px}
+  .card .price b{color:var(--ink)}
+  .card .th{font-size:13.5px;color:var(--ink2);margin:0}
+  .card .caret{color:var(--ink3);font-family:var(--mono);font-size:12px;transition:transform .15s}
+  .card.open .caret{transform:rotate(90deg)}
+
+  /* layout helpers */
+  .grid2{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:start}
+  @media(max-width:880px){.grid2{grid-template-columns:1fr}}
+  figure{margin:0}
+  .panel{border:1px solid var(--line);background:#fff;border-radius:3px;padding:16px}
+
+  svg{display:block;width:100%;height:auto;overflow:visible}
+  .axislbl{font-family:var(--mono);font-size:10.5px;fill:var(--ink3)}
+  .gridln{stroke:var(--line);stroke-width:1}
+  .gridln2{stroke:var(--line2);stroke-width:1}
+  .medln{stroke:var(--ink3);stroke-width:1;stroke-dasharray:3 3}
+  .medlbl{font-family:var(--mono);font-size:9.5px;fill:var(--ink3)}
+
+  /* radar legend */
+  .rlegend{display:flex;flex-direction:column;gap:3px;margin-top:6px}
+  .rrow{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12px;padding:3px 5px;cursor:pointer;border-radius:2px}
+  .rrow:hover{background:var(--hl)}
+  .rrow.off{opacity:.34}
+  .rrow .dot{width:10px;height:10px;border-radius:50%;flex:none}
+  .rrow .nm{flex:1;color:var(--ink2)}
+  .rrow .v{font-weight:600;font-variant-numeric:tabular-nums}
+
+  /* heatmap */
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:3px}
+  table{border-collapse:collapse;width:100%;font-size:12.5px}
+  th,td{padding:7px 9px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+  thead th{position:sticky;top:0;background:var(--paper);font-family:var(--mono);font-size:11px;
+    font-weight:600;cursor:pointer;border-bottom:1px solid var(--line2);user-select:none}
+  thead th.metric, td.metric{text-align:left;position:sticky;left:0;background:var(--paper);z-index:2;
+    font-family:var(--sans);color:var(--ink2);min-width:188px}
+  thead th.metric{z-index:3}
+  th .tkdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+  td.cell{font-family:var(--mono);font-variant-numeric:tabular-nums;color:#1b1d22}
+  td.cell.dim{opacity:.28}
+  .metric .hint{display:block;font-family:var(--mono);font-size:9.5px;color:var(--ink3);font-weight:400}
+  .sortcue{color:var(--ink3);font-size:9px}
+
+  /* dcf */
+  .dcf{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:start}
+  @media(max-width:880px){.dcf{grid-template-columns:1fr}}
+  .sliders{display:flex;flex-direction:column;gap:15px}
+  .sld label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:var(--ink2);margin-bottom:4px}
+  .sld label .val{color:var(--ink);font-weight:600}
+  input[type=range]{width:100%;accent-color:var(--ink);height:3px}
+  .dcfout{border:1px solid var(--line);border-radius:3px;padding:0;overflow:hidden}
+  .dcfrow{display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px}
+  .dcfrow:last-child{border-bottom:0}
+  .dcfrow .k{color:var(--ink2)}
+  .dcfrow .v{font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums}
+  .dcfrow.big{background:var(--hl)}
+  .dcfrow.big .v{font-size:17px}
+  .verdict-fv{font-family:var(--mono);font-size:12px;padding:3px 8px;border-radius:2px}
+  .up{color:var(--good)} .down{color:var(--bad)}
+  .impl{font-size:12.5px;color:var(--ink2);padding:13px 16px;background:#fff;border-top:1px solid var(--line)}
+  .impl b{font-family:var(--mono)}
+
+  /* verdict */
+  .vbars{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+  .vbar{display:grid;grid-template-columns:150px 1fr 56px;align-items:center;gap:14px;padding:11px 16px;border-bottom:1px solid var(--line);position:relative}
+  .vbar:last-child{border-bottom:0}
+  .vbar:hover{background:var(--hl)}
+  .vbar .lab{display:flex;align-items:center;gap:9px;font-size:13.5px}
+  .vbar .lab .dot{width:11px;height:11px;border-radius:50%;flex:none}
+  .vbar .lab .rk{font-family:var(--mono);font-size:11px;color:var(--ink3);width:16px}
+  .track{height:13px;background:var(--hl);border-radius:2px;overflow:hidden}
+  .fill{height:100%;border-radius:2px;transition:width .35s ease}
+  .vbar .sc{font-family:var(--mono);font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+  .vbar .pop{display:none;position:absolute;left:166px;right:72px;bottom:calc(100% - 4px);
+    background:var(--ink);color:var(--paper);padding:9px 12px;border-radius:3px;font-size:12px;line-height:1.45;z-index:20;box-shadow:0 6px 22px rgba(0,0,0,.18)}
+  .vbar:hover .pop{display:block}
+  .vbar .pop .bp{display:block;margin:2px 0}
+  .vbar .pop .bull{color:#9fe6c4} .vbar .pop .bear{color:#f4b0ba}
+  .wexpl{font-family:var(--mono);font-size:11px;color:var(--ink3);margin:0 0 14px;line-height:1.7}
+  .wexpl b{color:var(--ink2)}
+
+  footer{border-top:1px solid var(--line2);margin-top:18px;padding:22px 0 60px;font-size:12px;color:var(--ink3);line-height:1.7}
+  footer b{color:var(--ink2)}
+  .flag{background:#FBF4E6;border:1px solid #E8D9B0;border-radius:3px;padding:12px 15px;font-size:13px;color:#6b5a2e;margin:18px 0 0}
+  .flag b{color:#5a4a22}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Equity comparison · 3-year horizon · Japan semiconductor value chain</div>
+    <h1>Nine Tokyo-listed names, one supply chain, two lenses</h1>
+    <p>From wafers and process chemicals through fab equipment, test, and chips — graded on what actually
+       separates them over three years: returns on capital versus cost of capital, moat direction, balance-sheet
+       resilience, and what today's price already assumes. Toggle the scoring lens; every chart shares one color
+       per ticker and one show/hide state.</p>
+    <div class="meta">
+      <span><b>Data date</b> ~9–10 Jun 2026</span>
+      <span><b>Currency</b> JPY</span>
+      <span><b>Fiscal year</b> mostly ends March</span>
+      <span><b>Figures</b> illustrative — verify live</span>
+    </div>
+    <div class="flag" id=" tickerflag">
+      <b>Ticker note —</b> <span class="mono">4857</span> is not an active TSE listing. In a cohort that is otherwise the
+      Japanese semiconductor value chain, the obvious missing member is <b>Advantest (6857)</b>, the world's #1 chip-test
+      maker — a single-digit transposition from “4857”. It is treated as <span class="mono">6857 Advantest</span> below.
+      One other cross-sector flag: <b>Keyence (6861)</b> is factory-automation, not a semiconductor company; its
+      capital-intensity and cyclicality metrics are not directly comparable to the equipment names.
+    </div>
+  </div>
+</header>
+
+<!-- GLOBAL CONTROL BAR -->
+<div class="gbar">
+  <div class="wrap">
+    <span class="glabel">Tickers</span>
+    <div class="chips" id="chips"></div>
+    <span class="spacer"></span>
+    <span class="glabel">Scoring lens</span>
+    <div class="seg" id="lensSeg">
+      <button data-lens="value">Value</button>
+      <button data-lens="quality" class="active">Quality-Growth</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- 1. THESIS STRIP -->
+  <section>
+    <div class="sechead"><span class="secnum">01</span><h2>Thesis strip</h2></div>
+    <p class="caption"><span class="dec">Decision it helps make:</span> a 20-second read on each name — what it is,
+      where it trades, and one composite score under the lens you've selected. Click any card to expand the thesis.</p>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <!-- 2. RADAR -->
+  <section>
+    <div class="sechead"><span class="secnum">02</span><h2>Quality radar</h2></div>
+    <p class="caption"><span class="dec">Decision it helps make:</span> see each business's <em>shape</em> — where a high
+      composite comes from. A wafer maker and a fabless test leader can score similarly for opposite reasons. Axes are
+      normalized 0–10 (10 = best in cohort); the legend value is the lens-weighted composite. Click the legend to isolate names.</p>
+    <div class="grid2">
+      <figure class="panel"><svg id="radar" viewBox="0 0 460 460" role="img" aria-label="Radar chart"></svg></figure>
+      <div>
+        <div class="rlegend" id="radarLegend"></div>
+        <p class="wexpl" style="margin-top:14px" id="lensNote"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. SCATTER -->
+  <section>
+    <div class="sechead"><span class="secnum">03</span><h2>Valuation vs. fundamentals</h2></div>
+    <p class="caption"><span class="dec">Decision it helps make:</span> spot who is cheap or dear <em>for what you get</em>.
+      Dashed lines are cohort medians — bottom-right of the crosshair is the sweet spot (lower multiple, higher growth/returns).
+      Bubble size = market cap. Hover for the underlying numbers.</p>
+    <div class="panel">
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px">
+        <div><span class="glabel">X axis</span>
+          <div class="seg" id="xSeg" style="margin-left:8px">
+            <button data-x="peFwd" class="active">Fwd P/E</button>
+            <button data-x="evEbitda">EV/EBITDA</button>
+          </div></div>
+        <div><span class="glabel">Y axis</span>
+          <div class="seg" id="ySeg" style="margin-left:8px">
+            <button data-y="epsCagrFwd" class="active">Fwd growth</button>
+            <button data-y="roic">ROIC</button>
+          </div></div>
+      </div>
+      <svg id="scatter" viewBox="0 0 880 470" role="img" aria-label="Valuation scatter"></svg>
+      <div id="scatterTip" class="num" style="font-family:var(--mono);font-size:12px;color:var(--ink2);min-height:20px;margin-top:6px"></div>
+    </div>
+  </section>
+
+  <!-- 4. HEATMAP -->
+  <section>
+    <div class="sechead"><span class="secnum">04</span><h2>Metric heatmap</h2></div>
+    <p class="caption"><span class="dec">Decision it helps make:</span> the full grid, every row color-graded best→worst
+      within the cohort (green = best). Click a column header to sort by that metric. Toggle the basis below — note that for
+      Japanese companies stock-based comp is tiny, so SBC-adjusted ≈ GAAP here.</p>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px">
+      <div><span class="glabel">Period</span>
+        <div class="seg" id="periodSeg" style="margin-left:8px">
+          <button data-period="ttm" class="active">TTM</button>
+          <button data-period="fwd">Forward</button>
+        </div></div>
+      <div><span class="glabel">Earnings basis</span>
+        <div class="seg" id="basisSeg" style="margin-left:8px">
+          <button data-basis="gaap" class="active">GAAP</button>
+          <button data-basis="sbc">SBC-adj</button>
+        </div></div>
+    </div>
+    <div class="tablewrap"><table id="heat"><thead></thead><tbody></tbody></table></div>
+  </section>
+
+  <!-- 5. REVERSE DCF -->
+  <section>
+    <div class="sechead"><span class="secnum">05</span><h2>Reverse-DCF workbench</h2></div>
+    <p class="caption"><span class="dec">Decision it helps make:</span> stop arguing about “expensive.” Set your own
+      assumptions and read two things: the intrinsic value they imply, and — holding everything else fixed — the
+      <em>revenue growth the current price already bakes in</em>. If that implied growth looks heroic, the market is doing
+      the dreaming for you. Simple 10-year FCF-to-equity model; all inputs shown.</p>
+    <div class="panel">
+      <div style="margin-bottom:16px"><span class="glabel">Company</span>
+        <div class="seg" id="dcfSeg" style="margin-left:8px;flex-wrap:wrap"></div></div>
+      <div class="dcf">
+        <div class="sliders" id="dcfSliders"></div>
+        <div>
+          <div class="dcfout" id="dcfOut"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. VERDICT -->
+  <section>
+    <div class="sechead"><span class="secnum">06</span><h2>Verdict</h2></div>
+    <p class="caption"><span class="dec">Decision it helps make:</span> the weighted ranking under your selected lens.
+      Hover any bar for its single biggest bull and bear point. Weights re-sort the field live.</p>
+    <p class="wexpl" id="weightExpl"></p>
+    <div class="vbars" id="verdict"></div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <b>Sources & method.</b> Prices, market caps, and recent fiscal-year results gathered from public market data
+    (~9–10 Jun 2026); ratios, ROIC, FCF quality, moat scores, and all forward figures are the author's illustrative
+    estimates and normalizations, not consensus pulls. Japanese fiscal years generally end in March. SBC is immaterial
+    for these issuers, so the SBC-adjusted basis differs only marginally from GAAP. Reverse-DCF uses a transparent
+    10-year explicit FCF-to-equity model with a Gordon terminal value; per-share revenue, net cash, and starting FCF
+    margins are approximations.<br><br>
+    <b>Figures are illustrative — verify live before acting.</b> This is an analytical tool, not investment advice;
+    it reflects no view on your objectives, and the author is not a financial adviser.
+  </div>
+</footer>
+
+<script>
+/* ============================ DATA ============================ */
+/* All figures illustrative, ~Jun 2026, JPY. Radar axes 0-10 (10=best). */
+const DATA = [
+ {tk:"6857",nm:"Advantest",bz:"Semiconductor test equipment (ATE)",color:"#D7263D",
+  price:25500,mcap:19.0,
+  thesis:"The purest listed lever on AI compute test intensity. HBM stacks and ever-larger accelerators need vastly more test time, and Advantest holds >50% of the SoC/memory ATE market it largely defined. Earnings are compounding at a rate few hardware names can match — the debate is entirely about the multiple and the cyclicality underneath it.",
+  bull:"Dominant, widening share in the one part of the chip-test market that AI scales fastest; ~67% gross margin and explosive operating leverage.",
+  bear:"P/E in the mid-40s on cyclical, customer-concentrated earnings; a high-beta name that already round-tripped from its April high.",
+  r:{val:3,growth:10,roic:9,moat:9,fcf:7,bs:8,scal:9},
+  m:{peTTM:45,peFwd:33,pegFwd:1.1,evEbitda:30,evSales:8.5,pfcf:40,fcfYield:2.5,revCagrHist:25,epsCagrFwd:30,gross:67,op:35,net:28,roic:42,roe:38,fcfMargin:22,fcfConv:80,sbc:0.8,netDebtEbitda:-0.6,intCov:99},
+  d:{revPS:1073,netCashPS:800,fcfM:0.22}},
+
+ {tk:"4063",nm:"Shin-Etsu Chemical",bz:"Silicon wafers + PVC / materials",color:"#1B6CA8",
+  price:6836,mcap:12.7,
+  thesis:"The cohort's quality anchor: #1 globally in both silicon wafers and PVC, ~25% operating margins through cycles, and a fortress net-cash balance sheet. Earnings are in a cyclical trough (wafers and PVC both soft), which flatters the trailing multiple — but the franchise and the through-cycle returns are about as durable as Japanese industrials get.",
+  bull:"Twin global cost-leadership monopolistic positions, ~25% op margin, huge net cash, disciplined capital returns — a sleep-well compounder.",
+  bear:"Wafer and PVC cyclicality with US-housing sensitivity; trailing P/E optically high on depressed earnings; only mid-single-digit structural growth.",
+  r:{val:6,growth:4,roic:8,moat:9,fcf:9,bs:10,scal:6},
+  m:{peTTM:27,peFwd:22,pegFwd:2.7,evEbitda:12,evSales:4.0,pfcf:24,fcfYield:4.2,revCagrHist:6,epsCagrFwd:8,gross:37,op:25,net:18.5,roic:16,roe:13,fcfMargin:17,fcfConv:95,sbc:0.2,netDebtEbitda:-1.5,intCov:999},
+  d:{revPS:1383,netCashPS:1184,fcfM:0.17}},
+
+ {tk:"6146",nm:"Disco",bz:"Dicing & grinding (back-end) equipment",color:"#6A4C93",
+  price:78000,mcap:8.5,
+  thesis:"A near-monopoly in precision dicing and wafer grinding — exactly the back-end steps that advanced packaging and HBM thin-wafer stacking lean on hardest. Best-in-cohort margins and returns, run on an unusually transparent internal incentive system. The catch is the price: it trades like the secular winner it is.",
+  bull:"~70–80% share in grinders/dicers with deep recipe lock-in; ~39% op margin and >30% ROIC; direct beneficiary of HBM and packaging.",
+  bear:"Among the richest multiples in the group; highly cyclical and concentrated; little margin for execution error at this valuation.",
+  r:{val:2,growth:9,roic:10,moat:9,fcf:8,bs:8,scal:9},
+  m:{peTTM:47,peFwd:38,pegFwd:1.7,evEbitda:32,evSales:11,pfcf:45,fcfYield:2.2,revCagrHist:22,epsCagrFwd:22,gross:62,op:39,net:28,roic:35,roe:30,fcfMargin:24,fcfConv:85,sbc:0.5,netDebtEbitda:-1.0,intCov:999},
+  d:{revPS:3670,netCashPS:3000,fcfM:0.24}},
+
+ {tk:"6963",nm:"Rohm",bz:"Power & analog semis (SiC)",color:"#C58B00",
+  price:4000,mcap:1.5,
+  thesis:"A turnaround bet, not a quality compounder. Rohm has spent heavily building out silicon-carbide capacity for EVs and AI power delivery just as SiC pricing and EV demand softened — crushing margins to near break-even. The optionality is real if SiC inflects; the current returns destroy value, and that's the whole problem.",
+  bull:"Optionality on a SiC power-semi up-cycle; net-cash balance sheet, government/partner backing, auto design-in pipeline.",
+  bear:"Returns below cost of capital today; loss-making SiC ramp into oversupply and price war; weakest fundamentals in the cohort.",
+  r:{val:5,growth:3,roic:1,moat:4,fcf:2,bs:6,scal:4},
+  m:{peTTM:90,peFwd:55,pegFwd:3.7,evEbitda:12,evSales:2.8,pfcf:60,fcfYield:1.0,revCagrHist:-3,epsCagrFwd:15,gross:30,op:3,net:1.5,roic:2,roe:1.5,fcfMargin:3,fcfConv:50,sbc:0.3,netDebtEbitda:0.5,intCov:8},
+  d:{revPS:1200,netCashPS:1500,fcfM:0.05}},
+
+ {tk:"4004",nm:"Resonac",bz:"Semi materials + petrochemicals",color:"#E07A5F",
+  price:16500,mcap:3.0,
+  thesis:"The high-beta deep-value play. The semiconductor & electronic-materials segment (back-end packaging materials for AI) is genuinely strong and growing ~20%+, but it's wrapped inside a leveraged, low-margin conglomerate. The stock has roughly 5x'd in a year on the AI-materials narrative and a planned petrochemical spin-off; the leverage is the live risk.",
+  bull:"Strong, AI-levered back-end materials franchise; portfolio reform and Crasus spin-off could re-rate margins and cut debt; cheap on EV/sales.",
+  bear:"Net-debt/EBITDA ~5x and ~3% net margin — the weakest balance sheet here; petrochemical cyclicality; price already runs ahead of fair-value estimates.",
+  r:{val:6,growth:7,roic:2,moat:5,fcf:4,bs:2,scal:6},
+  m:{peTTM:38,peFwd:30,pegFwd:1.2,evEbitda:9,evSales:2.8,pfcf:25,fcfYield:3.0,revCagrHist:2,epsCagrFwd:25,gross:26,op:5,net:2.9,roic:4,roe:5.3,fcfMargin:5,fcfConv:70,sbc:0.2,netDebtEbitda:4.7,intCov:5.8},
+  d:{revPS:7300,netCashPS:-3850,fcfM:0.06}},
+
+ {tk:"6861",nm:"Keyence",bz:"Factory-automation sensors (cross-sector)",color:"#2A9D8F",
+  price:77000,mcap:19.5,
+  thesis:"Not a chip company — included as the cohort's quality yardstick. An asset-light, direct-sales sensor and vision machine with ~50%+ operating margins, ~84% gross margins, and a balance sheet that is mostly cash. Growth is only moderate and the multiple is full, but the return profile and durability are the best of any name here.",
+  bull:"Extraordinary, durable economics: ~51% op margin, fortress net cash, opaque supplier model that blocks competition; consistent compounder.",
+  bear:"Cross-sector (industrial automation, not semis); ~9% growth against a ~37x multiple; a vast idle cash pile is a governance/return drag.",
+  r:{val:3,growth:5,roic:10,moat:10,fcf:10,bs:10,scal:10},
+  m:{peTTM:37,peFwd:36,pegFwd:4.0,evEbitda:24,evSales:17,pfcf:40,fcfYield:2.5,revCagrHist:9,epsCagrFwd:9,gross:84,op:51,net:38,roic:45,roe:14,fcfMargin:30,fcfConv:90,sbc:0.1,netDebtEbitda:-2.0,intCov:999},
+  d:{revPS:4190,netCashPS:6000,fcfM:0.30}},
+
+ {tk:"6723",nm:"Renesas",bz:"MCUs / SoCs / analog",color:"#3A0CA3",
+  price:4044,mcap:8.0,
+  thesis:"The cyclical-value name. #3 in microcontrollers with deep automotive design-in lock-in, trading at the lowest forward multiple among the chip names after an auto/industrial inventory correction. The rerating case rests on the cycle turning and a debt-funded M&A spree (Dialog, Altium, Transphorm) finally earning its cost of capital — which is exactly the open question.",
+  bull:"Cheapest forward P/E of the chipmakers; sticky auto MCU franchise; cyclical recovery plus content-per-car tailwind; value-unlock from unit divestitures.",
+  bear:"Serial premium-priced M&A has diluted ROIC; automotive cyclicality and China exposure; stock has already run ~150% on the recovery trade.",
+  r:{val:7,growth:6,roic:5,moat:5,fcf:6,bs:5,scal:6},
+  m:{peTTM:28,peFwd:19,pegFwd:1.6,evEbitda:11,evSales:5.0,pfcf:18,fcfYield:5.0,revCagrHist:8,epsCagrFwd:12,gross:55,op:22,net:17,roic:9,roe:11,fcfMargin:15,fcfConv:85,sbc:1.5,netDebtEbitda:0.6,intCov:12},
+  d:{revPS:733,netCashPS:-250,fcfM:0.15}},
+
+ {tk:"8035",nm:"Tokyo Electron",bz:"Wafer-fab equipment (WFE)",color:"#006D5B",
+  price:60000,mcap:27.0,
+  thesis:"The GARP pick of the equipment names. A top-three WFE player with ~90% share in coater/developers and strong etch, deposition and clean franchises — wide-moat exposure to leading-edge and AI capex, at a more reasonable multiple than Disco or Advantest. FY26 was a digestion year; management guides a strong FY27 rebound. China revenue mix is the swing risk.",
+  bull:"Broad wide-moat WFE franchise, >30% ROIC, ~50% payout with record buybacks; leading-edge and AI logic/memory capex tailwind at a fair price.",
+  bear:"Large China revenue share exposed to tightening export controls; cyclical with customer concentration among a handful of leading-edge fabs.",
+  r:{val:6,growth:7,roic:9,moat:9,fcf:9,bs:9,scal:8},
+  m:{peTTM:26,peFwd:22,pegFwd:1.5,evEbitda:18,evSales:9.5,pfcf:28,fcfYield:3.5,revCagrHist:12,epsCagrFwd:15,gross:47,op:29,net:24,roic:32,roe:28,fcfMargin:20,fcfConv:90,sbc:0.4,netDebtEbitda:-1.0,intCov:999},
+  d:{revPS:5420,netCashPS:2500,fcfM:0.20}},
+
+ {tk:"7735",nm:"SCREEN Holdings",bz:"Wafer-cleaning equipment (SPE)",color:"#9C2C77",
+  price:13000,mcap:2.4,
+  thesis:"Value within quality. SCREEN owns ~50%+ of the single-wafer cleaning market — a narrow but dominant niche that scales with wafer starts and added cleaning steps at advanced nodes. It carries the lowest forward multiple of the equipment names, with solid but thinner margins than the WFE giants and more single-product concentration.",
+  bull:"Dominant niche in wafer cleaning with switching costs; cheapest forward multiple of the equipment names; FY27 guided to robust SPE + packaging growth.",
+  bear:"Narrow product breadth (cleaning-led) and smaller scale; China exposure; lower margins and more cyclicality than TEL or Disco.",
+  r:{val:7,growth:6,roic:8,moat:7,fcf:7,bs:8,scal:7},
+  m:{peTTM:25,peFwd:20,pegFwd:1.4,evEbitda:13,evSales:3.8,pfcf:22,fcfYield:4.0,revCagrHist:14,epsCagrFwd:14,gross:38,op:19,net:15,roic:22,roe:20,fcfMargin:13,fcfConv:80,sbc:0.3,netDebtEbitda:-0.7,intCov:999},
+  d:{revPS:3275,netCashPS:2500,fcfM:0.13}}
+];
+
+const AXES=[
+ {k:"val",label:"Valuation"},{k:"growth",label:"Growth"},{k:"roic",label:"ROIC vs WACC"},
+ {k:"moat",label:"Moat"},{k:"fcf",label:"FCF quality"},{k:"bs",label:"Balance sheet"},{k:"scal",label:"Scalability"}
+];
+
+const LENSES={
+ value:{label:"Value",w:{val:.30,fcf:.15,bs:.15,roic:.12,moat:.10,growth:.10,scal:.08},
+   note:"Value lens overweights what you pay and what protects it — valuation (30%), FCF quality and balance sheet (15% each), with returns and moat behind them. It rewards cheap, cash-generative, lowly-levered names and penalizes paying up for growth."},
+ quality:{label:"Quality-Growth",w:{growth:.22,roic:.20,moat:.18,scal:.12,fcf:.12,bs:.08,val:.08},
+   note:"Quality-Growth lens overweights the compounding engine — growth (22%), ROIC vs WACC (20%) and moat (18%), with valuation a light 8%. It rewards durable, high-return franchises with room to reinvest and tolerates a fuller multiple."}
+};
+
+/* Heatmap metric rows: key, label, hint, fmt, higherBetter, fwdKey(optional alt), notForward */
+const METRICS=[
+ {k:"peTTM",fwd:"peFwd",label:"P/E",hint:"price / earnings",fmt:v=>v.toFixed(0)+"x",hi:false},
+ {k:"pegFwd",label:"PEG (fwd)",hint:"fwd P/E / growth",fmt:v=>v.toFixed(1),hi:false},
+ {k:"evEbitda",label:"EV / EBITDA",hint:"enterprise value",fmt:v=>v.toFixed(0)+"x",hi:false},
+ {k:"evSales",label:"EV / Sales",hint:"enterprise value",fmt:v=>v.toFixed(1)+"x",hi:false},
+ {k:"pfcf",label:"P / FCF",hint:"price / free cash flow",fmt:v=>v.toFixed(0)+"x",hi:false},
+ {k:"fcfYield",label:"FCF yield",hint:"FCF / market cap",fmt:v=>v.toFixed(1)+"%",hi:true},
+ {k:"revCagrHist",fwd:"epsCagrFwd",label:"Growth",hint:"rev CAGR (TTM) / EPS CAGR (fwd)",fmt:v=>v.toFixed(0)+"%",hi:true},
+ {k:"gross",label:"Gross margin",hint:"% of revenue",fmt:v=>v.toFixed(0)+"%",hi:true},
+ {k:"op",label:"Operating margin",hint:"% of revenue",fmt:v=>v.toFixed(0)+"%",hi:true},
+ {k:"net",label:"Net margin",hint:"% of revenue",fmt:v=>v.toFixed(1)+"%",hi:true},
+ {k:"roic",label:"ROIC",hint:"return on invested capital",fmt:v=>v.toFixed(0)+"%",hi:true},
+ {k:"roe",label:"ROE",hint:"return on equity",fmt:v=>v.toFixed(0)+"%",hi:true},
+ {k:"fcfMargin",label:"FCF margin",hint:"FCF / revenue",fmt:v=>v.toFixed(0)+"%",hi:true},
+ {k:"fcfConv",label:"FCF conversion",hint:"FCF / net income",fmt:v=>v.toFixed(0)+"%",hi:true},
+ {k:"sbc",label:"SBC % of revenue",hint:"stock-based comp",fmt:v=>v.toFixed(1)+"%",hi:false},
+ {k:"netDebtEbitda",label:"Net debt / EBITDA",hint:"negative = net cash",fmt:v=>(v<0?"":"+")+v.toFixed(1)+"x",hi:false},
+ {k:"intCov",label:"Interest coverage",hint:"EBIT / interest",fmt:v=>v>=999?"net cash":v.toFixed(0)+"x",hi:true}
+];
+
+/* ============================ STATE ============================ */
+const state={
+  visible:new Set(DATA.map(d=>d.tk)),
+  lens:"quality",
+  xKey:"peFwd", yKey:"epsCagrFwd",
+  period:"ttm", basis:"gaap",
+  sortKey:null, sortDir:-1,
+  dcf:DATA[0].tk, dcfV:{}
+};
+DATA.forEach(d=>{ state.dcfV[d.tk]={g:d.m.epsCagrFwd, m:Math.round(d.d.fcfM*100), r:9, tg:2.5}; });
+
+const byTk=Object.fromEntries(DATA.map(d=>[d.tk,d]));
+const fmtYen=v=>"¥"+Math.round(v).toLocaleString();
+
+function composite(d,lens){
+  const w=LENSES[lens].w; let s=0;
+  for(const a of AXES) s+=d.r[a.k]*w[a.k];
+  return s;
+}
+function basisAdj(d,key){
+  // SBC-adjusted basis: nudge margins down slightly by SBC; trivially small for these names
+  if(state.basis!=="sbc") return d.m[key];
+  const v=d.m[key];
+  if(["net","op","fcfMargin","roe","roic"].includes(key)) return v - d.m.sbc*0.6;
+  return v;
+}
+function metricVal(d,met){
+  let key=met.k;
+  if(state.period==="fwd" && met.fwd) key=met.fwd;
+  return basisAdj(d,key);
+}
+
+/* ============================ CHIPS ============================ */
+const chipsEl=document.getElementById("chips");
+DATA.forEach(d=>{
+  const c=document.createElement("div");
+  c.className="chip"; c.dataset.tk=d.tk;
+  c.innerHTML=`<span class="dot" style="background:${d.color}"></span>${d.tk} ${d.nm.split(" ")[0]}`;
+  c.onclick=()=>{ toggle(d.tk); };
+  chipsEl.appendChild(c);
+});
+function toggle(tk){
+  if(state.visible.has(tk)){ if(state.visible.size>1) state.visible.delete(tk); }
+  else state.visible.add(tk);
+  renderAll();
+}
+function syncChips(){
+  [...chipsEl.children].forEach(c=>c.classList.toggle("off",!state.visible.has(c.dataset.tk)));
+}
+
+/* lens segmented */
+document.getElementById("lensSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ state.lens=b.dataset.lens;
+    document.querySelectorAll("#lensSeg button").forEach(x=>x.classList.toggle("active",x===b));
+    renderAll(); };
+});
+/* scatter axes */
+document.getElementById("xSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ state.xKey=b.dataset.x;
+    document.querySelectorAll("#xSeg button").forEach(x=>x.classList.toggle("active",x===b)); renderScatter(); };
+});
+document.getElementById("ySeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ state.yKey=b.dataset.y;
+    document.querySelectorAll("#ySeg button").forEach(x=>x.classList.toggle("active",x===b)); renderScatter(); };
+});
+/* heatmap toggles */
+document.getElementById("periodSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ state.period=b.dataset.period;
+    document.querySelectorAll("#periodSeg button").forEach(x=>x.classList.toggle("active",x===b)); renderHeat(); };
+});
+document.getElementById("basisSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ state.basis=b.dataset.basis;
+    document.querySelectorAll("#basisSeg button").forEach(x=>x.classList.toggle("active",x===b)); renderHeat(); };
+});
+
+/* ============================ THESIS CARDS ============================ */
+const cardsEl=document.getElementById("cards");
+function renderCards(){
+  cardsEl.innerHTML="";
+  DATA.forEach(d=>{
+    const sc=composite(d,state.lens);
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`
+      <div class="top">
+        <span class="bar" style="background:${d.color}"></span>
+        <div>
+          <div class="tk">${d.tk}</div>
+          <div class="nm">${d.nm}</div>
+          <div class="bz">${d.bz}</div>
+        </div>
+        <div class="sc"><div class="v" style="color:${d.color}">${sc.toFixed(1)}</div><div class="l">score</div></div>
+      </div>
+      <div class="body">
+        <div class="price">Price <b>${fmtYen(d.price)}</b> · Mkt cap <b>¥${d.mcap.toFixed(1)}T</b> · <span class="caret">▸</span></div>
+        <p class="th">${d.thesis}</p>
+      </div>`;
+    card.querySelector(".top").onclick=()=>card.classList.toggle("open");
+    if(!state.visible.has(d.tk)) card.style.opacity=.4;
+    cardsEl.appendChild(card);
+  });
+}
+
+/* ============================ RADAR ============================ */
+const radar=document.getElementById("radar");
+function renderRadar(){
+  const cx=230,cy=222,R=150,N=AXES.length;
+  let svg="";
+  // rings
+  for(let ring=1;ring<=5;ring++){
+    const r=R*ring/5; let pts=[];
+    for(let i=0;i<N;i++){const a=-Math.PI/2+i*2*Math.PI/N; pts.push((cx+r*Math.cos(a)).toFixed(1)+","+(cy+r*Math.sin(a)).toFixed(1));}
+    svg+=`<polygon points="${pts.join(" ")}" fill="none" class="${ring===5?'gridln2':'gridln'}"/>`;
+  }
+  // spokes + labels
+  for(let i=0;i<N;i++){
+    const a=-Math.PI/2+i*2*Math.PI/N;
+    const x=cx+R*Math.cos(a), y=cy+R*Math.sin(a);
+    svg+=`<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" class="gridln"/>`;
+    const lx=cx+(R+24)*Math.cos(a), ly=cy+(R+24)*Math.sin(a);
+    let anchor=Math.abs(Math.cos(a))<0.3?"middle":(Math.cos(a)>0?"start":"end");
+    svg+=`<text x="${lx.toFixed(1)}" y="${(ly+3).toFixed(1)}" text-anchor="${anchor}" class="axislbl">${AXES[i].label}</text>`;
+  }
+  // polygons
+  DATA.forEach(d=>{
+    if(!state.visible.has(d.tk)) return;
+    let pts=[];
+    for(let i=0;i<N;i++){
+      const a=-Math.PI/2+i*2*Math.PI/N; const v=d.r[AXES[i].k]/10*R;
+      pts.push((cx+v*Math.cos(a)).toFixed(1)+","+(cy+v*Math.sin(a)).toFixed(1));
+    }
+    svg+=`<polygon points="${pts.join(" ")}" fill="${d.color}" fill-opacity="0.07" stroke="${d.color}" stroke-width="2" stroke-linejoin="round"/>`;
+    for(let i=0;i<N;i++){
+      const a=-Math.PI/2+i*2*Math.PI/N; const v=d.r[AXES[i].k]/10*R;
+      svg+=`<circle cx="${(cx+v*Math.cos(a)).toFixed(1)}" cy="${(cy+v*Math.sin(a)).toFixed(1)}" r="2.4" fill="${d.color}"/>`;
+    }
+  });
+  radar.innerHTML=svg;
+
+  // legend
+  const leg=document.getElementById("radarLegend");
+  const ranked=[...DATA].sort((a,b)=>composite(b,state.lens)-composite(a,state.lens));
+  leg.innerHTML="";
+  ranked.forEach(d=>{
+    const row=document.createElement("div");
+    row.className="rrow"+(state.visible.has(d.tk)?"":" off");
+    row.innerHTML=`<span class="dot" style="background:${d.color}"></span>
+      <span class="nm">${d.tk} ${d.nm}</span>
+      <span class="v" style="color:${d.color}">${composite(d,state.lens).toFixed(1)}</span>`;
+    row.onclick=()=>toggle(d.tk);
+    leg.appendChild(row);
+  });
+  document.getElementById("lensNote").textContent=LENSES[state.lens].note;
+}
+
+/* ============================ SCATTER ============================ */
+const scatter=document.getElementById("scatter");
+const scatterTip=document.getElementById("scatterTip");
+function axisMeta(k){
+  const map={peFwd:{l:"Forward P/E",fmt:v=>v.toFixed(0)+"x"},
+    evEbitda:{l:"EV / EBITDA",fmt:v=>v.toFixed(0)+"x"},
+    epsCagrFwd:{l:"Fwd EPS growth",fmt:v=>v.toFixed(0)+"%"},
+    roic:{l:"ROIC",fmt:v=>v.toFixed(0)+"%"}};
+  return map[k];
+}
+function renderScatter(){
+  const W=880,H=470,pad={l:64,r:30,t:24,b:52};
+  const vis=DATA.filter(d=>state.visible.has(d.tk));
+  const xs=vis.map(d=>d.m[state.xKey]), ys=vis.map(d=>d.m[state.yKey]);
+  const all=DATA; // scale to full cohort for stable axes
+  const xAll=all.map(d=>d.m[state.xKey]), yAll=all.map(d=>d.m[state.yKey]);
+  let xMin=Math.min(...xAll), xMax=Math.max(...xAll), yMin=Math.min(...yAll), yMax=Math.max(...yAll);
+  const xPadr=(xMax-xMin)*0.12||1, yPadr=(yMax-yMin)*0.12||1;
+  xMin-=xPadr; xMax+=xPadr; yMin-=yPadr; yMax+=yPadr;
+  if(state.yKey==="epsCagrFwd"||state.yKey==="roic") yMin=Math.min(yMin,0);
+  const X=v=>pad.l+(v-xMin)/(xMax-xMin)*(W-pad.l-pad.r);
+  const Y=v=>H-pad.b-(v-yMin)/(yMax-yMin)*(H-pad.t-pad.b);
+  const xm=axisMeta(state.xKey), ym=axisMeta(state.yKey);
+  // medians of visible
+  const med=arr=>{const s=[...arr].sort((a,b)=>a-b);const n=s.length;return n? (n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2):0;};
+  const xMed=med(xs), yMed=med(ys);
+
+  let svg="";
+  // gridlines
+  for(let i=0;i<=4;i++){
+    const gx=pad.l+i/4*(W-pad.l-pad.r); const gy=pad.t+i/4*(H-pad.t-pad.b);
+    svg+=`<line x1="${gx}" y1="${pad.t}" x2="${gx}" y2="${H-pad.b}" class="gridln"/>`;
+    svg+=`<line x1="${pad.l}" y1="${gy}" x2="${W-pad.r}" y2="${gy}" class="gridln"/>`;
+    const xv=xMin+i/4*(xMax-xMin), yv=yMax-i/4*(yMax-yMin);
+    svg+=`<text x="${gx}" y="${H-pad.b+18}" text-anchor="middle" class="axislbl">${xm.fmt(xv)}</text>`;
+    svg+=`<text x="${pad.l-10}" y="${gy+3}" text-anchor="end" class="axislbl">${ym.fmt(yv)}</text>`;
+  }
+  // median lines
+  svg+=`<line x1="${X(xMed)}" y1="${pad.t}" x2="${X(xMed)}" y2="${H-pad.b}" class="medln"/>`;
+  svg+=`<line x1="${pad.l}" y1="${Y(yMed)}" x2="${W-pad.r}" y2="${Y(yMed)}" class="medln"/>`;
+  svg+=`<text x="${X(xMed)+5}" y="${pad.t+11}" class="medlbl">median ${xm.fmt(xMed)}</text>`;
+  svg+=`<text x="${W-pad.r}" y="${Y(yMed)-5}" text-anchor="end" class="medlbl">median ${ym.fmt(yMed)}</text>`;
+  // axis titles
+  svg+=`<text x="${(pad.l+W-pad.r)/2}" y="${H-6}" text-anchor="middle" class="axislbl" style="font-size:11.5px">${xm.l} →  (cheaper is left)</text>`;
+  svg+=`<text x="14" y="${(pad.t+H-pad.b)/2}" text-anchor="middle" class="axislbl" style="font-size:11.5px" transform="rotate(-90 14 ${(pad.t+H-pad.b)/2})">${ym.l} →</text>`;
+  // bubbles
+  const rmin=8,rmax=34, mc=DATA.map(d=>d.mcap), mcMin=Math.min(...mc), mcMax=Math.max(...mc);
+  const rad=mc=>rmin+Math.sqrt((mc-mcMin)/(mcMax-mcMin||1))*(rmax-rmin);
+  vis.forEach(d=>{
+    const x=X(d.m[state.xKey]), y=Y(d.m[state.yKey]), r=rad(d.mcap);
+    svg+=`<circle class="bub" data-tk="${d.tk}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}"
+       fill="${d.color}" fill-opacity="0.16" stroke="${d.color}" stroke-width="2" style="cursor:pointer"/>`;
+    svg+=`<text x="${x.toFixed(1)}" y="${(y+3.5).toFixed(1)}" text-anchor="middle" style="font-family:var(--mono);font-size:10.5px;font-weight:600;fill:${d.color};pointer-events:none">${d.tk}</text>`;
+  });
+  scatter.innerHTML=svg;
+  scatter.querySelectorAll(".bub").forEach(b=>{
+    b.onmouseenter=()=>{const d=byTk[b.dataset.tk];
+      scatterTip.innerHTML=`<b style="color:${d.color}">${d.tk} ${d.nm}</b> &nbsp; ${xm.l} ${xm.fmt(d.m[state.xKey])} · ${ym.l} ${ym.fmt(d.m[state.yKey])} · Mkt cap ¥${d.mcap.toFixed(1)}T · Fwd P/E ${d.m.peFwd}x · ROIC ${d.m.roic}% · Net debt/EBITDA ${d.m.netDebtEbitda<0?"net cash":d.m.netDebtEbitda+"x"}`;};
+    b.onmouseleave=()=>scatterTip.textContent="";
+  });
+}
+
+/* ============================ HEATMAP ============================ */
+const heat=document.getElementById("heat");
+function lerp(a,b,t){return a+(b-a)*t;}
+function gradeColor(t){ // t: 0(worst)..1(best)
+  // worst -> warm/red wash, best -> green wash, mid -> paper
+  let r,g,b;
+  if(t<0.5){const k=t/0.5; r=lerp(244,250,k); g=lerp(225,249,k); b=lerp(223,246,k);}
+  else{const k=(t-0.5)/0.5; r=lerp(250,214,k); g=lerp(249,238,k); b=lerp(246,224,k);}
+  return `rgb(${r|0},${g|0},${b|0})`;
+}
+function renderHeat(){
+  const vis=DATA.filter(d=>state.visible.has(d.tk));
+  const cols=vis.length?vis:DATA;
+  // header
+  let thead=`<tr><th class="metric" onclick="setSort(null)">Metric<span class="hint">click a ticker to sort ↓</span></th>`;
+  cols.forEach(d=>{
+    const cue=state.sortKey&&state.sortKey.tk===d.tk?`<span class="sortcue"> ${state.sortDir<0?"▼":"▲"}</span>`:"";
+    thead+=`<th data-tk="${d.tk}"><span class="tkdot" style="background:${d.color}"></span>${d.tk}${cue}</th>`;
+  });
+  thead+=`</tr>`;
+  heat.querySelector("thead").innerHTML=thead;
+
+  // rows, optionally sorted by selected ticker's value within each row order? sorting columns means reorder rows by that ticker's metric.
+  let metrics=[...METRICS];
+  // build body
+  let body="";
+  metrics.forEach(met=>{
+    const vals=cols.map(d=>metricVal(d,met));
+    let lo=Math.min(...vals), hi=Math.max(...vals);
+    body+=`<tr><td class="metric">${met.label}<span class="hint">${met.hint}</span></td>`;
+    cols.forEach(d=>{
+      const v=metricVal(d,met);
+      let t = hi===lo?0.5 : (v-lo)/(hi-lo);
+      if(!met.hi) t=1-t;
+      // clamp specials: intCov 999 -> best
+      const disp=met.fmt(v);
+      body+=`<td class="cell" style="background:${gradeColor(t)}">${disp}</td>`;
+    });
+    body+=`</tr>`;
+  });
+  heat.querySelector("tbody").innerHTML=body;
+
+  heat.querySelectorAll("thead th[data-tk]").forEach(th=>{
+    th.onclick=()=>{
+      const tk=th.dataset.tk;
+      if(state.sortKey&&state.sortKey.tk===tk) state.sortDir*=-1;
+      else { state.sortKey={tk}; state.sortDir=-1; }
+      sortHeatRows();
+    };
+  });
+  if(state.sortKey) sortHeatRows();
+}
+function sortHeatRows(){
+  // reorder visible tbody rows by the chosen ticker's normalized rank (best metrics top when desc)
+  const tb=heat.querySelector("tbody");
+  const rows=[...tb.children];
+  const cols=DATA.filter(d=>state.visible.has(d.tk)); const colsArr=cols.length?cols:DATA;
+  const idx=colsArr.findIndex(d=>d.tk===state.sortKey.tk);
+  if(idx<0) return;
+  // compute normalized score for the selected ticker per metric (higher=better after orientation)
+  const scored=rows.map((row,i)=>{
+    const met=METRICS[i];
+    const vals=colsArr.map(d=>metricVal(d,met));
+    let lo=Math.min(...vals),hi=Math.max(...vals);
+    const v=metricVal(colsArr[idx],met);
+    let t=hi===lo?0.5:(v-lo)/(hi-lo); if(!met.hi)t=1-t;
+    return {row,t};
+  });
+  scored.sort((a,b)=>(b.t-a.t)*(state.sortDir<0?1:-1));
+  scored.forEach(s=>tb.appendChild(s.row));
+  // refresh header cue
+  heat.querySelectorAll("thead th[data-tk]").forEach(th=>{
+    const old=th.querySelector(".sortcue"); if(old) old.remove();
+    if(th.dataset.tk===state.sortKey.tk){
+      const s=document.createElement("span"); s.className="sortcue"; s.textContent=" "+(state.sortDir<0?"▼":"▲"); th.appendChild(s);
+    }
+  });
+}
+function setSort(x){ state.sortKey=null; renderHeat(); }
+window.setSort=setSort;
+
+/* ============================ REVERSE DCF ============================ */
+const dcfSeg=document.getElementById("dcfSeg");
+DATA.forEach(d=>{
+  const b=document.createElement("button"); b.textContent=d.tk; b.dataset.tk=d.tk;
+  b.onclick=()=>{ state.dcf=d.tk; renderDCF(); };
+  dcfSeg.appendChild(b);
+});
+function dcfValue(d,g,m,r,tg){ // g,m,r,tg in % (m absolute %, others %); returns ¥/share
+  const R0=d.d.revPS, nc=d.d.netCashPS, years=10;
+  const gr=g/100, mar=m/100, dr=r/100, tgr=tg/100;
+  let pv=0, rev=R0;
+  for(let t=1;t<=years;t++){ rev*=(1+gr); const fcf=rev*mar; pv+=fcf/Math.pow(1+dr,t); }
+  const fcfT=rev*mar; const tv=fcfT*(1+tgr)/(dr-tgr); pv+=tv/Math.pow(1+dr,years);
+  return pv+nc;
+}
+function impliedGrowth(d,m,r,tg,price){ // solve g s.t. dcfValue==price
+  let lo=-20, hi=80;
+  for(let i=0;i<60;i++){ const mid=(lo+hi)/2; const v=dcfValue(d,mid,m,r,tg);
+    if(v>price) hi=mid; else lo=mid; }
+  return (lo+hi)/2;
+}
+function renderDCF(){
+  dcfSeg.querySelectorAll("button").forEach(b=>b.classList.toggle("active",b.dataset.tk===state.dcf));
+  const d=byTk[state.dcf], v=state.dcfV[state.dcf];
+  const slEl=document.getElementById("dcfSliders");
+  const defs=[
+    {k:"g",label:"Revenue growth (10y)",min:-10,max:45,step:0.5,unit:"%/yr"},
+    {k:"m",label:"Terminal FCF margin",min:1,max:45,step:0.5,unit:"%"},
+    {k:"r",label:"Discount rate (WACC)",min:5,max:15,step:0.25,unit:"%"},
+    {k:"tg",label:"Terminal growth",min:0,max:5,step:0.25,unit:"%"}
+  ];
+  slEl.innerHTML="";
+  defs.forEach(def=>{
+    const wrap=document.createElement("div"); wrap.className="sld";
+    wrap.innerHTML=`<label>${def.label}<span class="val">${v[def.k]}${def.unit}</span></label>
+      <input type="range" min="${def.min}" max="${def.max}" step="${def.step}" value="${v[def.k]}">`;
+    const inp=wrap.querySelector("input");
+    inp.oninput=()=>{ v[def.k]=parseFloat(inp.value); wrap.querySelector(".val").textContent=v[def.k]+def.unit; renderDCFout(); };
+    slEl.appendChild(wrap);
+  });
+  renderDCFout();
+}
+function renderDCFout(){
+  const d=byTk[state.dcf], v=state.dcfV[state.dcf];
+  const fv=dcfValue(d,v.g,v.m,v.r,v.tg);
+  const upside=(fv/d.price-1)*100;
+  const impl=impliedGrowth(d,v.m,v.r,v.tg,d.price);
+  const ncTxt=d.d.netCashPS>=0?`+${fmtYen(d.d.netCashPS)} net cash/sh`:`${fmtYen(d.d.netCashPS)} net debt/sh`;
+  const out=document.getElementById("dcfOut");
+  out.innerHTML=`
+    <div class="dcfrow"><span class="k">Current price</span><span class="v">${fmtYen(d.price)}</span></div>
+    <div class="dcfrow big"><span class="k">Intrinsic value / share</span>
+      <span class="v" style="color:${upside>=0?'var(--good)':'var(--bad)'}">${fmtYen(fv)}</span></div>
+    <div class="dcfrow"><span class="k">Upside / (downside)</span>
+      <span class="v ${upside>=0?'up':'down'}">${upside>=0?'+':''}${upside.toFixed(0)}%</span></div>
+    <div class="impl">At today's price, the model implies ~<b>${impl.toFixed(1)}% revenue growth</b> for 10 years
+      (holding margin ${v.m}%, WACC ${v.r}%, terminal ${v.tg}%). Your assumption is <b>${v.g}%</b> —
+      ${v.g>impl?`above the implied bar, so the DCF says <span class="up">undervalued</span>.`:
+        v.g<impl?`below the implied bar, so the DCF says <span class="down">overvalued</span>.`:`right at the implied bar — fairly valued.`}
+      <br><span class="muted">Base inputs: rev/sh ${fmtYen(d.d.revPS)}, ${ncTxt}, starting FCF margin ~${Math.round(d.d.fcfM*100)}%.</span></div>`;
+}
+
+/* ============================ VERDICT ============================ */
+function renderVerdict(){
+  const w=LENSES[state.lens].w;
+  document.getElementById("weightExpl").innerHTML="Weights ("+LENSES[state.lens].label+"): "+
+    AXES.map(a=>`<b>${a.label}</b> ${(w[a.k]*100)|0}%`).join(" · ");
+  const vis=DATA.filter(d=>state.visible.has(d.tk));
+  const ranked=[...vis].sort((a,b)=>composite(b,state.lens)-composite(a,state.lens));
+  const max=Math.max(...DATA.map(d=>composite(d,state.lens)));
+  const el=document.getElementById("verdict"); el.innerHTML="";
+  ranked.forEach((d,i)=>{
+    const sc=composite(d,state.lens);
+    const row=document.createElement("div"); row.className="vbar";
+    row.innerHTML=`
+      <div class="lab"><span class="rk">${i+1}</span><span class="dot" style="background:${d.color}"></span>
+        <span>${d.tk} ${d.nm.split(" ")[0]}</span></div>
+      <div class="track"><div class="fill" style="width:${(sc/max*100).toFixed(1)}%;background:${d.color}"></div></div>
+      <div class="sc" style="color:${d.color}">${sc.toFixed(1)}</div>
+      <div class="pop"><span class="bp bull">▲ Bull — ${d.bull}</span><span class="bp bear">▼ Bear — ${d.bear}</span></div>`;
+    el.appendChild(row);
+  });
+}
+
+/* ============================ RENDER ALL ============================ */
+function renderAll(){
+  syncChips(); renderCards(); renderRadar(); renderScatter(); renderHeat(); renderDCF(); renderVerdict();
+}
+renderAll();
+</script>
+</body>
+</html>
