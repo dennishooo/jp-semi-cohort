@@ -50,6 +50,17 @@
   .seg button:not(:last-child){border-right:1px solid var(--line2)}
   .spacer{flex:1}
 
+  /* supply-chain layer filter */
+  .layers{display:flex;gap:5px;flex-wrap:wrap}
+  .lchip{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;
+    border:1px solid var(--line2);background:#fff;border-radius:11px;padding:3px 10px;cursor:pointer;
+    color:var(--ink2);transition:background .12s,color .12s,opacity .12s;user-select:none}
+  .lchip:hover{background:var(--hl)}
+  .lchip.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .lchip.allchip{font-weight:600}
+  /* let the per-ticker chip area scroll if it gets tall on small screens */
+  .chips{max-height:108px;overflow-y:auto}
+
   section{margin:0 0 56px}
   .secnum{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.1em}
   .sechead{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:9px;margin-bottom:6px}
@@ -223,17 +234,17 @@
 <header>
   <div class="wrap">
     <div class="eyebrow">Equity comparison · 3-year horizon · Global semiconductor value chain</div>
-    <h1>Twenty-six names, one supply chain, two lenses</h1>
-    <p>From EDA software and design IP through wafers, fab equipment, test, foundry, memory and the chip designers
-       that drive demand — spanning the Tokyo-listed cohort, the Western equipment and design leaders (ASML, TSMC,
-       NVIDIA, Broadcom, AMD, Intel, Arm, Qualcomm, Synopsys, Cadence, Applied Materials, Lam, KLA, Micron,
-       GlobalFoundries) and the Korean memory giants (Samsung, SK Hynix) — graded on what actually separates them
-       over three years: returns on capital versus cost of
+    <h1>Fifty-eight names, the whole supply chain, two lenses</h1>
+    <p>End-to-end coverage of the semiconductor value chain — from raw inputs (gases, wafers, photoresist,
+       materials) through EDA software, chip designers, foundries, memory, analog/power, fab equipment, test, and
+       OSAT/packaging, out to distribution and the end clients (Apple, the hyperscalers, automakers) whose capex
+       pulls the whole chain. Use the <b>chain-layer filter</b> to isolate one tier at a time. Names are graded on
+       what actually separates them over three years: returns on capital versus cost of
        capital, moat direction, balance-sheet resilience, and what today's price already assumes. Toggle the
        scoring lens; every chart shares one color per ticker and one show/hide state.</p>
     <div class="meta">
       <span><b>Data date</b> ~9–10 Jun 2026</span>
-      <span><b>Currency</b> JPY (Tokyo) · USD (US/EU/Taiwan ADR) · KRW (Korea)</span>
+      <span><b>Currency</b> price shown native (USD/JPY/KRW/EUR/CN¥); market caps in USD-B</span>
       <span><b>Fiscal year</b> Japan ends March; others vary</span>
       <span><b>Figures</b> illustrative — verify live</span>
     </div>
@@ -243,6 +254,11 @@
       maker — a single-digit transposition from “4857”. It is treated as <span class="mono">6857 Advantest</span> below.
       One other cross-sector flag: <b>Keyence (6861)</b> is factory-automation, not a semiconductor company; its
       capital-intensity and cyclicality metrics are not directly comparable to the equipment names.
+      <br><br><b>End-client tier —</b> the <span class="mono">End clients / demand</span> layer (Apple, Microsoft,
+      Alphabet, Amazon, Meta, Tesla, Sony, Cisco, Dell, BYD) holds mega-cap companies that <em>buy</em> chips rather
+      than make them. They anchor the demand side of the chain, but their margins, ROIC and multiples reflect
+      consumer/cloud/auto businesses — <b>not directly comparable</b> to the pure semiconductor names. Use the layer
+      filter to view them on their own.
     </div>
   </div>
 </header>
@@ -250,14 +266,18 @@
 <!-- GLOBAL CONTROL BAR -->
 <div class="gbar">
   <div class="wrap">
-    <span class="glabel">Tickers</span>
-    <div class="chips" id="chips"></div>
+    <span class="glabel">Chain layer</span>
+    <div class="layers" id="layers"></div>
     <span class="spacer"></span>
     <span class="glabel">Scoring lens</span>
     <div class="seg" id="lensSeg">
       <button data-lens="value">Value</button>
       <button data-lens="quality" class="active">Quality-Growth</button>
     </div>
+  </div>
+  <div class="wrap" style="margin-top:8px">
+    <span class="glabel">Tickers</span>
+    <div class="chips" id="chips"></div>
   </div>
 </div>
 
@@ -379,7 +399,7 @@
 /* ============================ DATA ============================ */
 /* All figures illustrative, ~Jun 2026, JPY. Radar axes 0-10 (10=best). */
 const DATA = [
- {tk:"6857",nm:"Advantest",bz:"Semiconductor test equipment (ATE)",color:"#D7263D",
+ {tk:"6857",nm:"Advantest",bz:"Semiconductor test equipment (ATE)",color:"#D7263D",layer:"test",
   price:25500,mcap:19.0,
   thesis:"The purest listed lever on AI compute test intensity. HBM stacks and ever-larger accelerators need vastly more test time, and Advantest holds >50% of the SoC/memory ATE market it largely defined. Earnings are compounding at a rate few hardware names can match — the debate is entirely about the multiple and the cyclicality underneath it.",
   bull:"Dominant, widening share in the one part of the chip-test market that AI scales fastest; ~67% gross margin and explosive operating leverage.",
@@ -388,7 +408,7 @@ const DATA = [
   m:{peTTM:45,peFwd:33,pegFwd:1.1,evEbitda:30,evSales:8.5,pfcf:40,fcfYield:2.5,revCagrHist:25,epsCagrFwd:30,gross:67,op:35,net:28,roic:42,roe:38,fcfMargin:22,fcfConv:80,sbc:0.8,netDebtEbitda:-0.6,intCov:99},
   d:{revPS:1073,netCashPS:800,fcfM:0.22}},
 
- {tk:"4063",nm:"Shin-Etsu Chemical",bz:"Silicon wafers + PVC / materials",color:"#1B6CA8",
+ {tk:"4063",nm:"Shin-Etsu Chemical",bz:"Silicon wafers + PVC / materials",color:"#1B6CA8",layer:"wafers",
   price:6836,mcap:12.7,
   thesis:"The cohort's quality anchor: #1 globally in both silicon wafers and PVC, ~25% operating margins through cycles, and a fortress net-cash balance sheet. Earnings are in a cyclical trough (wafers and PVC both soft), which flatters the trailing multiple — but the franchise and the through-cycle returns are about as durable as Japanese industrials get.",
   bull:"Twin global cost-leadership monopolistic positions, ~25% op margin, huge net cash, disciplined capital returns — a sleep-well compounder.",
@@ -397,7 +417,7 @@ const DATA = [
   m:{peTTM:27,peFwd:22,pegFwd:2.7,evEbitda:12,evSales:4.0,pfcf:24,fcfYield:4.2,revCagrHist:6,epsCagrFwd:8,gross:37,op:25,net:18.5,roic:16,roe:13,fcfMargin:17,fcfConv:95,sbc:0.2,netDebtEbitda:-1.5,intCov:999},
   d:{revPS:1383,netCashPS:1184,fcfM:0.17}},
 
- {tk:"6146",nm:"Disco",bz:"Dicing & grinding (back-end) equipment",color:"#6A4C93",
+ {tk:"6146",nm:"Disco",bz:"Dicing & grinding (back-end) equipment",color:"#6A4C93",layer:"backend",
   price:78000,mcap:8.5,
   thesis:"A near-monopoly in precision dicing and wafer grinding — exactly the back-end steps that advanced packaging and HBM thin-wafer stacking lean on hardest. Best-in-cohort margins and returns, run on an unusually transparent internal incentive system. The catch is the price: it trades like the secular winner it is.",
   bull:"~70–80% share in grinders/dicers with deep recipe lock-in; ~39% op margin and >30% ROIC; direct beneficiary of HBM and packaging.",
@@ -406,7 +426,7 @@ const DATA = [
   m:{peTTM:47,peFwd:38,pegFwd:1.7,evEbitda:32,evSales:11,pfcf:45,fcfYield:2.2,revCagrHist:22,epsCagrFwd:22,gross:62,op:39,net:28,roic:35,roe:30,fcfMargin:24,fcfConv:85,sbc:0.5,netDebtEbitda:-1.0,intCov:999},
   d:{revPS:3670,netCashPS:3000,fcfM:0.24}},
 
- {tk:"6963",nm:"Rohm",bz:"Power & analog semis (SiC)",color:"#C58B00",
+ {tk:"6963",nm:"Rohm",bz:"Power & analog semis (SiC)",color:"#C58B00",layer:"analog",
   price:4000,mcap:1.5,
   thesis:"A turnaround bet, not a quality compounder. Rohm has spent heavily building out silicon-carbide capacity for EVs and AI power delivery just as SiC pricing and EV demand softened — crushing margins to near break-even. The optionality is real if SiC inflects; the current returns destroy value, and that's the whole problem.",
   bull:"Optionality on a SiC power-semi up-cycle; net-cash balance sheet, government/partner backing, auto design-in pipeline.",
@@ -415,7 +435,7 @@ const DATA = [
   m:{peTTM:90,peFwd:55,pegFwd:3.7,evEbitda:12,evSales:2.8,pfcf:60,fcfYield:1.0,revCagrHist:-3,epsCagrFwd:15,gross:30,op:3,net:1.5,roic:2,roe:1.5,fcfMargin:3,fcfConv:50,sbc:0.3,netDebtEbitda:0.5,intCov:8},
   d:{revPS:1200,netCashPS:1500,fcfM:0.05}},
 
- {tk:"4004",nm:"Resonac",bz:"Semi materials + petrochemicals",color:"#E07A5F",
+ {tk:"4004",nm:"Resonac",bz:"Semi materials + petrochemicals",color:"#E07A5F",layer:"materials",
   price:16500,mcap:3.0,
   thesis:"The high-beta deep-value play. The semiconductor & electronic-materials segment (back-end packaging materials for AI) is genuinely strong and growing ~20%+, but it's wrapped inside a leveraged, low-margin conglomerate. The stock has roughly 5x'd in a year on the AI-materials narrative and a planned petrochemical spin-off; the leverage is the live risk.",
   bull:"Strong, AI-levered back-end materials franchise; portfolio reform and Crasus spin-off could re-rate margins and cut debt; cheap on EV/sales.",
@@ -424,7 +444,7 @@ const DATA = [
   m:{peTTM:38,peFwd:30,pegFwd:1.2,evEbitda:9,evSales:2.8,pfcf:25,fcfYield:3.0,revCagrHist:2,epsCagrFwd:25,gross:26,op:5,net:2.9,roic:4,roe:5.3,fcfMargin:5,fcfConv:70,sbc:0.2,netDebtEbitda:4.7,intCov:5.8},
   d:{revPS:7300,netCashPS:-3850,fcfM:0.06}},
 
- {tk:"6861",nm:"Keyence",bz:"Factory-automation sensors (cross-sector)",color:"#2A9D8F",
+ {tk:"6861",nm:"Keyence",bz:"Factory-automation sensors (cross-sector)",color:"#2A9D8F",layer:"equipment",
   price:77000,mcap:19.5,
   thesis:"Not a chip company — included as the cohort's quality yardstick. An asset-light, direct-sales sensor and vision machine with ~50%+ operating margins, ~84% gross margins, and a balance sheet that is mostly cash. Growth is only moderate and the multiple is full, but the return profile and durability are the best of any name here.",
   bull:"Extraordinary, durable economics: ~51% op margin, fortress net cash, opaque supplier model that blocks competition; consistent compounder.",
@@ -433,7 +453,7 @@ const DATA = [
   m:{peTTM:37,peFwd:36,pegFwd:4.0,evEbitda:24,evSales:17,pfcf:40,fcfYield:2.5,revCagrHist:9,epsCagrFwd:9,gross:84,op:51,net:38,roic:45,roe:14,fcfMargin:30,fcfConv:90,sbc:0.1,netDebtEbitda:-2.0,intCov:999},
   d:{revPS:4190,netCashPS:6000,fcfM:0.30}},
 
- {tk:"6723",nm:"Renesas",bz:"MCUs / SoCs / analog",color:"#3A0CA3",
+ {tk:"6723",nm:"Renesas",bz:"MCUs / SoCs / analog",color:"#3A0CA3",layer:"analog",
   price:4044,mcap:8.0,
   thesis:"The cyclical-value name. #3 in microcontrollers with deep automotive design-in lock-in, trading at the lowest forward multiple among the chip names after an auto/industrial inventory correction. The rerating case rests on the cycle turning and a debt-funded M&A spree (Dialog, Altium, Transphorm) finally earning its cost of capital — which is exactly the open question.",
   bull:"Cheapest forward P/E of the chipmakers; sticky auto MCU franchise; cyclical recovery plus content-per-car tailwind; value-unlock from unit divestitures.",
@@ -442,7 +462,7 @@ const DATA = [
   m:{peTTM:28,peFwd:19,pegFwd:1.6,evEbitda:11,evSales:5.0,pfcf:18,fcfYield:5.0,revCagrHist:8,epsCagrFwd:12,gross:55,op:22,net:17,roic:9,roe:11,fcfMargin:15,fcfConv:85,sbc:1.5,netDebtEbitda:0.6,intCov:12},
   d:{revPS:733,netCashPS:-250,fcfM:0.15}},
 
- {tk:"8035",nm:"Tokyo Electron",bz:"Wafer-fab equipment (WFE)",color:"#006D5B",
+ {tk:"8035",nm:"Tokyo Electron",bz:"Wafer-fab equipment (WFE)",color:"#006D5B",layer:"equipment",
   price:60000,mcap:27.0,
   thesis:"The GARP pick of the equipment names. A top-three WFE player with ~90% share in coater/developers and strong etch, deposition and clean franchises — wide-moat exposure to leading-edge and AI capex, at a more reasonable multiple than Disco or Advantest. FY26 was a digestion year; management guides a strong FY27 rebound. China revenue mix is the swing risk.",
   bull:"Broad wide-moat WFE franchise, >30% ROIC, ~50% payout with record buybacks; leading-edge and AI logic/memory capex tailwind at a fair price.",
@@ -451,7 +471,7 @@ const DATA = [
   m:{peTTM:26,peFwd:22,pegFwd:1.5,evEbitda:18,evSales:9.5,pfcf:28,fcfYield:3.5,revCagrHist:12,epsCagrFwd:15,gross:47,op:29,net:24,roic:32,roe:28,fcfMargin:20,fcfConv:90,sbc:0.4,netDebtEbitda:-1.0,intCov:999},
   d:{revPS:5420,netCashPS:2500,fcfM:0.20}},
 
- {tk:"7735",nm:"SCREEN Holdings",bz:"Wafer-cleaning equipment (SPE)",color:"#9C2C77",
+ {tk:"7735",nm:"SCREEN Holdings",bz:"Wafer-cleaning equipment (SPE)",color:"#9C2C77",layer:"equipment",
   price:13000,mcap:2.4,
   thesis:"Value within quality. SCREEN owns ~50%+ of the single-wafer cleaning market — a narrow but dominant niche that scales with wafer starts and added cleaning steps at advanced nodes. It carries the lowest forward multiple of the equipment names, with solid but thinner margins than the WFE giants and more single-product concentration.",
   bull:"Dominant niche in wafer cleaning with switching costs; cheapest forward multiple of the equipment names; FY27 guided to robust SPE + packaging growth.",
@@ -461,7 +481,7 @@ const DATA = [
   d:{revPS:3275,netCashPS:2500,fcfM:0.13}},
 
  /* ---- Global value-chain leaders (figures in USD; illustrative, ~Jun 2026) ---- */
- {tk:"ASML",nm:"ASML Holding",bz:"Lithography systems (EUV / DUV)",color:"#FF6B00",
+ {tk:"ASML",nm:"ASML Holding",bz:"Lithography systems (EUV / DUV)",color:"#FF6B00",layer:"equipment",
   price:1778,mcap:671,cur:"$",
   thesis:"The single most irreplaceable node in the entire chain: a 100% monopoly on EUV lithography, the only way to print leading-edge logic and the densest memory. Every advanced fab on earth must buy from ASML, and High-NA EUV extends that grip for another decade. The debate is never the moat — it is the timing of the order cycle and how much China exposure normalizes, with the stock at a ~58x trailing multiple after a sharp AI-driven re-rating.",
   bull:"Absolute EUV monopoly with multi-year backlog and High-NA upgrade cycle; ~51% gross margin, huge installed-base service annuity, every leading-edge roadmap depends on it.",
@@ -470,7 +490,7 @@ const DATA = [
   m:{peTTM:58,peFwd:45,pegFwd:2.0,evEbitda:38,evSales:17,pfcf:52,fcfYield:1.9,revCagrHist:18,epsCagrFwd:22,gross:51,op:33,net:28,roic:48,roe:55,fcfMargin:26,fcfConv:92,sbc:1.0,netDebtEbitda:-0.8,intCov:999},
   d:{revPS:101,netCashPS:8,fcfM:0.26}},
 
- {tk:"LRCX",nm:"Lam Research",bz:"Etch & deposition (WFE)",color:"#00897B",
+ {tk:"LRCX",nm:"Lam Research",bz:"Etch & deposition (WFE)",color:"#00897B",layer:"equipment",
   price:327,mcap:409,cur:"$",
   thesis:"The memory-capex purebred. Lam dominates plasma etch and deposition — the steps that scale fastest as NAND goes vertical and DRAM stacks toward HBM. More cyclical than the litho monopoly, but with a deep installed-base services tail and best-in-class capital returns. The stock has roughly tripled in a year on AI/HBM enthusiasm, pushing it to a ~62x trailing multiple — the cycle and memory pricing are the swing factors, not the franchise.",
   bull:"Co-leader in etch/deposition with growing share at advanced nodes; ~48% gross margin; aggressive buybacks; direct HBM and 3D-NAND scaling leverage.",
@@ -479,7 +499,7 @@ const DATA = [
   m:{peTTM:62,peFwd:44,pegFwd:2.4,evEbitda:42,evSales:18.5,pfcf:55,fcfYield:1.8,revCagrHist:10,epsCagrFwd:18,gross:48,op:31,net:26,roic:38,roe:55,fcfMargin:24,fcfConv:95,sbc:2.5,netDebtEbitda:-0.5,intCov:999},
   d:{revPS:17,netCashPS:4,fcfM:0.24}},
 
- {tk:"KLAC",nm:"KLA Corp",bz:"Process control & inspection",color:"#5E35B1",
+ {tk:"KLAC",nm:"KLA Corp",bz:"Process control & inspection",color:"#5E35B1",layer:"equipment",
   price:2139,mcap:279,cur:"$",
   thesis:"The toll-booth on yield. KLA owns ~55%+ of process-control and inspection — as nodes shrink and defects get costlier, fabs must inspect more, not less, making KLA structurally less cyclical than the WFE names. Best-in-cohort margins among equipment makers and an enviable services annuity. Highest-quality equipment franchise after the litho monopoly — though at ~61x trailing the market now prices that quality fully. (A 10-for-1 split takes effect 12 Jun 2026; figures here are pre-split.)",
   bull:">55% share in process control with widening lead at advanced nodes; ~62% gross margin, ~40% op margin; defensive services mix and superb capital returns.",
@@ -488,7 +508,7 @@ const DATA = [
   m:{peTTM:61,peFwd:45,pegFwd:2.6,evEbitda:40,evSales:22,pfcf:55,fcfYield:1.8,revCagrHist:13,epsCagrFwd:15,gross:62,op:40,net:36,roic:42,roe:90,fcfMargin:30,fcfConv:95,sbc:2.2,netDebtEbitda:0.3,intCov:40},
   d:{revPS:100,netCashPS:-20,fcfM:0.30}},
 
- {tk:"TSM",nm:"TSMC",bz:"Leading-edge foundry",color:"#C0392B",
+ {tk:"TSM",nm:"TSMC",bz:"Leading-edge foundry",color:"#C0392B",layer:"foundry",
   price:428,mcap:1890,cur:"$",
   thesis:"The factory the whole industry runs on. TSMC manufactures the leading-edge silicon for Apple, Nvidia, AMD and almost every fabless designer, holding ~70% of the foundry market and effectively all of the bleeding edge. AI demand has pricing power flowing its way for the first time in years. Scale, yield and customer trust are the moat; geopolitics is the discount — and at ~32x trailing it remains the most reasonably valued of the AI-leveraged leaders. (Figures are per US-listed ADR; 1 ADR = 5 ordinary shares.)",
   bull:"~70% foundry share and a near-monopoly on the leading edge; AI accelerator demand driving pricing power; ~59% gross margin at vast scale; unmatched yield/execution.",
@@ -497,7 +517,7 @@ const DATA = [
   m:{peTTM:32,peFwd:22,pegFwd:0.9,evEbitda:16,evSales:12,pfcf:34,fcfYield:2.4,revCagrHist:25,epsCagrFwd:25,gross:59,op:49,net:43,roic:32,roe:31,fcfMargin:18,fcfConv:60,sbc:0.3,netDebtEbitda:-0.6,intCov:999},
   d:{revPS:25,netCashPS:30,fcfM:0.18}},
 
- {tk:"AMAT",nm:"Applied Materials",bz:"Diversified fab equipment (WFE)",color:"#1565C0",
+ {tk:"AMAT",nm:"Applied Materials",bz:"Diversified fab equipment (WFE)",color:"#1565C0",layer:"equipment",
   price:499,mcap:396,cur:"$",
   thesis:"The broadest equipment toolbox. Applied spans deposition, etch, ion implant, CMP and inspection — the widest WFE product range, which smooths cyclicality and lets it ride every node and material transition (gate-all-around, advanced packaging, ICAPS). At ~47x trailing it carries the lowest multiple of the US equipment names; the trade-off is being a generalist rather than a monopolist in any one step.",
   bull:"Widest WFE product breadth de-risks any single segment; ~48% gross margin, strong FCF and buybacks; ICAPS/trailing-edge plus leading-edge dual exposure.",
@@ -507,7 +527,7 @@ const DATA = [
   d:{revPS:37,netCashPS:2,fcfM:0.23}},
 
  /* ---- Chips, memory & IP: the demand side (USD unless noted; ~Jun 2026) ---- */
- {tk:"NVDA",nm:"NVIDIA",bz:"AI accelerators / GPUs (fabless)",color:"#76B900",
+ {tk:"NVDA",nm:"NVIDIA",bz:"AI accelerators / GPUs (fabless)",color:"#76B900",layer:"design",
   price:208,mcap:5040,cur:"$",
   thesis:"The demand engine the entire cohort feeds. NVIDIA's GPUs and the CUDA software moat define AI compute, and every equipment, foundry, memory and packaging name in this list is ultimately levered to its order book. At ~$5T it is the most valuable company on earth, yet a ~21x forward multiple looks almost reasonable against the growth — the whole debate is whether data-center capex sustains or air-pockets.",
   bull:"Near-total share of AI training compute with a CUDA software lock-in no rival has cracked; ~75% gross margin, explosive FCF, the reference demand signal for the chain.",
@@ -516,7 +536,7 @@ const DATA = [
   m:{peTTM:32,peFwd:21,pegFwd:0.5,evEbitda:19,evSales:20,pfcf:28,fcfYield:2.5,revCagrHist:70,epsCagrFwd:35,gross:75,op:62,net:55,roic:90,roe:90,fcfMargin:48,fcfConv:95,sbc:3.5,netDebtEbitda:-1.5,intCov:999},
   d:{revPS:10.5,netCashPS:1.5,fcfM:0.48}},
 
- {tk:"AVGO",nm:"Broadcom",bz:"Custom AI silicon + networking",color:"#CC092F",
+ {tk:"AVGO",nm:"Broadcom",bz:"Custom AI silicon + networking",color:"#CC092F",layer:"design",
   price:392,mcap:1870,cur:"$",
   thesis:"The other AI-silicon winner. Broadcom designs the custom accelerators (XPUs) and networking silicon that hyperscalers use to reduce dependence on NVIDIA, plus a sticky infrastructure-software franchise (VMware). A serial-acquirer model with prodigious FCF and dividends — at ~65x trailing the AI-ASIC narrative is fully priced, but the cash generation is real.",
   bull:"Co-leader in custom AI ASICs and data-center networking; ~60%+ gross margin, huge FCF and dividend; diversified software tail smooths the cycle.",
@@ -525,7 +545,7 @@ const DATA = [
   m:{peTTM:65,peFwd:25,pegFwd:1.1,evEbitda:28,evSales:26,pfcf:35,fcfYield:2.4,revCagrHist:32,epsCagrFwd:28,gross:67,op:45,net:38,roic:18,roe:35,fcfMargin:42,fcfConv:100,sbc:5.0,netDebtEbitda:1.8,intCov:9},
   d:{revPS:16,netCashPS:-12,fcfM:0.42}},
 
- {tk:"AMD",nm:"AMD",bz:"CPUs + AI accelerators (fabless)",color:"#ED1C24",
+ {tk:"AMD",nm:"AMD",bz:"CPUs + AI accelerators (fabless)",color:"#ED1C24",layer:"design",
   price:476,mcap:775,cur:"$",
   thesis:"The #2 challenger across CPUs and AI accelerators. AMD has taken durable server-CPU share from Intel and is the only credible alternative to NVIDIA in data-center GPUs with its MI-series. At ~159x trailing the stock prices in a large, successful AI-GPU ramp that is still unproven at scale — enormous optionality, enormous expectations.",
   bull:"Real server-CPU share gains plus the only credible non-NVIDIA AI-GPU roadmap; fabless asset-light model; multi-year hyperscaler design wins.",
@@ -534,7 +554,7 @@ const DATA = [
   m:{peTTM:159,peFwd:55,pegFwd:1.8,evEbitda:60,evSales:21,pfcf:70,fcfYield:1.3,revCagrHist:25,epsCagrFwd:40,gross:53,op:25,net:13,roic:9,roe:11,fcfMargin:18,fcfConv:110,sbc:6.0,netDebtEbitda:-0.5,intCov:99},
   d:{revPS:23,netCashPS:3,fcfM:0.18}},
 
- {tk:"INTC",nm:"Intel",bz:"CPUs + foundry turnaround (IDM)",color:"#0071C5",
+ {tk:"INTC",nm:"Intel",bz:"CPUs + foundry turnaround (IDM)",color:"#0071C5",layer:"idm",
   price:108,mcap:542,cur:"$",
   thesis:"The deep-value turnaround. Intel is loss-making today as it spends to stand up a leading-edge foundry (18A/14A) and claw back process leadership it ceded to TSMC. The equity is a binary-ish bet: if the foundry roadmap and external customers materialize, the stock is cheap on assets; if not, the capital burn continues. No trailing P/E — it lost money.",
   bull:"US/EU government-backed foundry buildout with 18A ramping; deep IDM asset base and x86 installed base; optionality if external foundry customers commit.",
@@ -543,7 +563,7 @@ const DATA = [
   m:{peTTM:999,peFwd:102,pegFwd:5.0,evEbitda:14,evSales:4.5,pfcf:60,fcfYield:0.5,revCagrHist:-2,epsCagrFwd:10,gross:32,op:-2,net:-6,roic:1,roe:-3,fcfMargin:2,fcfConv:30,sbc:2.5,netDebtEbitda:2.5,intCov:2},
   d:{revPS:11,netCashPS:-8,fcfM:0.02}},
 
- {tk:"ARM",nm:"Arm Holdings",bz:"CPU IP / licensing (royalty)",color:"#00B4AB",
+ {tk:"ARM",nm:"Arm Holdings",bz:"CPU IP / licensing (royalty)",color:"#00B4AB",layer:"eda",
   price:325,mcap:347,cur:"$",
   thesis:"The asset-light toll on every chip. Arm licenses the CPU architecture inside nearly all mobile devices and a fast-growing share of data-center and edge silicon, earning upfront license fees plus a royalty on every unit shipped. ~95% gross margins and no fabs — but at ~150x forward earnings the royalty-growth runway is priced for near-perfection.",
   bull:"Royalty model with ~95% gross margin and near-universal architectural reach; data-center and AI-edge design wins expand the royalty base every node.",
@@ -552,7 +572,7 @@ const DATA = [
   m:{peTTM:384,peFwd:150,pegFwd:5.0,evEbitda:120,evSales:70,pfcf:200,fcfYield:0.5,revCagrHist:25,epsCagrFwd:30,gross:95,op:35,net:25,roic:15,roe:14,fcfMargin:30,fcfConv:110,sbc:12,netDebtEbitda:-2.0,intCov:999},
   d:{revPS:4.6,netCashPS:2,fcfM:0.30}},
 
- {tk:"005930",nm:"Samsung Electronics",bz:"Memory + foundry + devices",color:"#1428A0",
+ {tk:"005930",nm:"Samsung Electronics",bz:"Memory + foundry + devices",color:"#1428A0",layer:"memory",
   price:302500,mcap:2046,cur:"₩",
   thesis:"The diversified memory giant. Samsung is #1 in DRAM and NAND, runs the #2 foundry, and sells the devices that consume the chips — a vast, integrated franchise trading at a low-single-digit forward multiple on trough-to-recovering memory earnings. The HBM catch-up versus SK Hynix is the swing factor; the conglomerate discount is structural.",
   bull:"Scale leadership in DRAM/NAND plus a foundry and device business; fortress balance sheet; deeply cheap on a ~6x forward multiple as memory recovers.",
@@ -561,7 +581,7 @@ const DATA = [
   m:{peTTM:26,peFwd:6,pegFwd:0.3,evEbitda:5,evSales:1.6,pfcf:12,fcfYield:6.0,revCagrHist:8,epsCagrFwd:35,gross:38,op:18,net:14,roic:11,roe:10,fcfMargin:9,fcfConv:70,sbc:0.1,netDebtEbitda:-2.5,intCov:999},
   d:{revPS:58400,netCashPS:50000,fcfM:0.09}},
 
- {tk:"000660",nm:"SK Hynix",bz:"DRAM / HBM / NAND memory",color:"#EA002C",
+ {tk:"000660",nm:"SK Hynix",bz:"DRAM / HBM / NAND memory",color:"#EA002C",layer:"memory",
   price:2048000,mcap:1569,cur:"₩",
   thesis:"The purest listed bet on HBM. SK Hynix leads the high-bandwidth-memory market that every AI accelerator depends on, and that lead has driven a violent earnings and share-price recovery. More concentrated and more cyclical than Samsung, with a stretched-then-deleveraging balance sheet — at ~6x forward it is cheap if HBM demand holds, dangerous if memory rolls over.",
   bull:"HBM share leadership feeding directly into the AI accelerator ramp; explosive earnings recovery; ~6x forward multiple on surging cash flow.",
@@ -570,7 +590,7 @@ const DATA = [
   m:{peTTM:21,peFwd:6,pegFwd:0.2,evEbitda:5,evSales:2.5,pfcf:10,fcfYield:7.0,revCagrHist:30,epsCagrFwd:40,gross:50,op:38,net:30,roic:28,roe:32,fcfMargin:15,fcfConv:60,sbc:0.1,netDebtEbitda:0.4,intCov:20},
   d:{revPS:186500,netCashPS:-50000,fcfM:0.15}},
 
- {tk:"MU",nm:"Micron",bz:"DRAM / HBM / NAND memory",color:"#0066B3",
+ {tk:"MU",nm:"Micron",bz:"DRAM / HBM / NAND memory",color:"#0066B3",layer:"memory",
   price:936,mcap:1060,cur:"$",
   thesis:"The US-listed memory and HBM play. Micron is the #3 DRAM/NAND maker and a credible HBM supplier into the AI ramp, with earnings exploding off the memory trough — the ~9.7x forward multiple on peak-cycle earnings is the classic memory paradox: optically cheap precisely because the market doubts the earnings last.",
   bull:"HBM share gains into AI demand; US-listed liquidity and CHIPS-Act support; enormous operating leverage off the memory-cycle bottom.",
@@ -580,7 +600,7 @@ const DATA = [
   d:{revPS:51,netCashPS:-15,fcfM:0.12}},
 
  /* ---- EDA software, mobile SoC & trailing-edge foundry (USD; ~Jun 2026) ---- */
- {tk:"SNPS",nm:"Synopsys",bz:"EDA software + design IP",color:"#7B2D8E",
+ {tk:"SNPS",nm:"Synopsys",bz:"EDA software + design IP",color:"#7B2D8E",layer:"eda",
   price:465,mcap:89,cur:"$",
   thesis:"One half of the EDA duopoly that every chip on this page is designed with. Synopsys sells the design-automation software and silicon IP that NVIDIA, AMD, Broadcom, Arm and the foundries cannot work without — a near-recurring, ~90%-retention model with structurally higher margins and lower cyclicality than any hardware name. At ~110x trailing (digesting the Ansys acquisition) the quality is fully priced.",
   bull:"Duopoly EDA + IP with deep switching costs and recurring revenue; AI chip-design complexity expands its TAM every node; Ansys adds simulation cross-sell.",
@@ -589,7 +609,7 @@ const DATA = [
   m:{peTTM:110,peFwd:29,pegFwd:1.4,evEbitda:35,evSales:11,pfcf:45,fcfYield:1.8,revCagrHist:14,epsCagrFwd:20,gross:81,op:34,net:25,roic:14,roe:16,fcfMargin:28,fcfConv:110,sbc:6.0,netDebtEbitda:1.0,intCov:20},
   d:{revPS:45,netCashPS:-10,fcfM:0.28}},
 
- {tk:"CDNS",nm:"Cadence",bz:"EDA software + design IP",color:"#178C43",
+ {tk:"CDNS",nm:"Cadence",bz:"EDA software + design IP",color:"#178C43",layer:"eda",
   price:391,mcap:108,cur:"$",
   thesis:"The other half of the EDA duopoly, and the higher-margin one. Cadence's design and verification tools plus its hardware emulation systems are mission-critical to every advanced chip program, generating ~recurring revenue at ~35%+ operating margins. The franchise is arguably the cleanest compounder in the cohort; the only knock is a ~91x trailing multiple that demands sustained double-digit growth.",
   bull:"Duopoly EDA with verification/emulation lock-in and ~recurring revenue; ~35% op margin and superb FCF; direct beneficiary of AI design complexity.",
@@ -598,7 +618,7 @@ const DATA = [
   m:{peTTM:91,peFwd:48,pegFwd:2.4,evEbitda:50,evSales:19,pfcf:60,fcfYield:1.6,revCagrHist:14,epsCagrFwd:20,gross:86,op:35,net:28,roic:22,roe:30,fcfMargin:32,fcfConv:105,sbc:6.5,netDebtEbitda:-0.3,intCov:999},
   d:{revPS:20,netCashPS:1,fcfM:0.32}},
 
- {tk:"QCOM",nm:"Qualcomm",bz:"Mobile / edge SoCs + licensing",color:"#3253DC",
+ {tk:"QCOM",nm:"Qualcomm",bz:"Mobile / edge SoCs + licensing",color:"#3253DC",layer:"design",
   price:205,mcap:217,cur:"$",
   thesis:"The mobile-and-edge anchor, and the cohort's cyclical-value chip designer. Qualcomm leads premium smartphone SoCs and earns a high-margin patent-licensing royalty on virtually every handset, while pushing into automotive and edge AI. At ~21x it is among the cheapest designers here — the market prices a mature smartphone TAM and Apple's modem in-sourcing rather than the diversification story.",
   bull:"Leading mobile SoC plus a fat, durable licensing royalty stream; real automotive and edge-AI diversification; cheap multiple and strong capital returns.",
@@ -607,20 +627,334 @@ const DATA = [
   m:{peTTM:22,peFwd:21,pegFwd:2.6,evEbitda:13,evSales:4.9,pfcf:14,fcfYield:6.5,revCagrHist:8,epsCagrFwd:8,gross:56,op:32,net:27,roic:30,roe:40,fcfMargin:25,fcfConv:95,sbc:2.5,netDebtEbitda:-0.3,intCov:99},
   d:{revPS:42,netCashPS:3,fcfM:0.25}},
 
- {tk:"GFS",nm:"GlobalFoundries",bz:"Trailing-edge / specialty foundry",color:"#B5651D",
+ {tk:"GFS",nm:"GlobalFoundries",bz:"Trailing-edge / specialty foundry",color:"#B5651D",layer:"foundry",
   price:75,mcap:41,cur:"$",
   thesis:"The trailing-edge foundry counterpoint to TSMC. GlobalFoundries deliberately skipped the bleeding edge to serve specialty processes — RF, power, automotive, IoT — where designs are sticky and capacity matters more than the latest node. Lower growth and returns than the leading edge, but more durable customer relationships and a Western-fab security premium. Not an AI-compute play.",
   bull:"Differentiated specialty/trailing-edge niche with long-term customer agreements; Western (US/EU) capacity premium and CHIPS support; less node-race capex pressure.",
   bear:"No leading-edge or AI-compute exposure; lower margins and ROIC than peers; smartphone/auto end-market cyclicality and a ~54x trailing multiple.",
   r:{val:5,growth:4,roic:4,moat:5,fcf:5,bs:6,scal:5},
   m:{peTTM:54,peFwd:38,pegFwd:3.0,evEbitda:9,evSales:5.5,pfcf:25,fcfYield:2.5,revCagrHist:3,epsCagrFwd:13,gross:25,op:14,net:11,roic:6,roe:8,fcfMargin:10,fcfConv:70,sbc:2.0,netDebtEbitda:-0.4,intCov:30},
-  d:{revPS:12.5,netCashPS:2,fcfM:0.10}}
+  d:{revPS:12.5,netCashPS:2,fcfM:0.10}},
+
+ /* ======== UPSTREAM: resources, gases, materials, wafers (mcap in USD-B) ======== */
+ {tk:"LIN",nm:"Linde",bz:"Industrial & electronic gases",color:"#4C9F38",layer:"gases",
+  price:516,mcap:238,cur:"$",mcapUSD:true,
+  thesis:"The widest moat in the upstream chain. Linde supplies the bulk and specialty gases every fab consumes, on long-term take-or-pay contracts with on-site plants that lock customers in for decades. Not a pure semi play — gases span healthcare, chemicals and industry — but the closest thing to an annuity in the whole value chain, which is why it trades at a premium ~34x.",
+  bull:"Take-or-pay contracts and on-site plants create utility-like recurring revenue; disciplined pricing and capital returns; electronics-gas demand rises with every new fab.",
+  bear:"Only partly a semiconductor story; mature mid-single-digit volume growth; ~34x P/E is full for an industrial-gas compounder.",
+  r:{val:4,growth:5,roic:8,moat:10,fcf:9,bs:8,scal:7},
+  m:{peTTM:34,peFwd:28,pegFwd:3.0,evEbitda:18,evSales:7,pfcf:30,fcfYield:3.0,revCagrHist:6,epsCagrFwd:11,gross:48,op:29,net:21,roic:14,roe:18,fcfMargin:18,fcfConv:95,sbc:0.5,netDebtEbitda:1.2,intCov:25},
+  d:{revPS:75,netCashPS:-30,fcfM:0.18}},
+
+ {tk:"AI",nm:"Air Liquide",bz:"Industrial & electronic gases",color:"#8AB833",layer:"gases",
+  price:170,mcap:115,cur:"€",mcapUSD:true,
+  thesis:"Linde's European mirror image. Air Liquide is the #2 global gases major with the same on-site, long-contract model and a sizeable electronics & advanced-materials franchise feeding fabs in Europe and Asia. A steady industrial compounder, slightly cheaper than Linde, with the same partial-exposure caveat — most of the business is not semiconductors.",
+  bull:"Diversified gases major with sticky contracts and a growing electronics segment; resilient margins and dividends through cycles.",
+  bear:"Semiconductor exposure is a minority of revenue; European-industrial growth is modest; capital-intensive plant buildout.",
+  r:{val:5,growth:4,roic:7,moat:9,fcf:8,bs:7,scal:7},
+  m:{peTTM:30,peFwd:26,pegFwd:3.3,evEbitda:13,evSales:3.5,pfcf:26,fcfYield:3.2,revCagrHist:5,epsCagrFwd:8,gross:42,op:21,net:13,roic:11,roe:13,fcfMargin:13,fcfConv:90,sbc:0.3,netDebtEbitda:1.4,intCov:20},
+  d:{revPS:46,netCashPS:-20,fcfM:0.13}},
+
+ {tk:"ENTG",nm:"Entegris",bz:"Advanced materials & filtration",color:"#A05195",layer:"materials",
+  price:134,mcap:20,cur:"$",mcapUSD:true,
+  thesis:"A picks-and-shovels materials specialist that scales with process complexity, not just wafer volume. Entegris makes the filtration, deposition materials, and contamination-control consumables that advanced nodes need more of at every shrink — a high-recurring, consumable-heavy model. Earnings are in a cyclical dip (hence ~77x trailing), masking a quality franchise.",
+  bull:"Consumable, recipe-locked materials that grow with node complexity; high recurring revenue; advanced-node and advanced-packaging tailwinds.",
+  bear:"Depressed trailing earnings inflate the multiple to ~77x; debt from the CMC acquisition; smaller scale and cyclicality.",
+  r:{val:3,growth:7,roic:5,moat:8,fcf:6,bs:5,scal:7},
+  m:{peTTM:77,peFwd:35,pegFwd:2.0,evEbitda:22,evSales:6,pfcf:40,fcfYield:1.8,revCagrHist:8,epsCagrFwd:18,gross:45,op:22,net:11,roic:8,roe:14,fcfMargin:14,fcfConv:90,sbc:1.5,netDebtEbitda:3.0,intCov:6},
+  d:{revPS:21,netCashPS:-25,fcfM:0.14}},
+
+ {tk:"4186",nm:"Tokyo Ohka Kogyo",bz:"Photoresist & process chemicals",color:"#D45087",layer:"materials",
+  price:9387,mcap:8,cur:"¥",mcapUSD:true,
+  thesis:"A quiet leader in photoresist — the light-sensitive polymer at the heart of lithography. TOK is among the handful of suppliers that can qualify resists for leading-edge and EUV patterning, a slow-moving, high-trust niche. Small and steady; its fortunes track wafer starts and the shift to more advanced (and more resist-intensive) nodes.",
+  bull:"Top-tier photoresist supplier with EUV qualification and deep customer trust; consumable demand scales with advanced-node wafer starts.",
+  bear:"Small and narrow; modest growth; earnings sensitive to the wafer-start cycle and limited pricing leverage.",
+  r:{val:6,growth:5,roic:6,moat:7,fcf:6,bs:8,scal:5},
+  m:{peTTM:32,peFwd:29,pegFwd:2.5,evEbitda:13,evSales:3,pfcf:24,fcfYield:3.0,revCagrHist:7,epsCagrFwd:12,gross:35,op:16,net:13,roic:10,roe:11,fcfMargin:12,fcfConv:85,sbc:0.1,netDebtEbitda:-1.5,intCov:999},
+  d:{revPS:2085,netCashPS:1500,fcfM:0.12}},
+
+ {tk:"4182",nm:"Mitsubishi Gas Chemical",bz:"Electronic & specialty chemicals",color:"#C77DA0",layer:"materials",
+  price:4426,mcap:6,cur:"¥",mcapUSD:true,
+  thesis:"A diversified Japanese chemical maker with a meaningful electronic-materials arm (BT resin for IC substrates, specialty chemicals) wrapped in a broader, lower-margin chemicals business. Currently loss-making on a trailing basis as base chemicals slump, so the electronics value is obscured — a deep-cyclical, sum-of-parts situation rather than a clean semi play.",
+  bull:"Strong niche in BT-resin substrate materials levered to advanced packaging; deep-value optionality if chemicals recover.",
+  bear:"Loss-making trailing (P/E n/m); most revenue is commodity chemicals, not semis; low through-cycle returns.",
+  r:{val:6,growth:3,roic:2,moat:4,fcf:3,bs:6,scal:4},
+  m:{peTTM:999,peFwd:18,pegFwd:1.5,evEbitda:9,evSales:1.2,pfcf:30,fcfYield:2.0,revCagrHist:1,epsCagrFwd:20,gross:20,op:4,net:-1,roic:2,roe:-1,fcfMargin:3,fcfConv:40,sbc:0.1,netDebtEbitda:1.5,intCov:4},
+  d:{revPS:3790,netCashPS:-1000,fcfM:0.03}},
+
+ {tk:"3436",nm:"Sumco",bz:"Silicon wafers (#2 global)",color:"#665191",layer:"wafers",
+  price:3200,mcap:7,cur:"¥",mcapUSD:true,
+  thesis:"The #2 silicon-wafer maker after Shin-Etsu, and a near-pure bet on wafer volume and pricing. Sumco is loss-making at the trough as 300mm demand and pricing sag through the inventory correction — a deeply cyclical commodity-ish business with high fixed costs, where the upside is operating leverage when the cycle turns and the downside is exactly what's happening now.",
+  bull:"Duopoly-adjacent position in 300mm wafers; huge operating leverage into a wafer up-cycle; essential, irreplaceable input.",
+  bear:"Loss-making at the trough (P/E n/m); commodity pricing power is thin; heavy fixed costs and capex make the downcycle painful.",
+  r:{val:5,growth:3,roic:2,moat:6,fcf:3,bs:6,scal:5},
+  m:{peTTM:999,peFwd:999,pegFwd:0,evEbitda:8,evSales:1.8,pfcf:30,fcfYield:1.0,revCagrHist:-5,epsCagrFwd:30,gross:18,op:2,net:-6,roic:2,roe:-5,fcfMargin:3,fcfConv:30,sbc:0.1,netDebtEbitda:1.0,intCov:3},
+  d:{revPS:1170,netCashPS:-300,fcfM:0.03}},
+
+ {tk:"SOI",nm:"Soitec",bz:"Engineered substrates (SOI)",color:"#BC5090",layer:"wafers",
+  price:125,mcap:5,cur:"€",mcapUSD:true,
+  thesis:"A specialist in engineered substrates — silicon-on-insulator and related wafers used in RF, power, and photonics. A differentiated niche with real IP, but small and currently loss-making as RF/mobile demand softened. The thesis is a recovery-plus-new-applications story (edge RF, automotive), not a steady compounder.",
+  bull:"Differentiated SOI/engineered-substrate IP with design-in stickiness in RF and power; optionality on new substrate applications.",
+  bear:"Loss-making (P/E n/m); concentrated in soft RF/mobile end-markets; small scale and lumpy demand.",
+  r:{val:4,growth:5,roic:2,moat:6,fcf:3,bs:6,scal:5},
+  m:{peTTM:999,peFwd:999,pegFwd:0,evEbitda:10,evSales:5,pfcf:40,fcfYield:1.0,revCagrHist:-3,epsCagrFwd:25,gross:30,op:5,net:-30,roic:2,roe:-25,fcfMargin:5,fcfConv:30,sbc:1.0,netDebtEbitda:1.5,intCov:2},
+  d:{revPS:18,netCashPS:-5,fcfM:0.05}},
+
+ /* ======== OSAT, packaging & substrates ======== */
+ {tk:"4062",nm:"Ibiden",bz:"IC packaging substrates",color:"#F95D6A",layer:"osat",
+  price:17400,mcap:35,cur:"¥",mcapUSD:true,
+  thesis:"A dominant maker of high-end IC package substrates — the FC-BGA boards that carry advanced CPUs, GPUs and AI accelerators. As chips disaggregate into chiplets and advanced packaging, substrate complexity (and Ibiden's content) rises sharply. The market prices that secular tailwind richly at ~87x; execution and capacity ramps are the swing factors.",
+  bull:"Leading high-layer-count FC-BGA substrate supplier directly levered to AI accelerators and chiplet packaging; deep technical moat.",
+  bear:"~87x trailing P/E prices the AI-substrate story fully; capital-intensive capacity buildout; customer concentration.",
+  r:{val:2,growth:8,roic:6,moat:8,fcf:6,bs:7,scal:7},
+  m:{peTTM:87,peFwd:81,pegFwd:4.0,evEbitda:22,evSales:11,pfcf:50,fcfYield:1.5,revCagrHist:8,epsCagrFwd:20,gross:30,op:18,net:15,roic:9,roe:12,fcfMargin:10,fcfConv:60,sbc:0.1,netDebtEbitda:0.5,intCov:30},
+  d:{revPS:1490,netCashPS:-200,fcfM:0.10}},
+
+ {tk:"6967",nm:"Shinko Electric",bz:"IC packaging substrates & leadframes",color:"#FF7C43",layer:"osat",
+  price:5900,mcap:5,cur:"¥",mcapUSD:true,
+  thesis:"Another Japanese substrate and package specialist (a Fujitsu-lineage business), supplying FC-BGA substrates, leadframes and packages. Similar advanced-packaging tailwinds to Ibiden but smaller and lower-margin, and the subject of an ongoing take-private/restructuring narrative that complicates the equity story.",
+  bull:"Substrate and package franchise levered to advanced packaging; potential value-unlock from ownership/restructuring.",
+  bear:"Lower margins and scale than Ibiden; corporate-action overhang; cyclical packaging demand.",
+  r:{val:4,growth:6,roic:6,moat:6,fcf:6,bs:7,scal:6},
+  m:{peTTM:45,peFwd:29,pegFwd:1.8,evEbitda:14,evSales:5,pfcf:30,fcfYield:2.0,revCagrHist:6,epsCagrFwd:16,gross:28,op:16,net:13,roic:10,roe:11,fcfMargin:9,fcfConv:70,sbc:0.1,netDebtEbitda:-0.5,intCov:999},
+  d:{revPS:1590,netCashPS:500,fcfM:0.09}},
+
+ {tk:"ASX",nm:"ASE Technology",bz:"OSAT — assembly & test (#1)",color:"#C9468A",layer:"osat",
+  price:35,mcap:79,cur:"$",mcapUSD:true,
+  thesis:"The world's largest outsourced assembly and test house (ADR). ASE packages and tests chips for everyone, and advanced packaging — 2.5D/3D, fan-out, chiplets — is shifting value from the fab to the OSAT, right into its wheelhouse. A scale leader riding the packaging-is-the-new-scaling theme, at a more modest multiple than the substrate names.",
+  bull:"#1 OSAT scale with leading advanced-packaging capability as chiplets/heterogeneous integration grow; broad customer base.",
+  bear:"Lower-margin back-end business; cyclical and price-competitive; capex-heavy advanced-packaging ramp.",
+  r:{val:5,growth:7,roic:6,moat:7,fcf:6,bs:6,scal:7},
+  m:{peTTM:53,peFwd:30,pegFwd:1.7,evEbitda:11,evSales:2.5,pfcf:25,fcfYield:2.5,revCagrHist:9,epsCagrFwd:18,gross:18,op:10,net:7,roic:9,roe:13,fcfMargin:8,fcfConv:70,sbc:0.3,netDebtEbitda:1.5,intCov:10},
+  d:{revPS:5,netCashPS:-2,fcfM:0.08}},
+
+ {tk:"AMKR",nm:"Amkor Technology",bz:"OSAT — assembly & test (#2)",color:"#FF6361",layer:"osat",
+  price:71,mcap:18,cur:"$",mcapUSD:true,
+  thesis:"The #2 western OSAT and the go-to advanced-packaging partner for US/EU customers, with a strategic new Arizona facility tied to the onshoring push. Same packaging tailwinds as ASE in a smaller, more US-centric package — a geopolitically-favored back-end play, but still a thin-margin, cyclical assembly business.",
+  bull:"#2 OSAT with a Western-onshoring advantage and a CHIPS-supported US fab; advanced-packaging and automotive growth.",
+  bear:"Thin OSAT margins; customer concentration (a single large customer is significant); cyclical and capital-intensive.",
+  r:{val:5,growth:6,roic:5,moat:6,fcf:6,bs:6,scal:6},
+  m:{peTTM:41,peFwd:33,pegFwd:2.2,evEbitda:9,evSales:2.5,pfcf:22,fcfYield:3.0,revCagrHist:7,epsCagrFwd:15,gross:15,op:8,net:6,roic:7,roe:10,fcfMargin:7,fcfConv:65,sbc:0.5,netDebtEbitda:0.3,intCov:15},
+  d:{revPS:29,netCashPS:-2,fcfM:0.07}},
+
+ {tk:"600584",nm:"JCET Group",bz:"OSAT — assembly & test (China)",color:"#FFA600",layer:"osat",
+  price:74,mcap:20,cur:"CN¥",mcapUSD:true,
+  thesis:"China's largest OSAT and a national-champion play on domestic semiconductor self-sufficiency. JCET benefits from China's localization drive and rising advanced-packaging demand, but carries the policy/geopolitical two-sidedness of any China-supply-chain name and a rich ~82x trailing multiple on compressed earnings.",
+  bull:"#1 China OSAT positioned for domestic localization and advanced-packaging growth; policy support and a large home market.",
+  bear:"~82x trailing P/E on depressed earnings; geopolitical and export-control exposure cuts both ways; thin OSAT margins.",
+  r:{val:3,growth:7,roic:4,moat:5,fcf:5,bs:6,scal:6},
+  m:{peTTM:82,peFwd:49,pegFwd:2.5,evEbitda:10,evSales:1.5,pfcf:30,fcfYield:2.0,revCagrHist:10,epsCagrFwd:20,gross:14,op:7,net:4,roic:5,roe:8,fcfMargin:6,fcfConv:60,sbc:0.2,netDebtEbitda:1.5,intCov:8},
+  d:{revPS:22,netCashPS:-5,fcfM:0.06}},
+
+ /* ======== ANALOG / POWER / AUTO / CONNECTIVITY ======== */
+ {tk:"TXN",nm:"Texas Instruments",bz:"Analog & embedded (IDM)",color:"#CC2936",layer:"analog",
+  price:289,mcap:263,cur:"$",mcapUSD:true,
+  thesis:"The analog blue-chip. TI runs its own 300mm analog fabs and sells tens of thousands of catalog parts into industrial and automotive, a famously sticky, long-lifecycle, high-margin business. Earnings are depressed at the industrial/auto trough (hence ~49x trailing), and a heavy capex cycle is pressuring near-term FCF — the bet is on through-cycle cash generation resuming.",
+  bull:"Best-in-class analog franchise with owned 300mm capacity and huge catalog breadth; ~60%+ gross margin and legendary capital returns through cycles.",
+  bear:"~49x trailing on trough earnings; elevated capex compresses near-term FCF; industrial/auto demand still recovering.",
+  r:{val:4,growth:5,roic:8,moat:9,fcf:6,bs:7,scal:8},
+  m:{peTTM:49,peFwd:35,pegFwd:3.0,evEbitda:22,evSales:14,pfcf:40,fcfYield:2.0,revCagrHist:3,epsCagrFwd:12,gross:58,op:35,net:30,roic:25,roe:35,fcfMargin:15,fcfConv:70,sbc:2.0,netDebtEbitda:0.5,intCov:40},
+  d:{revPS:20,netCashPS:-2,fcfM:0.15}},
+
+ {tk:"ADI",nm:"Analog Devices",bz:"High-performance analog",color:"#E63946",layer:"analog",
+  price:405,mcap:197,cur:"$",mcapUSD:true,
+  thesis:"The high-performance analog leader, strong in signal-chain, power and the industrial/communications/auto markets, with a heavy mix of long-lifecycle, high-margin parts. Like TI, earnings sit at a cyclical trough that inflates the trailing multiple to ~60x; the franchise quality and ~70% gross margins are the draw.",
+  bull:"Premium analog/signal-chain franchise with ~70% gross margin and sticky industrial design-ins; disciplined returns.",
+  bear:"~60x trailing on depressed earnings; industrial/comms cyclicality; integration legacy from large acquisitions.",
+  r:{val:4,growth:5,roic:7,moat:9,fcf:7,bs:7,scal:8},
+  m:{peTTM:60,peFwd:29,pegFwd:2.4,evEbitda:24,evSales:15,pfcf:35,fcfYield:2.5,revCagrHist:3,epsCagrFwd:14,gross:68,op:32,net:25,roic:12,roe:13,fcfMargin:30,fcfConv:110,sbc:3.0,netDebtEbitda:0.8,intCov:20},
+  d:{revPS:26,netCashPS:-5,fcfM:0.30}},
+
+ {tk:"IFX",nm:"Infineon",bz:"Power & automotive semis",color:"#0A8754",layer:"power",
+  price:77,mcap:114,cur:"€",mcapUSD:true,
+  thesis:"Europe's power and automotive-semiconductor champion — #1 in power discretes and a leader in automotive MCUs, central to electrification and energy efficiency. Trailing earnings are depressed by the auto/industrial downturn (~92x), so the story is a cyclical recovery layered on a structural electrification tailwind, with SiC optionality.",
+  bull:"#1 in power semis with deep automotive design-in; electrification and energy-efficiency tailwinds; SiC and GaN optionality.",
+  bear:"~92x trailing on trough earnings; auto/industrial cyclicality and China exposure; capital-intensive SiC ramp.",
+  r:{val:5,growth:6,roic:5,moat:7,fcf:6,bs:6,scal:7},
+  m:{peTTM:92,peFwd:34,pegFwd:1.8,evEbitda:13,evSales:3,pfcf:25,fcfYield:3.0,revCagrHist:5,epsCagrFwd:18,gross:38,op:18,net:8,roic:7,roe:9,fcfMargin:10,fcfConv:80,sbc:0.3,netDebtEbitda:1.0,intCov:12},
+  d:{revPS:11,netCashPS:-3,fcfM:0.10}},
+
+ {tk:"NXPI",nm:"NXP Semiconductors",bz:"Automotive & edge processing",color:"#1B998B",layer:"analog",
+  price:297,mcap:75,cur:"$",mcapUSD:true,
+  thesis:"An automotive-and-edge specialist with strong franchises in auto processors, radar, connectivity and secure identification. More reasonably valued than the analog majors (~28x) as a cyclical-value auto name, levered to rising silicon content per vehicle even as unit growth is mature.",
+  bull:"Leading auto-semiconductor content (radar, processors, connectivity) with content-per-car tailwinds; reasonable multiple; solid FCF.",
+  bear:"Automotive-cycle and China exposure; mature end-market unit growth; some debt load.",
+  r:{val:6,growth:5,roic:7,moat:7,fcf:8,bs:6,scal:7},
+  m:{peTTM:28,peFwd:19,pegFwd:1.6,evEbitda:13,evSales:5,pfcf:16,fcfYield:5.0,revCagrHist:5,epsCagrFwd:12,gross:57,op:30,net:22,roic:18,roe:35,fcfMargin:22,fcfConv:100,sbc:2.5,netDebtEbitda:1.5,intCov:12},
+  d:{revPS:50,netCashPS:-10,fcfM:0.22}},
+
+ {tk:"STM",nm:"STMicroelectronics",bz:"Broad-line analog/MCU/power",color:"#2EC4B6",layer:"analog",
+  price:73,mcap:63,cur:"$",mcapUSD:true,
+  thesis:"A broad-line European maker spanning MCUs, analog, power and sensors for auto and industrial. Earnings have collapsed at the trough (trailing P/E is essentially not meaningful at ~430x), making this a deep-cyclical recovery bet on a franchise with real microcontroller and SiC positions but currently very thin profitability.",
+  bull:"Diversified MCU/analog/power portfolio with auto and SiC exposure; large operating leverage if the cycle recovers.",
+  bear:"Trailing P/E ~430x — earnings barely positive at the trough; weak near-term profitability; intense competition.",
+  r:{val:5,growth:5,roic:3,moat:6,fcf:5,bs:7,scal:6},
+  m:{peTTM:430,peFwd:44,pegFwd:2.5,evEbitda:10,evSales:2.5,pfcf:30,fcfYield:2.0,revCagrHist:-2,epsCagrFwd:25,gross:33,op:8,net:3,roic:3,roe:4,fcfMargin:6,fcfConv:50,sbc:0.5,netDebtEbitda:-0.3,intCov:30},
+  d:{revPS:14,netCashPS:2,fcfM:0.06}},
+
+ {tk:"ON",nm:"ON Semiconductor",bz:"Power & sensing (auto/industrial)",color:"#3A7D44",layer:"power",
+  price:117,mcap:46,cur:"$",mcapUSD:true,
+  thesis:"A power-and-sensing house that has reshaped its portfolio toward high-margin SiC, automotive and industrial power. Trough earnings push the trailing multiple to ~83x; the structural story is electrification and intelligent power, with the cyclical question being how fast auto/industrial demand recovers.",
+  bull:"Refocused on SiC and intelligent power for EVs and industrial; improved margin structure; electrification tailwind.",
+  bear:"~83x trailing on depressed earnings; SiC pricing/oversupply risk; auto/industrial cyclicality.",
+  r:{val:5,growth:5,roic:5,moat:6,fcf:6,bs:6,scal:6},
+  m:{peTTM:83,peFwd:35,pegFwd:2.0,evEbitda:14,evSales:5,pfcf:25,fcfYield:3.0,revCagrHist:-1,epsCagrFwd:18,gross:40,op:20,net:10,roic:7,roe:12,fcfMargin:12,fcfConv:80,sbc:1.5,netDebtEbitda:1.0,intCov:12},
+  d:{revPS:15,netCashPS:-3,fcfM:0.12}},
+
+ {tk:"MCHP",nm:"Microchip",bz:"Microcontrollers & analog",color:"#E15554",layer:"analog",
+  price:91,mcap:50,cur:"$",mcapUSD:true,
+  thesis:"A microcontroller and mixed-signal specialist with an enormous catalog and famously sticky embedded design-ins. The most violent inventory correction of the MCU names crushed trailing earnings (P/E ~417x, effectively n/m), so this is a sharp cyclical-recovery bet on a high-return franchise carrying a notable debt load.",
+  bull:"Vast MCU/analog catalog with sticky embedded design-ins and high through-cycle margins; large recovery leverage.",
+  bear:"Trailing earnings near zero (P/E ~417x); meaningful debt; deepest inventory correction among MCU peers.",
+  r:{val:5,growth:5,roic:6,moat:7,fcf:6,bs:5,scal:7},
+  m:{peTTM:417,peFwd:29,pegFwd:1.8,evEbitda:18,evSales:9,pfcf:30,fcfYield:2.5,revCagrHist:-5,epsCagrFwd:30,gross:55,op:18,net:3,roic:6,roe:8,fcfMargin:18,fcfConv:120,sbc:2.0,netDebtEbitda:2.5,intCov:6},
+  d:{revPS:9,netCashPS:-12,fcfM:0.18}},
+
+ {tk:"MRVL",nm:"Marvell",bz:"Custom AI silicon & networking",color:"#E84855",layer:"design",
+  price:267,mcap:233,cur:"$",mcapUSD:true,
+  thesis:"The other custom-AI-silicon and data-center connectivity story alongside Broadcom. Marvell designs custom accelerators, optical DSPs and networking silicon for hyperscalers — a smaller, more concentrated AI bet trading at ~92x trailing, with the upside (and risk) hinging on a few large custom-silicon programs ramping.",
+  bull:"Custom AI silicon and optical/networking design wins with hyperscalers; data-center-driven growth; recently added to the S&P 500.",
+  bear:"~92x trailing P/E; revenue concentrated in a few custom programs; intense competition from Broadcom and merchant silicon.",
+  r:{val:3,growth:9,roic:5,moat:7,fcf:7,bs:6,scal:8},
+  m:{peTTM:92,peFwd:59,pegFwd:2.5,evEbitda:45,evSales:27,pfcf:55,fcfYield:1.5,revCagrHist:20,epsCagrFwd:30,gross:62,op:30,net:20,roic:8,roe:12,fcfMargin:25,fcfConv:110,sbc:8.0,netDebtEbitda:1.0,intCov:12},
+  d:{revPS:10,netCashPS:-3,fcfM:0.25}},
+
+ /* ======== DISTRIBUTION ======== */
+ {tk:"AVT",nm:"Avnet",bz:"Component distribution",color:"#8D99AE",layer:"distribution",
+  price:87,mcap:7,cur:"$",mcapUSD:true,
+  thesis:"A global electronic-components distributor — the logistics layer between chipmakers and the long tail of customers. Razor-thin margins, high revenue, and a working-capital-heavy model that swings with the inventory cycle. A cyclical-value name: cheap on forward earnings (~11x) precisely because distribution earns little and is highly cyclical.",
+  bull:"Essential broad-line distribution scale and supplier relationships; very cheap forward multiple; cash generation when inventories normalize.",
+  bear:"Wafer-thin margins and low ROIC; earnings down sharply in the correction; structurally a low-quality, capital-cyclical business.",
+  r:{val:8,growth:3,roic:4,moat:4,fcf:5,bs:6,scal:4},
+  m:{peTTM:34,peFwd:11,pegFwd:1.0,evEbitda:9,evSales:0.4,pfcf:12,fcfYield:6.0,revCagrHist:0,epsCagrFwd:15,gross:11,op:3,net:1,roic:6,roe:7,fcfMargin:2,fcfConv:80,sbc:0.3,netDebtEbitda:2.0,intCov:6},
+  d:{revPS:304,netCashPS:-40,fcfM:0.02}},
+
+ {tk:"ARW",nm:"Arrow Electronics",bz:"Component distribution",color:"#6C757D",layer:"distribution",
+  price:219,mcap:11,cur:"$",mcapUSD:true,
+  thesis:"The larger of the big-two component distributors, with a sizable enterprise-computing arm alongside core component distribution. Same thin-margin, cycle-driven economics as Avnet, slightly higher quality, and similarly cheap (~16x trailing, ~11x forward) — a value/cyclical name rather than a growth or moat story.",
+  bull:"Scale leader in distribution plus enterprise-computing solutions; cheap multiple and steady buybacks; cash-generative across the cycle.",
+  bear:"Low-margin, low-ROIC distribution; revenue and earnings track the inventory cycle; little secular growth.",
+  r:{val:8,growth:3,roic:5,moat:4,fcf:6,bs:6,scal:4},
+  m:{peTTM:16,peFwd:11,pegFwd:1.2,evEbitda:8,evSales:0.4,pfcf:10,fcfYield:7.0,revCagrHist:-2,epsCagrFwd:10,gross:12,op:3,net:1.5,roic:7,roe:9,fcfMargin:2,fcfConv:85,sbc:0.3,netDebtEbitda:1.8,intCov:7},
+  d:{revPS:655,netCashPS:-60,fcfM:0.02}},
+
+ /* ======== END CLIENTS / DEMAND (mega-cap; metrics not directly comparable to pure semis) ======== */
+ {tk:"AAPL",nm:"Apple",bz:"Consumer devices (chip buyer)",color:"#555555",layer:"demand",
+  price:291,mcap:4270,cur:"$",mcapUSD:true,
+  thesis:"The largest single customer of the leading edge — Apple's custom silicon (designed in-house, built by TSMC) anchors TSMC's most advanced nodes years ahead of rivals. As an equity it's a consumer-platform compounder, not a semiconductor business, so its scores here reflect demand-side pull, not chip economics.",
+  bull:"Unmatched ecosystem lock-in and services growth; the anchor tenant for leading-edge foundry capacity; fortress cash generation.",
+  bear:"A device-and-services company, not a chipmaker — metrics aren't comparable to semis; mature hardware growth; ~35x for modest growth.",
+  r:{val:4,growth:5,roic:10,moat:10,fcf:10,bs:9,scal:9},
+  m:{peTTM:35,peFwd:32,pegFwd:4.0,evEbitda:25,evSales:9,pfcf:33,fcfYield:3.0,revCagrHist:5,epsCagrFwd:9,gross:47,op:32,net:26,roic:55,roe:150,fcfMargin:27,fcfConv:105,sbc:1.5,netDebtEbitda:-0.3,intCov:999},
+  d:{revPS:31,netCashPS:3,fcfM:0.27}},
+
+ {tk:"MSFT",nm:"Microsoft",bz:"Cloud & software (chip buyer)",color:"#737373",layer:"demand",
+  price:403,mcap:3000,cur:"$",mcapUSD:true,
+  thesis:"A top-three buyer of AI silicon through Azure's data-center buildout, and increasingly a custom-chip designer (Maia/Cobalt) itself. As an equity it's a cloud-and-software compounder; included as a demand-side anchor whose capex decisions move the whole upstream chain.",
+  bull:"Azure + AI capex is a primary demand driver for the entire cohort; durable software franchise and FCF; building its own silicon.",
+  bear:"Not a semiconductor business — included for demand context; ~24x for a mega-cap; AI-capex returns still unproven.",
+  r:{val:5,growth:6,roic:10,moat:10,fcf:10,bs:10,scal:10},
+  m:{peTTM:24,peFwd:22,pegFwd:1.8,evEbitda:17,evSales:11,pfcf:30,fcfYield:3.0,revCagrHist:14,epsCagrFwd:13,gross:69,op:45,net:36,roic:30,roe:35,fcfMargin:25,fcfConv:90,sbc:2.5,netDebtEbitda:-0.5,intCov:999},
+  d:{revPS:43,netCashPS:5,fcfM:0.25}},
+
+ {tk:"GOOGL",nm:"Alphabet",bz:"Cloud & advertising (chip buyer)",color:"#8C8C8C",layer:"demand",
+  price:364,mcap:4450,cur:"$",mcapUSD:true,
+  thesis:"A major AI-silicon consumer and the most advanced hyperscale custom-chip designer (TPU), built at TSMC. As an equity it's an advertising-and-cloud compounder; here it represents both end-demand and the in-house-silicon trend that competes with merchant GPUs.",
+  bull:"TPU program is the deepest hyperscaler custom-silicon effort; vast FCF; AI demand and cloud growth drive cohort orders.",
+  bear:"A platform/advertising company, not a chipmaker; AI-capex intensity rising; metrics not comparable to pure semis.",
+  r:{val:6,growth:6,roic:9,moat:9,fcf:9,bs:10,scal:10},
+  m:{peTTM:28,peFwd:29,pegFwd:2.2,evEbitda:18,evSales:7,pfcf:30,fcfYield:3.0,revCagrHist:13,epsCagrFwd:12,gross:58,op:32,net:28,roic:28,roe:32,fcfMargin:22,fcfConv:90,sbc:4.0,netDebtEbitda:-1.0,intCov:999},
+  d:{revPS:35,netCashPS:6,fcfM:0.22}},
+
+ {tk:"AMZN",nm:"Amazon",bz:"Cloud & retail (chip buyer)",color:"#9E9E9E",layer:"demand",
+  price:244,mcap:2630,cur:"$",mcapUSD:true,
+  thesis:"AWS is a top buyer of AI accelerators and a custom-silicon designer (Trainium/Graviton). As an equity, a cloud-and-retail compounder with lower margins than its hyperscale peers; included as a demand anchor whose data-center capex feeds the upstream chain.",
+  bull:"AWS capex and Trainium/Graviton custom silicon drive cohort demand; retail+cloud scale; improving margins.",
+  bear:"Retail drags blended margins; not a semiconductor business; heavy capex with uncertain AI returns.",
+  r:{val:4,growth:7,roic:6,moat:9,fcf:7,bs:8,scal:10},
+  m:{peTTM:29,peFwd:29,pegFwd:1.5,evEbitda:16,evSales:3.5,pfcf:35,fcfYield:2.0,revCagrHist:12,epsCagrFwd:20,gross:48,op:11,net:8,roic:14,roe:20,fcfMargin:8,fcfConv:80,sbc:4.0,netDebtEbitda:0.5,intCov:30},
+  d:{revPS:69,netCashPS:2,fcfM:0.08}},
+
+ {tk:"META",nm:"Meta Platforms",bz:"Social & AI (chip buyer)",color:"#ADADAD",layer:"demand",
+  price:585,mcap:1480,cur:"$",mcapUSD:true,
+  thesis:"One of the largest buyers of NVIDIA GPUs for AI training, and a builder of its own MTIA inference silicon. As an equity, a high-margin advertising compounder spending aggressively on AI infrastructure — a pure demand-side anchor for the cohort's order books.",
+  bull:"Among the biggest AI-GPU buyers; ~highest-margin ad engine funds vast capex; building custom inference chips.",
+  bear:"Not a semiconductor business; AI/Reality-Labs spend is enormous and unproven; ad-cycle sensitivity.",
+  r:{val:6,growth:7,roic:9,moat:9,fcf:8,bs:9,scal:10},
+  m:{peTTM:21,peFwd:18,pegFwd:1.2,evEbitda:13,evSales:7,pfcf:24,fcfYield:3.5,revCagrHist:18,epsCagrFwd:15,gross:81,op:42,net:34,roic:28,roe:34,fcfMargin:25,fcfConv:90,sbc:5.0,netDebtEbitda:-0.5,intCov:999},
+  d:{revPS:85,netCashPS:8,fcfM:0.25}},
+
+ {tk:"TSLA",nm:"Tesla",bz:"EV & AI (chip buyer)",color:"#C2C2C2",layer:"demand",
+  price:397,mcap:1490,cur:"$",mcapUSD:true,
+  thesis:"An automotive/AI buyer of custom and merchant silicon (its FSD inference chips, plus huge GPU clusters for training). As an equity, a high-multiple EV-and-AI-optionality story rather than a semiconductor business — included as an automotive/AI demand anchor. Trailing P/E ~386x reflects how little of the valuation rests on current earnings.",
+  bull:"Custom FSD/Dojo silicon and large GPU training demand; EV scale and energy/AI optionality.",
+  bear:"~386x trailing P/E — valuation almost entirely on future optionality; auto-demand and execution risk; not a chipmaker.",
+  r:{val:1,growth:6,roic:5,moat:6,fcf:5,bs:8,scal:7},
+  m:{peTTM:386,peFwd:184,pegFwd:6.0,evEbitda:80,evSales:14,pfcf:120,fcfYield:0.5,revCagrHist:10,epsCagrFwd:25,gross:18,op:8,net:8,roic:8,roe:10,fcfMargin:5,fcfConv:60,sbc:4.0,netDebtEbitda:-1.0,intCov:999},
+  d:{revPS:26,netCashPS:8,fcfM:0.05}},
+
+ {tk:"SONY",nm:"Sony Group",bz:"Image sensors & devices",color:"#9AA0A6",layer:"demand",
+  price:21,mcap:127,cur:"$",mcapUSD:true,
+  thesis:"A bridge between demand and supply: Sony is both a huge chip buyer and the world's #1 CMOS image-sensor maker (in every premium smartphone camera). As an equity (ADR) it's a diversified games/entertainment/devices conglomerate, currently showing a trailing loss (P/E n/m); the image-sensor franchise is the semiconductor-relevant jewel.",
+  bull:"Dominant CMOS image-sensor franchise with secular content growth; diversified entertainment and games cash flows.",
+  bear:"Trailing loss (P/E n/m); mostly a non-semiconductor conglomerate; sensor business is a minority of the whole.",
+  r:{val:5,growth:5,roic:5,moat:7,fcf:6,bs:7,scal:6},
+  m:{peTTM:999,peFwd:17,pegFwd:1.5,evEbitda:10,evSales:1.5,pfcf:18,fcfYield:3.0,revCagrHist:5,epsCagrFwd:12,gross:30,op:10,net:-1,roic:5,roe:-1,fcfMargin:6,fcfConv:60,sbc:0.2,netDebtEbitda:0.5,intCov:15},
+  d:{revPS:13,netCashPS:-2,fcfM:0.06}},
+
+ {tk:"CSCO",nm:"Cisco Systems",bz:"Networking systems (chip buyer)",color:"#88909A",layer:"demand",
+  price:120,mcap:474,cur:"$",mcapUSD:true,
+  thesis:"A major buyer of networking and custom silicon (and a designer of its own ASICs) building the switching/routing gear that AI data centers need. As an equity, a mature enterprise-networking compounder with a growing software/recurring mix — included as a systems-level demand anchor for the cohort.",
+  bull:"AI data-center networking demand; large recurring-software mix and strong FCF; designs custom silicon.",
+  bear:"Mature, low-growth enterprise networking; not a semiconductor pure-play; ~40x trailing on compressed earnings.",
+  r:{val:6,growth:4,roic:8,moat:8,fcf:9,bs:8,scal:8},
+  m:{peTTM:40,peFwd:26,pegFwd:3.0,evEbitda:15,evSales:5,pfcf:18,fcfYield:4.5,revCagrHist:3,epsCagrFwd:8,gross:65,op:28,net:20,roic:20,roe:28,fcfMargin:25,fcfConv:110,sbc:3.0,netDebtEbitda:0.3,intCov:25},
+  d:{revPS:15,netCashPS:-2,fcfM:0.25}},
+
+ {tk:"DELL",nm:"Dell Technologies",bz:"AI servers & PCs (chip buyer)",color:"#7E868F",layer:"demand",
+  price:382,mcap:248,cur:"$",mcapUSD:true,
+  thesis:"A primary integrator of AI servers — Dell packages NVIDIA GPUs and the rest of the cohort's silicon into the systems hyperscalers and enterprises buy. As an equity, a thin-margin hardware assembler riding the AI-server boom; included as the systems/integration demand layer closest to the end customer.",
+  bull:"Leading AI-server integrator with a soaring backlog; PC refresh optionality; large buybacks on cheap-ish earnings.",
+  bear:"Thin hardware margins and pass-through economics; not a chipmaker; AI-server margins are slim and competitive.",
+  r:{val:7,growth:6,roic:6,moat:5,fcf:7,bs:5,scal:6},
+  m:{peTTM:31,peFwd:21,pegFwd:1.4,evEbitda:14,evSales:1.8,pfcf:18,fcfYield:4.0,revCagrHist:6,epsCagrFwd:15,gross:22,op:6,net:4,roic:12,roe:50,fcfMargin:4,fcfConv:80,sbc:1.5,netDebtEbitda:2.0,intCov:8},
+  d:{revPS:206,netCashPS:-30,fcfM:0.04}},
+
+ {tk:"002594",nm:"BYD",bz:"EV maker (chip buyer)",color:"#94A1B2",layer:"demand",
+  price:90,mcap:115,cur:"CN¥",mcapUSD:true,
+  thesis:"The world's largest EV maker and a vast consumer of automotive power semiconductors, MCUs and sensors — and notably, a designer/maker of its own SiC power devices. As an equity, a Chinese auto-and-battery growth story; included as the automotive end-demand anchor for the power/analog and auto-semi layers.",
+  bull:"Massive EV/battery scale driving auto-semiconductor demand; vertically integrated, including in-house SiC power devices; cost leadership.",
+  bear:"Not a semiconductor company; brutal EV price competition and thinning auto margins; China policy/geopolitical exposure.",
+  r:{val:6,growth:7,roic:7,moat:6,fcf:6,bs:6,scal:8},
+  m:{peTTM:29,peFwd:19,pegFwd:0.9,evEbitda:8,evSales:0.9,pfcf:20,fcfYield:3.0,revCagrHist:30,epsCagrFwd:20,gross:20,op:7,net:5,roic:14,roe:22,fcfMargin:4,fcfConv:50,sbc:0.1,netDebtEbitda:-0.2,intCov:30},
+  d:{revPS:94,netCashPS:5,fcfM:0.04}}
 ];
 
 const AXES=[
  {k:"val",label:"Valuation"},{k:"growth",label:"Growth"},{k:"roic",label:"ROIC vs WACC"},
  {k:"moat",label:"Moat"},{k:"fcf",label:"FCF quality"},{k:"bs",label:"Balance sheet"},{k:"scal",label:"Scalability"}
 ];
+
+/* Supply-chain layers, ordered upstream → downstream. Each DATA row carries a `layer` key. */
+const LAYERS=[
+ {k:"gases",label:"Gases"},
+ {k:"materials",label:"Materials"},
+ {k:"wafers",label:"Wafers"},
+ {k:"eda",label:"EDA & IP"},
+ {k:"design",label:"Chip designers"},
+ {k:"foundry",label:"Foundry"},
+ {k:"idm",label:"IDM"},
+ {k:"memory",label:"Memory"},
+ {k:"analog",label:"Analog / auto"},
+ {k:"power",label:"Power"},
+ {k:"equipment",label:"Equipment"},
+ {k:"test",label:"Test"},
+ {k:"backend",label:"Back-end / assembly"},
+ {k:"osat",label:"OSAT & substrates"},
+ {k:"distribution",label:"Distribution"},
+ {k:"demand",label:"End clients / demand"}
+];
+const LAYER_LABEL=Object.fromEntries(LAYERS.map(l=>[l.k,l.label]));
 
 const LENSES={
  value:{label:"Value",w:{val:.30,fcf:.15,bs:.15,roic:.12,moat:.10,growth:.10,scal:.08},
@@ -662,25 +996,28 @@ const state={
 DATA.forEach(d=>{ state.dcfV[d.tk]={g:d.m.epsCagrFwd, m:Math.round(d.d.fcfM*100), r:9, tg:2.5}; });
 
 const byTk=Object.fromEntries(DATA.map(d=>[d.tk,d]));
-/* currency-aware formatter: JPY (¥) by default, USD ($) for global names that set cur:"$" */
+/* currency-aware formatter. cur governs only the PRICE display symbol:
+   ¥ (JPY, default), $ (USD), ₩ (KRW), € (EUR), CN¥ (Chinese yuan). */
 const curOf=d=>(d&&d.cur)?d.cur:"¥";
 function fmtMoney(v,d){
   return curOf(d)+Math.round(v).toLocaleString();
 }
 /* legacy alias kept for any old call sites */
 const fmtYen=v=>"¥"+Math.round(v).toLocaleString();
-/* market-cap units differ by currency: JPY/KRW in trillions, USD in billions.
-   ¥xxT for JPY names, ₩xxxxT for KRW names, $xxxB for USD names. */
+/* Market-cap storage:
+   - legacy Tokyo/Korea names store mcap in native TRILLIONS (¥T / ₩T) with no mcapUSD flag.
+   - all newer names store mcap already in USD BILLIONS and set mcapUSD:true.
+   Display: USD-billion names show "$xxxB"; native-trillion names show ¥xxT / ₩xxxxT. */
 function fmtMcap(d){
-  const c=curOf(d);
-  if(c==="$") return `$${d.mcap.toFixed(0)}B`;
-  if(c==="₩") return `₩${d.mcap.toFixed(0)}T`;
+  if(d.mcapUSD||curOf(d)==="$") return `$${d.mcap.toFixed(0)}B`;  // already USD billions
+  if(curOf(d)==="₩") return `₩${d.mcap.toFixed(0)}T`;
   return `¥${d.mcap.toFixed(1)}T`;
 }
-/* normalize market cap to a common unit (USD billions) for bubble sizing only,
-   so names in ¥T, ₩T and $B all share one scale.
+/* normalize market cap to a common unit (USD billions) for bubble sizing.
+   USD-billion names pass through; legacy native-trillion names convert.
    ~150 JPY/USD → ¥1T ≈ $6.7B; ~1360 KRW/USD → ₩1T ≈ $0.735B. */
 function mcapUSD(d){
+  if(d.mcapUSD) return d.mcap;                // already USD billions
   const c=curOf(d);
   if(c==="$") return d.mcap;                 // already USD billions
   if(c==="₩") return d.mcap*0.735;           // KRW trillions → USD billions
@@ -705,15 +1042,51 @@ function metricVal(d,met){
   return basisAdj(d,key);
 }
 
+/* ============================ LAYER FILTER ============================ */
+// which layers actually appear in DATA, kept in canonical order
+const presentLayers=LAYERS.filter(l=>DATA.some(d=>d.layer===l.k));
+const layersEl=document.getElementById("layers");
+function tksInLayer(k){ return DATA.filter(d=>d.layer===k).map(d=>d.tk); }
+function renderLayerChips(){
+  layersEl.innerHTML="";
+  // "All" resets to every ticker visible
+  const all=document.createElement("div");
+  all.className="lchip allchip"+(state.visible.size===DATA.length?" active":"");
+  all.textContent="All";
+  all.onclick=()=>{ state.visible=new Set(DATA.map(d=>d.tk)); renderAll(); };
+  layersEl.appendChild(all);
+  presentLayers.forEach(l=>{
+    const tks=tksInLayer(l.k);
+    // active when this layer is exactly the current selection
+    const isExact=tks.length===state.visible.size && tks.every(t=>state.visible.has(t));
+    const chip=document.createElement("div");
+    chip.className="lchip"+(isExact?" active":"");
+    chip.textContent=l.label;
+    chip.title=`Isolate ${l.label} (${tks.length})`;
+    // click isolates this layer; click again (when already isolated) → All
+    chip.onclick=()=>{ if(isExact){ state.visible=new Set(DATA.map(d=>d.tk)); }
+      else { state.visible=new Set(tks); } renderAll(); };
+    layersEl.appendChild(chip);
+  });
+}
+
 /* ============================ CHIPS ============================ */
 const chipsEl=document.getElementById("chips");
-DATA.forEach(d=>{
-  const c=document.createElement("div");
-  c.className="chip"; c.dataset.tk=d.tk;
-  c.innerHTML=`<span class="dot" style="background:${d.color}"></span>${d.tk} ${d.nm.split(" ")[0]}`;
-  c.onclick=()=>{ toggle(d.tk); };
-  chipsEl.appendChild(c);
-});
+// render ticker chips grouped by layer order, with a faint layer label between groups
+function buildChips(){
+  chipsEl.innerHTML="";
+  presentLayers.forEach(l=>{
+    DATA.filter(d=>d.layer===l.k).forEach(d=>{
+      const c=document.createElement("div");
+      c.className="chip"; c.dataset.tk=d.tk;
+      c.title=LAYER_LABEL[d.layer]||"";
+      c.innerHTML=`<span class="dot" style="background:${d.color}"></span>${d.tk} ${d.nm.split(" ")[0]}`;
+      c.onclick=()=>{ toggle(d.tk); };
+      chipsEl.appendChild(c);
+    });
+  });
+}
+buildChips();
 function toggle(tk){
   if(state.visible.has(tk)){ if(state.visible.size>1) state.visible.delete(tk); }
   else state.visible.add(tk);
@@ -721,6 +1094,7 @@ function toggle(tk){
 }
 function syncChips(){
   [...chipsEl.children].forEach(c=>c.classList.toggle("off",!state.visible.has(c.dataset.tk)));
+  renderLayerChips();
 }
 
 /* lens segmented */
