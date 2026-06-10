@@ -223,11 +223,12 @@
 <header>
   <div class="wrap">
     <div class="eyebrow">Equity comparison · 3-year horizon · Global semiconductor value chain</div>
-    <h1>Twenty-two names, one supply chain, two lenses</h1>
-    <p>From wafers and process chemicals through fab equipment, test, foundry, memory and the chip designers that
-       drive demand — spanning the Tokyo-listed cohort, the Western equipment and design leaders (ASML, TSMC, NVIDIA,
-       Broadcom, AMD, Intel, Arm, Applied Materials, Lam, KLA, Micron) and the Korean memory giants (Samsung,
-       SK Hynix) — graded on what actually separates them over three years: returns on capital versus cost of
+    <h1>Twenty-six names, one supply chain, two lenses</h1>
+    <p>From EDA software and design IP through wafers, fab equipment, test, foundry, memory and the chip designers
+       that drive demand — spanning the Tokyo-listed cohort, the Western equipment and design leaders (ASML, TSMC,
+       NVIDIA, Broadcom, AMD, Intel, Arm, Qualcomm, Synopsys, Cadence, Applied Materials, Lam, KLA, Micron,
+       GlobalFoundries) and the Korean memory giants (Samsung, SK Hynix) — graded on what actually separates them
+       over three years: returns on capital versus cost of
        capital, moat direction, balance-sheet resilience, and what today's price already assumes. Toggle the
        scoring lens; every chart shares one color per ticker and one show/hide state.</p>
     <div class="meta">
@@ -576,7 +577,44 @@ const DATA = [
   bear:"Brutally cyclical commodity memory; ~9.7x forward P/E reflects peak earnings the market won't capitalize; #3 scale behind the Korean leaders.",
   r:{val:8,growth:9,roic:7,moat:5,fcf:6,bs:7,scal:7},
   m:{peTTM:44,peFwd:10,pegFwd:0.3,evEbitda:6,evSales:4.5,pfcf:14,fcfYield:5.0,revCagrHist:85,epsCagrFwd:45,gross:50,op:38,net:30,roic:22,roe:28,fcfMargin:12,fcfConv:50,sbc:1.5,netDebtEbitda:0.5,intCov:15},
-  d:{revPS:51,netCashPS:-15,fcfM:0.12}}
+  d:{revPS:51,netCashPS:-15,fcfM:0.12}},
+
+ /* ---- EDA software, mobile SoC & trailing-edge foundry (USD; ~Jun 2026) ---- */
+ {tk:"SNPS",nm:"Synopsys",bz:"EDA software + design IP",color:"#7B2D8E",
+  price:465,mcap:89,cur:"$",
+  thesis:"One half of the EDA duopoly that every chip on this page is designed with. Synopsys sells the design-automation software and silicon IP that NVIDIA, AMD, Broadcom, Arm and the foundries cannot work without — a near-recurring, ~90%-retention model with structurally higher margins and lower cyclicality than any hardware name. At ~110x trailing (digesting the Ansys acquisition) the quality is fully priced.",
+  bull:"Duopoly EDA + IP with deep switching costs and recurring revenue; AI chip-design complexity expands its TAM every node; Ansys adds simulation cross-sell.",
+  bear:"~110x trailing P/E even after the multiple compressed; Ansys integration and debt to absorb; revenue still indirectly tied to the design cycle.",
+  r:{val:2,growth:8,roic:7,moat:10,fcf:9,bs:7,scal:10},
+  m:{peTTM:110,peFwd:29,pegFwd:1.4,evEbitda:35,evSales:11,pfcf:45,fcfYield:1.8,revCagrHist:14,epsCagrFwd:20,gross:81,op:34,net:25,roic:14,roe:16,fcfMargin:28,fcfConv:110,sbc:6.0,netDebtEbitda:1.0,intCov:20},
+  d:{revPS:45,netCashPS:-10,fcfM:0.28}},
+
+ {tk:"CDNS",nm:"Cadence",bz:"EDA software + design IP",color:"#178C43",
+  price:391,mcap:108,cur:"$",
+  thesis:"The other half of the EDA duopoly, and the higher-margin one. Cadence's design and verification tools plus its hardware emulation systems are mission-critical to every advanced chip program, generating ~recurring revenue at ~35%+ operating margins. The franchise is arguably the cleanest compounder in the cohort; the only knock is a ~91x trailing multiple that demands sustained double-digit growth.",
+  bull:"Duopoly EDA with verification/emulation lock-in and ~recurring revenue; ~35% op margin and superb FCF; direct beneficiary of AI design complexity.",
+  bear:"~91x trailing P/E leaves no room for a growth stumble; small revenue base versus its market cap; design-cycle sensitivity in a downturn.",
+  r:{val:2,growth:8,roic:9,moat:10,fcf:10,bs:8,scal:10},
+  m:{peTTM:91,peFwd:48,pegFwd:2.4,evEbitda:50,evSales:19,pfcf:60,fcfYield:1.6,revCagrHist:14,epsCagrFwd:20,gross:86,op:35,net:28,roic:22,roe:30,fcfMargin:32,fcfConv:105,sbc:6.5,netDebtEbitda:-0.3,intCov:999},
+  d:{revPS:20,netCashPS:1,fcfM:0.32}},
+
+ {tk:"QCOM",nm:"Qualcomm",bz:"Mobile / edge SoCs + licensing",color:"#3253DC",
+  price:205,mcap:217,cur:"$",
+  thesis:"The mobile-and-edge anchor, and the cohort's cyclical-value chip designer. Qualcomm leads premium smartphone SoCs and earns a high-margin patent-licensing royalty on virtually every handset, while pushing into automotive and edge AI. At ~21x it is among the cheapest designers here — the market prices a mature smartphone TAM and Apple's modem in-sourcing rather than the diversification story.",
+  bull:"Leading mobile SoC plus a fat, durable licensing royalty stream; real automotive and edge-AI diversification; cheap multiple and strong capital returns.",
+  bear:"Smartphone-cycle maturity and Apple modem in-sourcing cap growth; licensing faces periodic legal/renewal risk; China handset exposure.",
+  r:{val:8,growth:5,roic:9,moat:7,fcf:9,bs:8,scal:8},
+  m:{peTTM:22,peFwd:21,pegFwd:2.6,evEbitda:13,evSales:4.9,pfcf:14,fcfYield:6.5,revCagrHist:8,epsCagrFwd:8,gross:56,op:32,net:27,roic:30,roe:40,fcfMargin:25,fcfConv:95,sbc:2.5,netDebtEbitda:-0.3,intCov:99},
+  d:{revPS:42,netCashPS:3,fcfM:0.25}},
+
+ {tk:"GFS",nm:"GlobalFoundries",bz:"Trailing-edge / specialty foundry",color:"#B5651D",
+  price:75,mcap:41,cur:"$",
+  thesis:"The trailing-edge foundry counterpoint to TSMC. GlobalFoundries deliberately skipped the bleeding edge to serve specialty processes — RF, power, automotive, IoT — where designs are sticky and capacity matters more than the latest node. Lower growth and returns than the leading edge, but more durable customer relationships and a Western-fab security premium. Not an AI-compute play.",
+  bull:"Differentiated specialty/trailing-edge niche with long-term customer agreements; Western (US/EU) capacity premium and CHIPS support; less node-race capex pressure.",
+  bear:"No leading-edge or AI-compute exposure; lower margins and ROIC than peers; smartphone/auto end-market cyclicality and a ~54x trailing multiple.",
+  r:{val:5,growth:4,roic:4,moat:5,fcf:5,bs:6,scal:5},
+  m:{peTTM:54,peFwd:38,pegFwd:3.0,evEbitda:9,evSales:5.5,pfcf:25,fcfYield:2.5,revCagrHist:3,epsCagrFwd:13,gross:25,op:14,net:11,roic:6,roe:8,fcfMargin:10,fcfConv:70,sbc:2.0,netDebtEbitda:-0.4,intCov:30},
+  d:{revPS:12.5,netCashPS:2,fcfM:0.10}}
 ];
 
 const AXES=[
