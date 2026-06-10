@@ -71,7 +71,8 @@
     padding:10px 0;margin-bottom:30px;box-shadow:0 1px 0 rgba(0,0,0,.02)}
   .gbar .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   /* phone-only "Filters" disclosure — hidden on desktop, controls always shown */
-  .gbarhead{display:none}
+  /* scoped under .gbar so it beats the .gbar .wrap base rule on specificity */
+  .gbar .gbarhead{display:none}
   .filterstoggle{display:inline-flex;align-items:center;gap:8px;background:none;border:0;cursor:pointer;padding:2px 0;color:var(--ink2)}
   .filterstoggle .caret{font-family:var(--mono);font-size:11px;color:var(--ink3);transition:transform .18s var(--ease)}
   .gbar.filters-open .filterstoggle .caret{transform:rotate(90deg)}
@@ -324,10 +325,13 @@
     .chip{font-size:11.5px;padding:4px 8px}
     .seg{flex-wrap:wrap}
     /* collapse the filter controls behind the "Filters" toggle so the pinned bar is one row */
-    .gbarhead{display:flex}
-    .gbarctrl,.tickerbar,.tkpanel{display:none}
+    /* all scoped under .gbar to outrank the (0,2,0) .gbar .wrap base rule */
+    .gbar .gbarhead{display:flex}
+    .gbar .gbarctrl,.gbar .tickerbar,.gbar .tkpanel{display:none}
     .gbar.filters-open .gbarctrl{display:flex}
     .gbar.filters-open .tickerbar{display:flex}
+    /* ticker chip panel: show only when its own toggle is open and filters are expanded */
+    .gbar.filters-open .tkpanel.open{display:flex}
     .gbarhead .glabel{width:auto;margin-bottom:0}
     .tksum,.filterstoggle .tksum{width:auto}
 
