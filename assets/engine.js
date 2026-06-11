@@ -19,7 +19,8 @@ const SITE=[
   {href:"ai-infra.html",    label:"AI Infrastructure"},
   {href:"power.html",       label:"Nuclear & Power"},
   {href:"cyber.html",       label:"Cybersecurity"},
-  {href:"biopharma.html",   label:"Obesity & Biopharma"}
+  {href:"biopharma.html",   label:"Obesity & Biopharma"},
+  {href:"robotics.html",    label:"Robotics"}
 ];
 function siteNav(){
   const cur = (location.pathname.split("/").pop() || "index.html") || "index.html";
