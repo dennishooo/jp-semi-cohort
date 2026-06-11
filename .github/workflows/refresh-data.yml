@@ -1,0 +1,80 @@
+name: Refresh market data
+
+# Pulls the observable quantitative fields (price, market cap, P/E, margins, ...) for every
+# public name in data/*.js from yfinance and opens a PR with the changes. Curated fields
+# (the 0-10 radar scores, ROIC/FCF estimates, thesis, share-of-market) are preserved.
+#
+# Runs where the network is open (GitHub-hosted runner) - the authoring sandbox cannot.
+# Trigger manually from the Actions tab; the weekly schedule is opt-in (uncomment below).
+
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Comma-separated file stems to scope (blank = all), e.g. finance,space"
+        required: false
+        default: ""
+      dry_run:
+        description: "Report only, write no changes"
+        type: boolean
+        default: false
+  # schedule:
+  #   - cron: "0 6 * * 1"   # 06:00 UTC every Monday
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: refresh-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install --quiet yfinance
+
+      - name: Refresh data
+        run: |
+          python scripts/refresh_data.py \
+            ${{ inputs.only && format('--only {0}', inputs.only) || '' }} \
+            ${{ inputs.dry_run && '--dry-run' || '' }}
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: refresh-report
+          path: data/REFRESH_REPORT.md
+
+      - name: Open pull request
+        if: ${{ !inputs.dry_run }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: data-refresh/run-${{ github.run_number }}
+          title: "Data refresh (${{ github.run_number }})"
+          body: |
+            Automated refresh of observable market-data fields via `scripts/refresh_data.py` (yfinance).
+
+            Curated fields (0-10 radar scores, ROIC/FCF estimates, thesis, bull/bear, share-of-market)
+            are preserved. See `data/REFRESH_REPORT.md` in this PR (and the run artifact) for the full
+            list of changes, skipped private/pre-IPO names, and items needing manual review
+            (non-USD listings, implausible values).
+
+            Review the diff before merging — figures are point-in-time and single-source.
+          commit-message: "Refresh market data via scripts/refresh_data.py"
+          add-paths: |
+            data/*.js
+            data/REFRESH_REPORT.md
+          delete-branch: true
