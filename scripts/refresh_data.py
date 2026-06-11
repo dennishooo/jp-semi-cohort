@@ -71,17 +71,59 @@ YAHOO_OVERRIDES = {
     "BESI": "BESI.AS", "SMHN": "SMHN.DE", "ATS": "ATS.VI",
     # space
     "AIR": "AIR.PA", "SES": "SESG.PA",
+    # robotics
+    "ABB": "ABBN.SW", "6954": "6954.T", "6506": "6506.T",
 }
 
-def map_fields(info: dict) -> dict:
-    """Return {dotted_path: value} for the fields we are willing to overwrite."""
+_FX_CACHE: dict[str, float | None] = {}
+def fx_to_usd(currency: str | None) -> float | None:
+    """USD per 1 unit of `currency`. Handles GBp (London pence = GBP/100). Cached."""
+    if currency in (None, "USD"):
+        return 1.0
+    if currency in _FX_CACHE:
+        return _FX_CACHE[currency]
+    import yfinance as yf
+    base = "GBP" if currency == "GBp" else currency
+    rate = None
+    for attempt in range(3):
+        try:
+            t = yf.Ticker(f"{base}USD=X")
+            rate = getattr(t.fast_info, "last_price", None) or \
+                   (t.info.get("regularMarketPrice") or t.info.get("currentPrice"))
+            if rate:
+                break
+        except Exception:
+            pass
+        time.sleep(1.0 * (attempt + 1))
+    if rate and currency == "GBp":
+        rate = rate / 100.0          # pence -> pounds
+    _FX_CACHE[currency] = rate
+    return rate
+
+def map_fields(info: dict, currency: str = "USD", rate: float | None = 1.0) -> tuple[dict, str]:
+    """Return ({dotted_path: value}, review_note) for the fields we overwrite.
+    Currency-denominated fields (price, mcap, revPS) are handled per-currency;
+    ratio fields (P/E, margins, ROE, growth, EV multiples) are currency-independent."""
+    out, note = {}, ""
     price = info.get("currentPrice") or info.get("regularMarketPrice")
-    mcap  = info.get("marketCap")
-    out = {}
-    if price and math.isfinite(price):                 out["price"]        = round(price, 2)
-    if mcap and math.isfinite(mcap):                   out["mcap"]         = round(mcap / 1e9, 2)  # -> $B
-    out["m.peTTM"]   = _pos_pe(info.get("trailingPE"))
-    out["m.peFwd"]   = _pos_pe(info.get("forwardPE"))
+    # Display price stays in the record's currency; London pence -> pounds to match a "£" label.
+    if price and math.isfinite(price):
+        out["price"] = round(price / 100 if currency == "GBp" else price, 2)
+    # Market cap is always shown in USD $B. For USD names use the reported cap; for foreign
+    # names derive it (shares x USD price) to avoid the local-currency cap ambiguity.
+    if currency in (None, "USD"):
+        mcap = info.get("marketCap")
+        if mcap and math.isfinite(mcap):
+            out["mcap"] = round(mcap / 1e9, 2)
+    else:
+        shares = info.get("sharesOutstanding")
+        if price and shares and rate and math.isfinite(price) and math.isfinite(shares):
+            out["mcap"] = round(shares * price * rate / 1e9, 2)   # rate folds in GBp/100
+        else:
+            note = f" — currency **{currency}**: USD mcap not derivable (missing shares/FX); mcap left unchanged"
+    # ratios — independent of currency
+    out["m.peTTM"] = _pos_pe(info.get("trailingPE"))
+    out["m.peFwd"] = _pos_pe(info.get("forwardPE"))
     if (v := _ratio(info.get("enterpriseToEbitda"))) is not None: out["m.evEbitda"] = v
     if (v := _ratio(info.get("enterpriseToRevenue"))) is not None: out["m.evSales"]  = v
     if (v := _pct(info.get("grossMargins")))   is not None: out["m.gross"]       = v
@@ -89,9 +131,12 @@ def map_fields(info: dict) -> dict:
     if (v := _pct(info.get("profitMargins")))  is not None: out["m.net"]         = v
     if (v := _pct(info.get("returnOnEquity"))) is not None: out["m.roe"]         = v
     if (v := _pct(info.get("revenueGrowth")))  is not None: out["m.revCagrHist"] = v  # NB: YoY, not multi-yr CAGR
-    rps = info.get("revenuePerShare")
-    if rps and math.isfinite(rps):                     out["d.revPS"]      = round(rps, 2)
-    return {k: v for k, v in out.items() if v is not None}
+    # revenue/share: only for USD names (yfinance financials use GBP not GBp for .L, etc.)
+    if currency in (None, "USD"):
+        rps = info.get("revenuePerShare")
+        if rps and math.isfinite(rps):
+            out["d.revPS"] = round(rps, 2)
+    return {k: v for k, v in out.items() if v is not None}, note
 
 # --- JS data file <-> python dict --------------------------------------------------------
 def load_config(path: pathlib.Path) -> dict:
@@ -179,13 +224,8 @@ def main():
                 sec_skip.append(f"`{tk}` {rec['nm']}{via} — no market data (private/pre-IPO or unresolved symbol); left unchanged")
                 continue
             cur = info.get("currency", "USD")
-            review_note = ""
-            updates = map_fields(info)
-            # Non-USD listing: price is in local currency and yfinance marketCap is too, so
-            # writing mcap as USD$B would corrupt it. Keep price, DROP mcap, flag for review.
-            if cur and cur != "USD":
-                updates.pop("mcap", None)
-                review_note = f" — currency **{cur}** (mcap skipped; verify price/currency)"
+            rate = fx_to_usd(cur)
+            updates, review_note = map_fields(info, cur, rate)
             ch = apply(rec, updates)
             if ch:
                 sec_changed.append(f"`{tk}` {rec['nm']}{via}: " + "; ".join(ch))
