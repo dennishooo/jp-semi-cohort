@@ -17,7 +17,8 @@ const SITE=[
   {href:"finance.html",     label:"Finance"},
   {href:"space.html",       label:"Space"},
   {href:"ai-infra.html",    label:"AI Infrastructure"},
-  {href:"power.html",       label:"Nuclear & Power"}
+  {href:"power.html",       label:"Nuclear & Power"},
+  {href:"cyber.html",       label:"Cybersecurity"}
 ];
 function siteNav(){
   const cur = (location.pathname.split("/").pop() || "index.html") || "index.html";
