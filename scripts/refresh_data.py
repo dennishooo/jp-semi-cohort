@@ -44,6 +44,35 @@ def _ratio(v, lo=-50, hi=300):
 def _pct(v, lo=-200, hi=400):
     return round(v * 100, 1) if (v is not None and math.isfinite(v) and lo/100 <= v <= hi/100) else None
 
+# Display ticker -> Yahoo Finance symbol, where they differ: foreign listings that need an
+# exchange suffix, renamed/dashed US symbols, and short codes that collide with an unrelated
+# US ticker (e.g. "AI" = C3.ai on Yahoo, but here it's Air Liquide). For local-currency names
+# the currency guard in main() still skips their (local-currency) market cap.
+YAHOO_OVERRIDES = {
+    # finance
+    "LSEG": "LSEG.L", "HSBC": "HSBA.L", "ALV": "ALV.DE", "BRK.B": "BRK-B",
+    # semiconductors — Japan (.T)
+    "6857": "6857.T", "4063": "4063.T", "6146": "6146.T", "6963": "6963.T", "4004": "4004.T",
+    "6861": "6861.T", "6723": "6723.T", "8035": "8035.T", "7735": "7735.T", "4186": "4186.T",
+    "4182": "4182.T", "3436": "3436.T", "4062": "4062.T", "6967": "6967.T", "4091": "4091.T",
+    "4901": "4901.T", "4005": "4005.T", "285A": "285A.T", "6503": "6503.T", "6504": "6504.T",
+    "7729": "7729.T", "3132": "3132.T",
+    # Korea (.KS)
+    "005930": "005930.KS", "000660": "000660.KS",
+    # Taiwan (.TW)
+    "6488": "6488.TW", "2454": "2454.TW", "2360": "2360.TW", "6239": "6239.TW",
+    "8046": "8046.TW", "3036": "3036.TW", "3702": "3702.TW",
+    # Hong Kong (.HK)
+    "0981": "0981.HK", "1347": "1347.HK", "0522": "0522.HK", "0992": "0992.HK", "1810": "1810.HK",
+    # mainland China (.SS Shanghai / .SZ Shenzhen)
+    "600584": "600584.SS", "002371": "002371.SZ", "002156": "002156.SZ", "002594": "002594.SZ",
+    # Europe (ambiguous short codes mapped to the real listing)
+    "AI": "AI.PA", "SOI": "SOI.PA", "IFX": "IFX.DE", "WAF": "WAF.DE", "ASM": "ASM.AS",
+    "BESI": "BESI.AS", "SMHN": "SMHN.DE", "ATS": "ATS.VI",
+    # space
+    "AIR": "AIR.PA", "SES": "SESG.PA",
+}
+
 def map_fields(info: dict) -> dict:
     """Return {dotted_path: value} for the fields we are willing to overwrite."""
     price = info.get("currentPrice") or info.get("regularMarketPrice")
@@ -78,17 +107,23 @@ def dump_config(path: pathlib.Path, cfg: dict, banner: str):
     body = json.dumps(cfg, ensure_ascii=False, indent=2)
     path.write_text(f"/* {banner} */\nwindow.CONFIG = {body};\n")
 
-def fetch_info(ticker: str) -> dict | None:
+def fetch_info(ticker: str, retries: int = 3) -> tuple[dict | None, str]:
+    """Fetch .info for a ticker (after symbol-override), retrying transient failures.
+    Returns (info_or_None, yahoo_symbol_used)."""
     import yfinance as yf
-    try:
-        info = yf.Ticker(ticker).info
-        # yfinance returns a near-empty dict for unknown / private names
-        if not info or not (info.get("currentPrice") or info.get("regularMarketPrice") or info.get("marketCap")):
-            return None
-        return info
-    except Exception as e:
-        print(f"  ! fetch error {ticker}: {e}", file=sys.stderr)
-        return None
+    sym = YAHOO_OVERRIDES.get(ticker, ticker)
+    for attempt in range(retries):
+        try:
+            info = yf.Ticker(sym).info
+            # yfinance returns a near-empty dict for unknown / private names
+            if info and (info.get("currentPrice") or info.get("regularMarketPrice") or info.get("marketCap")):
+                return info, sym
+        except Exception as e:
+            if attempt == retries - 1:
+                print(f"  ! fetch error {ticker} ({sym}): {e}", file=sys.stderr)
+        if attempt < retries - 1:
+            time.sleep(1.0 * (attempt + 1))   # back off on transient 404 / rate-limit
+    return None, sym
 
 def apply(rec: dict, updates: dict) -> list[str]:
     """Apply dotted-path updates to a record; return human-readable change lines."""
@@ -137,10 +172,11 @@ def main():
         sec_changed, sec_skip, sec_review = [], [], []
         for rec in recs:
             tk = rec["tk"]
-            info = fetch_info(tk)
+            info, sym = fetch_info(tk)
             time.sleep(args.sleep)
+            via = f" (via `{sym}`)" if sym != tk else ""
             if info is None:
-                sec_skip.append(f"`{tk}` {rec['nm']} — no market data (private/pre-IPO or unknown symbol); left unchanged")
+                sec_skip.append(f"`{tk}` {rec['nm']}{via} — no market data (private/pre-IPO or unresolved symbol); left unchanged")
                 continue
             cur = info.get("currency", "USD")
             review_note = ""
@@ -152,7 +188,7 @@ def main():
                 review_note = f" — currency **{cur}** (mcap skipped; verify price/currency)"
             ch = apply(rec, updates)
             if ch:
-                sec_changed.append(f"`{tk}` {rec['nm']}: " + "; ".join(ch))
+                sec_changed.append(f"`{tk}` {rec['nm']}{via}: " + "; ".join(ch))
             if review_note:
                 sec_review.append(f"`{tk}` {rec['nm']}{review_note}")
             print(f"  {tk:8} {'updated' if ch else 'no-change':10} {review_note}")
