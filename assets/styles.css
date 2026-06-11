@@ -376,3 +376,18 @@
     .vbar:hover .pop{display:none}
     .vbar.show .pop{display:block}
   }
+
+  /* ========================= BACK TO TOP ========================= */
+  .totop{position:fixed;right:24px;bottom:24px;z-index:200;
+    width:46px;height:46px;display:grid;place-items:center;
+    border:1px solid var(--line2);border-radius:50%;
+    background:var(--paper);color:var(--accent);cursor:pointer;
+    box-shadow:0 4px 16px rgba(22,19,14,.14);
+    opacity:0;transform:translateY(10px) scale(.92);pointer-events:none;
+    transition:opacity .3s var(--ease),transform .3s var(--ease),background .2s,color .2s,border-color .2s}
+  .totop svg{width:20px;height:20px;display:block}
+  .totop:hover{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+  .totop:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .totop.show{opacity:1;transform:none;pointer-events:auto}
+  @media(max-width:600px){.totop{right:16px;bottom:16px;width:42px;height:42px}}
+  @media(prefers-reduced-motion:reduce){.totop{transition:opacity .2s}}
