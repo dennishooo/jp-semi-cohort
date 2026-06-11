@@ -104,13 +104,14 @@ def map_fields(info: dict, currency: str = "USD", rate: float | None = 1.0,
                baseline: dict | None = None) -> tuple[dict, str]:
     """Return ({dotted_path: value}, review_note) for the fields we overwrite.
     Currency-denominated fields (price, mcap, revPS) are handled per-currency; ratio fields
-    are currency-independent. Guards reject values that yfinance reports unreliably:
-      * Financial-sector names: skip gross margin and EV multiples (not meaningful for banks).
-      * EV multiples: skip non-positive values (nonsensical here).
+    are currency-independent. Guards reject values that yfinance reports unreliably, judged
+    on the *value* (not the sector) so legit payment/exchange/fintech names aren't frozen:
+      * EV multiples: skip non-positive values (banks/insurers report negative or nonsensical EVs).
+      * gross margin: skip <=0 (banks report 0.0) and >=98 (a "no cost of revenue" artifact);
+        keeps real operating-company margins, incl. high-gross software/networks up to ~97%.
       * revPS: only when financial-statement currency is USD AND within 0.2x-5x of the
         curated baseline (catches local-currency / per-ADR unit mismatches, incl. BRK.B)."""
     out, note = {}, ""
-    is_financial = (info.get("sector") == "Financial Services")
     fin_ccy = info.get("financialCurrency")
     base = (baseline or {})
 
@@ -131,14 +132,12 @@ def map_fields(info: dict, currency: str = "USD", rate: float | None = 1.0,
         else:
             note = f" — currency **{currency}**: USD mcap not derivable (missing shares/FX); mcap left unchanged"
 
-    # ratios — currency-independent
+    # ratios — currency-independent. Value-driven guards, not sector-driven (see docstring).
     out["m.peTTM"] = _pos_pe(info.get("trailingPE"))
     out["m.peFwd"] = _pos_pe(info.get("forwardPE"))
-    # EV multiples: only positive values, and not for financials (not a meaningful concept)
-    if not is_financial:
-        if (v := _ratio(info.get("enterpriseToEbitda"))) is not None and v > 0: out["m.evEbitda"] = v
-        if (v := _ratio(info.get("enterpriseToRevenue"))) is not None and v > 0: out["m.evSales"]  = v
-        if (v := _pct(info.get("grossMargins"))) is not None: out["m.gross"] = v   # gross margin: not for banks
+    if (v := _ratio(info.get("enterpriseToEbitda"))) is not None and v > 0: out["m.evEbitda"] = v
+    if (v := _ratio(info.get("enterpriseToRevenue"))) is not None and v > 0: out["m.evSales"]  = v
+    if (v := _pct(info.get("grossMargins"))) is not None and 0 < v < 98: out["m.gross"] = v
     if (v := _pct(info.get("operatingMargins"))) is not None: out["m.op"]        = v
     if (v := _pct(info.get("profitMargins")))  is not None: out["m.net"]         = v
     if (v := _pct(info.get("returnOnEquity"))) is not None: out["m.roe"]         = v
