@@ -11,7 +11,26 @@ if(!CONFIG.meta){
   throw new Error('CONFIG missing');
 }
 document.title = CONFIG.meta.title;
-function buildBody(meta){ return `<header>
+/* shared cross-page nav — add an industry here and every page links to it */
+const SITE=[
+  {href:"index.html",       label:"Semiconductors"},
+  {href:"finance.html",     label:"Finance"},
+  {href:"space.html",       label:"Space"},
+  {href:"ai-infra.html",    label:"AI Infrastructure"},
+  {href:"power.html",       label:"Nuclear & Power"},
+  {href:"cyber.html",       label:"Cybersecurity"},
+  {href:"biopharma.html",   label:"Obesity & Biopharma"},
+  {href:"robotics.html",    label:"Robotics"}
+];
+function siteNav(){
+  const cur = (location.pathname.split("/").pop() || "index.html") || "index.html";
+  const links = SITE.map(s=>{
+    const on = (s.href===cur) || (cur==="index.html" && s.href==="index.html");
+    return `<a href="${s.href}"${on?' class="on"':''}>${s.label}</a>`;
+  }).join("");
+  return `<nav class="sitenav"><div class="wrap">${links}</div></nav>`;
+}
+function buildBody(meta){ return `${siteNav()}<header>
   <svg class="heroflow" id="heroflow" viewBox="0 0 1200 460" preserveAspectRatio="none" aria-hidden="true"></svg>
   <div class="wrap">${meta.hero}</div>
 </header>

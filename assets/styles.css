@@ -55,6 +55,17 @@
   .scrollcue .arr{display:inline-block;animation:bob 1.8s var(--ease) infinite}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
 
+  /* cross-page site nav (static at top; scrolls away so it never fights the sticky .gbar) */
+  .sitenav{border-bottom:1px solid var(--line);background:var(--paper2)}
+  .sitenav .wrap{display:flex;gap:3px;flex-wrap:wrap;padding:8px 28px}
+  .sitenav a{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--ink3);text-decoration:none;padding:5px 10px;border-radius:14px;white-space:nowrap;
+    transition:background .12s,color .12s}
+  .sitenav a:hover{background:var(--hl);color:var(--ink2)}
+  .sitenav a.on{background:var(--ink);color:var(--paper)}
+  @media(max-width:640px){ .sitenav .wrap{padding:7px 15px;gap:2px;overflow-x:auto;flex-wrap:nowrap}
+    .sitenav a{font-size:10.5px;padding:4px 8px} }
+
   /* global control bar */
   .gbar{position:sticky;top:0;z-index:30;background:rgba(250,247,240,.86);
     backdrop-filter:blur(10px) saturate(1.2);border-bottom:1px solid var(--line);
