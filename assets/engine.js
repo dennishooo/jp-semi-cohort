@@ -20,7 +20,9 @@ const SITE=[
   {href:"power.html",       label:"Nuclear & Power"},
   {href:"cyber.html",       label:"Cybersecurity"},
   {href:"biopharma.html",   label:"Obesity & Biopharma"},
-  {href:"robotics.html",    label:"Robotics"}
+  {href:"robotics.html",    label:"Robotics"},
+  {href:"crypto.html",      label:"Crypto"},
+  {href:"quantum.html",     label:"Quantum"}
 ];
 function siteNav(){
   const cur = (location.pathname.split("/").pop() || "index.html") || "index.html";
