@@ -18,7 +18,8 @@ const SITE=[
   {href:"space.html",       label:"Space"},
   {href:"ai-infra.html",    label:"AI Infrastructure"},
   {href:"power.html",       label:"Nuclear & Power"},
-  {href:"cyber.html",       label:"Cybersecurity"}
+  {href:"cyber.html",       label:"Cybersecurity"},
+  {href:"biopharma.html",   label:"Obesity & Biopharma"}
 ];
 function siteNav(){
   const cur = (location.pathname.split("/").pop() || "index.html") || "index.html";
