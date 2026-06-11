@@ -210,7 +210,10 @@ function buildBody(meta){ return `${siteNav()}<header>
 
 <footer>
   <div class="wrap">${meta.footer}</div>
-</footer>`; }
+</footer>
+<button id="toTop" class="totop" type="button" aria-label="Back to top" title="Back to top">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5l-7 7m7-7 7 7m-7-7v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>`; }
 document.body.innerHTML = buildBody(CONFIG.meta);
 
 /* ============================ DATA ============================ */
@@ -997,4 +1000,14 @@ function countUp(elm){
   // hero stats may already be in view on load → observe the statrow explicitly
   const sr=document.querySelector(".statrow");
   if(sr){ const io2=new IntersectionObserver((e)=>{ if(e[0].isIntersecting && !counted){ counted=true; sr.querySelectorAll(".sv[data-count]").forEach(countUp); io2.disconnect(); } },{threshold:.3}); io2.observe(sr); }
+})();
+
+/* back-to-top button: fades in once the hero has scrolled out of view */
+(function toTop(){
+  const btn=document.getElementById("toTop");
+  if(!btn) return;
+  const toggle=()=>btn.classList.toggle("show", window.scrollY>600);
+  toggle();
+  window.addEventListener("scroll", toggle, {passive:true});
+  btn.addEventListener("click", ()=>window.scrollTo({top:0, behavior: RM?"auto":"smooth"}));
 })();
